@@ -1,0 +1,317 @@
+{
+  "nav": {
+    "home": "হোম",
+    "about": "আমাদের সম্পর্কে",
+    "dashboard": "ড্যাশবোর্ড",
+    "login": "লগইন",
+    "logout": "লগআউট",
+    "register": "নিবন্ধন"
+  },
+  "home": {
+    "hero": {
+      "title": "AggriGo-এর সঙ্গে আপনার ব্যবসা বৃদ্ধি করুন",
+      "subtitle": "হাজার হাজার ব্যবসায়ীর সঙ্গে যুক্ত হন, যারা তাদের পণ্য আরও বেশি দর্শকের কাছে পৌঁছে দিচ্ছেন। আজই আপনার ব্যবসা নিবন্ধন করুন এবং নতুন সুযোগের দ্বার খুলুন!",
+      "cta": "এখনই নিবন্ধন করুন"
+    },
+    "features": {
+      "title": "কেন AggriGo নির্বাচন করবেন?",
+      "easy": {
+        "title": "সহজ নিবন্ধন",
+        "desc": "আপনার ব্যবসা নিবন্ধনের জন্য সহজ ৬-ধাপ প্রক্রিয়া"
+      },
+      "growth": {
+        "title": "ব্যবসার বৃদ্ধি",
+        "desc": "আপনার পণ্য প্রদর্শন করুন এবং আরও বেশি গ্রাহকের কাছে পৌঁছান"
+      },
+      "support": {
+        "title": "সমর্থন ও প্রশিক্ষণ",
+        "desc": "প্রশিক্ষণ এবং ব্যবসায়িক সহায়তা সেবা গ্রহণ করুন"
+      },
+      "market": {
+        "title": "বাজারে প্রবেশাধিকার",
+        "desc": "স্থানীয় এবং আন্তর্জাতিক ক্রেতাদের সঙ্গে সংযুক্ত হোন"
+      }
+    },
+    "cta": {
+      "title": "আপনার ব্যবসাকে পরবর্তী স্তরে নিয়ে যেতে প্রস্তুত?",
+      "subtitle": "আজই AggriGo-তে যোগ দিন এবং ব্যবসার বৃদ্ধির যাত্রা শুরু করুন",
+      "button": "এখনই শুরু করুন"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "আপনার অ্যাকাউন্টে লগইন করুন",
+      "email": "ইমেইল ঠিকানা",
+      "password": "পাসওয়ার্ড",
+      "button": "লগইন",
+      "noAccount": "অ্যাকাউন্ট নেই?",
+      "registerLink": "এখানে নিবন্ধন করুন",
+      "forgotPassword": "পাসওয়ার্ড ভুলে গেছেন?"
+    },
+    "register": {
+      "title": "আপনার অ্যাকাউন্ট তৈরি করুন",
+      "name": "পূর্ণ নাম",
+      "email": "ইমেইল ঠিকানা",
+      "password": "পাসওয়ার্ড",
+      "button": "নিবন্ধন করুন",
+      "hasAccount": "ইতিমধ্যে অ্যাকাউন্ট আছে?",
+      "loginLink": "এখানে লগইন করুন"
+    },
+    "verifyOTP": {
+      "title": "OTP যাচাই করুন",
+      "subtitle": "আপনার ইমেইলে পাঠানো ৬ সংখ্যার কোড লিখুন",
+      "placeholder": "OTP লিখুন",
+      "button": "যাচাই করুন",
+      "resend": "পুনরায় OTP পাঠান"
+    },
+    "forgot": {
+      "title": "পাসওয়ার্ড ভুলে গেছেন",
+      "subtitle": "পাসওয়ার্ড রিসেট করতে আপনার ইমেইল লিখুন",
+      "email": "ইমেইল ঠিকানা",
+      "button": "রিসেট লিংক পাঠান",
+      "backToLogin": "লগইনে ফিরে যান"
+    },
+    "reset": {
+      "title": "পাসওয়ার্ড রিসেট করুন",
+      "newPassword": "নতুন পাসওয়ার্ড",
+      "confirmPassword": "পাসওয়ার্ড নিশ্চিত করুন",
+      "button": "পাসওয়ার্ড রিসেট করুন"
+    }
+  },
+  "form": {
+    "step1": {
+      "title": "ধাপ ১: মৌলিক তথ্য এবং যোগাযোগ",
+      "productType": "পণ্যের ধরন",
+      "category": "বিভাগ",
+      "brandName": "ব্র্যান্ডের নাম",
+      "registeredName": "নিবন্ধিত ব্যবসার নাম",
+      "ownerName": "মালিকের নাম",
+      "gender": "লিঙ্গ",
+      "male": "পুরুষ",
+      "female": "মহিলা",
+      "other": "অন্যান্য",
+      "ownerAge": "মালিকের বয়স",
+      "ownershipType": "মালিকানার ধরন",
+      "single": "একক",
+      "partnership": "অংশীদারিত্ব",
+      "partnerName": "অংশীদারের নাম",
+      "mobileNumber": "মোবাইল নম্বর",
+      "whatsappSame": "হোয়াটসঅ্যাপ মোবাইলের মতো",
+      "whatsappNumber": "হোয়াটসঅ্যাপ নম্বর",
+      "email": "ইমেইল ঠিকানা",
+      "division": "বিভাগ",
+      "district": "জেলা",
+      "thana": "থানা/উপজেলা",
+      "postOffice": "পোস্ট অফিস",
+      "postCode": "পোস্ট কোড",
+      "detailedAddress": "বিস্তারিত ঠিকানা",
+      "placeholders": {
+        "productType": "যেমন: জৈব খাদ্য, হস্তশিল্প",
+        "category": "বিভাগ নির্বাচন করুন",
+        "brandName": "আপনার ব্র্যান্ডের নাম",
+        "ownerName": "পূর্ণ নাম",
+        "partnerName": "অংশীদারের পূর্ণ নাম",
+        "mobile": "০১XXXXXXXXX",
+        "email": "your@email.com",
+        "address": "বাড়ি/রাস্তা/এলাকার বিবরণ"
+      }
+    },
+    "step2": {
+      "title": "ধাপ ২: পণ্যের বিবরণ এবং উৎপাদন",
+      "productName": "পণ্যের নাম",
+      "shortDescription": "সংক্ষিপ্ত বিবরণ",
+      "rawMaterialSource": "কাঁচামালের উৎস",
+      "local": "স্থানীয়",
+      "imported": "আমদানিকৃত",
+      "productionType": "উৎপাদনের ধরন",
+      "handmade": "হাতে তৈরি",
+      "semiAutomatic": "আধা-স্বয়ংক্রিয়",
+      "automatic": "স্বয়ংক্রিয়",
+      "productionPlace": "উৎপাদন স্থান",
+      "homeBased": "বাড়িতে ভিত্তিক",
+      "factoryBased": "কারখানা ভিত্তিক",
+      "pricingTitle": "মূল্যের তথ্য",
+      "costPerUnit": "প্রতি ইউনিট খরচ (টাকা)",
+      "wholesalePrice": "পাইকারি মূল্য (টাকা)",
+      "retailPrice": "খুচরা মূল্য (টাকা)",
+      "moq": "ন্যূনতম অর্ডার পরিমাণ",
+      "bulkDiscount": "বাল্ক ছাড় পাওয়া যায়?",
+      "yes": "হ্যাঁ",
+      "no": "না",
+      "productionTitle": "উৎপাদন ক্ষমতা",
+      "productionCapacity": "উৎপাদন ক্ষমতা",
+      "machineryUsed": "ব্যবহৃত যন্ত্রপাতি",
+      "maleWorkers": "পুরুষ কর্মী",
+      "femaleWorkers": "মহিলা কর্মী",
+      "placeholders": {
+        "productName": "আপনার প্রধান পণ্যের নাম",
+        "description": "আপনার পণ্যের সংক্ষিপ্ত বিবরণ",
+        "capacity": "যেমন: ১০০০ ইউনিট/মাস",
+        "machinery": "ব্যবহৃত যন্ত্রপাতি বা সরঞ্জাম তালিকা"
+      }
+    },
+    "step3": {
+      "title": "ধাপ ৩: বাজার এবং ব্যবসার অবস্থা",
+      "buyerType": "ক্রেতার ধরন (প্রযোজ্য সব নির্বাচন করুন)",
+      "retailShop": "খুচরা দোকান",
+      "corporate": "কর্পোরেট",
+      "exportBuyer": "রপ্তানি ক্রেতা",
+      "online": "অনলাইন",
+      "exportMarketsTitle": "রপ্তানি বাজার",
+      "searchCountries": "রপ্তানি দেশ অনুসন্ধান এবং নির্বাচন করুন",
+      "searchPlaceholder": "দেশ অনুসন্ধানের জন্য টাইপ করুন...",
+      "selectedMarkets": "নির্বাচিত রপ্তানি বাজার:",
+      "buyersIn": "ক্রেতার সংখ্যা",
+      "noCountries": "কোন দেশ পাওয়া যায়নি",
+      "onlineBuyerTitle": "অনলাইন ক্রেতার তথ্য",
+      "onlineBuyerNote": "কমপক্ষে একটি লিংক প্রদান করুন (ফেসবুক পেজ বা ওয়েবসাইট)",
+      "facebookLink": "ফেসবুক পেজ লিংক",
+      "websiteLink": "ওয়েবসাইট লিংক",
+      "customerStatsTitle": "গ্রাহক পরিসংখ্যান",
+      "totalCustomers": "মোট গ্রাহক",
+      "regularCustomers": "নিয়মিত গ্রাহক",
+      "monthlySales": "মাসিক বিক্রয় (টাকা)",
+      "businessAge": "ব্যবসার বয়স (বছর)",
+      "documentsTitle": "নিবন্ধন ডকুমেন্ট",
+      "tradeLicense": "ট্রেড লাইসেন্স",
+      "tin": "টিআইএন",
+      "bsti": "বিএসটিআই",
+      "exportLicense": "রপ্তানি লাইসেন্স",
+      "other": "অন্যান্য",
+      "certificateName": "সনদ/ডকুমেন্টের নাম",
+      "uploadFile": "ফাইল আপলোড করুন",
+      "uploading": "আপলোড হচ্ছে...",
+      "uploaded": "আপলোড সম্পন্ন",
+      "bankTitle": "ব্যাংক তথ্য",
+      "hasBankAccount": "আপনার কি ব্যাংক অ্যাকাউন্ট আছে?",
+      "bankName": "ব্যাংকের নাম",
+      "branch": "শাখা",
+      "accountHolder": "অ্যাকাউন্ট ধারকের নাম",
+      "accountNumber": "অ্যাকাউন্ট নম্বর",
+      "mobileBankingTitle": "মোবাইল ব্যাংকিং",
+      "placeholders": {
+        "facebook": "https://facebook.com/yourpage",
+        "website": "https://yourwebsite.com",
+        "certificateName": "যেমন: আমদানি লাইসেন্স, ব্যবসা লাইসেন্স ইত্যাদি"
+      }
+    },
+    "step4": {
+      "title": "ধাপ ৪: ভবিষ্যত পরিকল্পনা এবং সহায়তা",
+      "futureGoals": "পরবর্তী ১-৩ বছরের লক্ষ্য",
+      "productionIncrease": "উৎপাদন বৃদ্ধির পরিকল্পনা",
+      "newProducts": "নতুন পণ্য যোগ করার পরিকল্পনা",
+      "interestOnlineExport": "অনলাইন বিক্রয়/রপ্তানিতে আগ্রহ",
+      "supportTitle": "প্ল্যাটফর্ম থেকে প্রয়োজনীয় সহায়তা",
+      "marketing": "বিপণন সহায়তা",
+      "packaging": "প্যাকেজিং সহায়তা",
+      "quality": "মান উন্নয়ন",
+      "financing": "অর্থায়ন",
+      "exportSupport": "রপ্তানি সহায়তা",
+      "training": "প্রশিক্ষণ ও উন্নয়ন",
+      "placeholders": {
+        "goals": "আপনার ব্যবসায়িক লক্ষ্য এবং দৃষ্টিভঙ্গি বর্ণনা করুন",
+        "production": "আপনি কীভাবে উৎপাদন বৃদ্ধি করার পরিকল্পনা করছেন?",
+        "newProducts": "আপনি যে নতুন পণ্যগুলি চালু করার পরিকল্পনা করছেন তা তালিকাবদ্ধ করুন"
+      }
+    },
+    "step5": {
+      "title": "ধাপ ৫: মিডিয়া আপলোড",
+      "productImagesTitle": "পণ্যের ছবি",
+      "productImagesNote": "অন্তত একটি পণ্যের ছবি আপলোড করুন (সর্বোচ্চ ৫টি)",
+      "packagingImage": "প্যাকেজিং ছবি (ঐচ্ছিক)",
+      "productionImage": "উৎপাদন প্রক্রিয়া ছবি (ঐচ্ছিক)",
+      "videoTitle": "পণ্য ভিডিও (ঐচ্ছিক)",
+      "videoNote": "আপনার পণ্য প্রদর্শনকারী একটি ভিডিও আপলোড করুন",
+      "selectImages": "ছবি নির্বাচন করুন",
+      "selectImage": "ছবি নির্বাচন করুন",
+      "selectVideo": "ভিডিও নির্বাচন করুন",
+      "remove": "সরান"
+    },
+    "step6": {
+      "title": "ধাপ ৬: পর্যালোচনা এবং সম্মতি",
+      "reviewTitle": "আপনার তথ্য পর্যালোচনা করুন",
+      "basicInfo": "মৌলিক তথ্য",
+      "productDetails": "পণ্যের বিবরণ",
+      "marketBusiness": "বাজার এবং ব্যবসা",
+      "futurePlans": "ভবিষ্যত পরিকল্পনা",
+      "mediaUploads": "মিডিয়া আপলোড",
+      "consentTitle": "সম্মতি এবং ঘোষণা",
+      "consentAccuracy": "আমি প্রত্যয়ন করছি যে প্রদত্ত সমস্ত তথ্য সঠিক এবং নির্ভুল",
+      "consentMarketing": "আমি AggriGo থেকে বিপণন যোগাযোগ পেতে সম্মত",
+      "digitalSignature": "ডিজিটাল স্বাক্ষর",
+      "signaturePlaceholder": "স্বাক্ষর হিসাবে আপনার পূর্ণ নাম টাইপ করুন",
+      "edit": "সম্পাদনা"
+    },
+    "buttons": {
+      "next": "সংরক্ষণ এবং পরবর্তী",
+      "back": "পিছনে",
+      "submit": "জমা দিন",
+      "cancel": "বাতিল",
+      "save": "সংরক্ষণ করুন",
+      "delete": "মুছে ফেলুন",
+      "download": "ডাউনলোড করুন",
+      "close": "বন্ধ করুন"
+    }
+  },
+  "validation": {
+    "required": "এই ক্ষেত্রটি প্রয়োজনীয়",
+    "email": "একটি বৈধ ইমেইল প্রদান করুন",
+    "phone": "একটি বৈধ ফোন নম্বর প্রদান করুন",
+    "minLength": "ন্যূনতম {count} অক্ষর প্রয়োজন",
+    "maxLength": "সর্বোচ্চ {count} অক্ষর অনুমোদিত",
+    "minAge": "ন্যূনতম বয়স {age}",
+    "minValue": "ন্যূনতম মান {value}",
+    "buyerTypeRequired": "অন্তত একটি ক্রেতার ধরন নির্বাচন করুন",
+    "exportCountryRequired": "অন্তত একটি রপ্তানি দেশ নির্বাচন করুন",
+    "buyerCountRequired": "সমস্ত নির্বাচিত দেশের জন্য ক্রেতার সংখ্যা লিখুন",
+    "onlineLinkRequired": "অন্তত একটি লিংক প্রদান করুন (ফেসবুক বা ওয়েবসাইট)",
+    "certificateNameRequired": "সনদ/ডকুমেন্টের নাম লিখুন",
+    "fileRequired": "ডকুমেন্ট ফাইল আপলোড করুন",
+    "bankRequired": "ব্যাংক অ্যাকাউন্টের তথ্য প্রয়োজনীয়",
+    "onlineExportRequired": "অনলাইন রপ্তানিতে আগ্রহ প্রয়োজনীয়",
+    "futurePlanRequired": "অন্তত একটি ভবিষ্যত পরিকল্পনা বা লক্ষ্য প্রদান করুন",
+    "productImageRequired": "অন্তত একটি পণ্যের ছবি প্রয়োজনীয়",
+    "consentRequired": "আপনাকে অবশ্যই প্রত্যয়ন করতে হবে যে সমস্ত তথ্য সঠিক",
+    "signatureRequired": "ডিজিটাল স্বাক্ষর প্রয়োজনীয়"
+  },
+  "dashboard": {
+    "title": "ড্যাশবোর্ড",
+    "welcome": "স্বাগতম",
+    "yourInfo": "আপনার ব্যবসার তথ্য",
+    "productInfo": "পণ্যের তথ্য",
+    "contactInfo": "যোগাযোগের তথ্য",
+    "businessStatus": "ব্যবসার অবস্থা",
+    "downloadPDF": "পিডিএফ ডাউনলোড করুন",
+    "editInfo": "তথ্য সম্পাদনা করুন",
+    "logout": "লগআউট",
+    "productType": "পণ্যের ধরন",
+    "category": "বিভাগ",
+    "brandName": "ব্র্যান্ডের নাম",
+    "ownerName": "মালিকের নাম",
+    "mobile": "মোবাইল",
+    "email": "ইমেইল",
+    "address": "ঠিকানা",
+    "productName": "পণ্যের নাম",
+    "price": "মূল্য",
+    "production": "উৎপাদন ক্ষমতা"
+  },
+  "common": {
+    "loading": "লোড হচ্ছে...",
+    "error": "ত্রুটি",
+    "success": "সফল",
+    "or": "অথবা",
+    "and": "এবং",
+    "of": "এর",
+    "to": "থেকে",
+    "from": "থেকে",
+    "in": "মধ্যে",
+    "at": "এ"
+  },
+  "footer": {
+    "copyright": "© ২০২৬ AggriGo। সর্বস্বত্ব সংরক্ষিত।",
+    "about": "সম্পর্কে",
+    "contact": "যোগাযোগ",
+    "privacy": "গোপনীয়তা নীতি",
+    "terms": "সেবার শর্তাবলী"
+  }
+}
