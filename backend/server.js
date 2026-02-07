@@ -50,6 +50,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+// Middleware to ensure DB connection before handling requests  
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.error('Database middleware error:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Database connection error'
+    });
+  }
+});
+
 // Root route - API information
 app.get('/', (req, res) => {
   res.status(200).json({
