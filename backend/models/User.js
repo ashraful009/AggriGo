@@ -46,7 +46,21 @@ const userSchema = new mongoose.Schema({
   resetPasswordExpire: {
     type: Date,
     select: false
-  }
+  },
+  profilePictures: [{
+    url: {
+      type: String,
+      required: true
+    },
+    publicId: {
+      type: String,
+      required: true
+    },
+    uploadedAt: {
+      type: Date,
+      default: Date.now
+    }
+  }]
 }, {
   timestamps: true
 });

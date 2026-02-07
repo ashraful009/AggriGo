@@ -84,12 +84,27 @@ const Step5MediaUpload = ({ onNext, onBack }) => {
     onNext(stepData);
   };
 
+  const handleSkip = () => {
+    // Skip this step - proceed with empty media arrays
+    const emptyMediaData = {
+      productImages: [],
+      packagingImage: '',
+      productionProcessImage: '',
+      video: ''
+    };
+    updateFormData(emptyMediaData);
+    onNext(emptyMediaData);
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-8 max-w-5xl mx-auto">
 
       <div className="text-center mb-8">
         <h3 className="text-2xl font-bold text-gray-800">{t('form.step5.title')}</h3>
         <p className="text-gray-500">{t('form.step5.subtitle')}</p>
+        <p className="text-sm text-amber-600 mt-2">
+          <span className="font-semibold">✨ Optional:</span> You can skip this step and add images later from your dashboard
+        </p>
       </div>
 
       {/* --- SECTION 1: PRODUCT GALLERY --- */}
@@ -211,9 +226,18 @@ const Step5MediaUpload = ({ onNext, onBack }) => {
         <button type="button" onClick={onBack} className="px-6 py-3 bg-white text-gray-700 font-bold rounded-xl border border-gray-200 hover:bg-gray-50 transition shadow-sm">
           {t('form.buttons.back')}
         </button>
-        <button type="submit" className="px-8 py-3 bg-gradient-to-r from-emerald-600 to-lime-600 text-white font-bold rounded-xl hover:shadow-lg hover:shadow-emerald-500/30 transition transform hover:-translate-y-1">
-          {t('form.step5.saveAndReview')}
-        </button>
+        <div className="flex gap-3">
+          <button
+            type="button"
+            onClick={handleSkip}
+            className="px-6 py-3 bg-amber-50 text-amber-700 font-bold rounded-xl border border-amber-200 hover:bg-amber-100 transition shadow-sm"
+          >
+            Skip for Now
+          </button>
+          <button type="submit" className="px-8 py-3 bg-gradient-to-r from-emerald-600 to-lime-600 text-white font-bold rounded-xl hover:shadow-lg hover:shadow-emerald-500/30 transition transform hover:-translate-y-1">
+            {t('form.step5.saveAndReview')}
+          </button>
+        </div>
       </div>
     </form>
   );

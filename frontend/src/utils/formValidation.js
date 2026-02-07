@@ -147,10 +147,8 @@ export const validateStep4 = (data) => {
 export const validateStep5 = (data) => {
   const errors = {};
   
-  // At least one product image is required
-  if (!data.productImages || data.productImages.length === 0) {
-    errors.productImages = 'At least one product image is required';
-  }
+  // Step 5 is now optional - users can skip media upload
+  // No validation required
   
   return { 
     isValid: Object.keys(errors).length === 0, 

@@ -34,7 +34,8 @@ const sendTokenResponse = (user, statusCode, res) => {
       user: {
         id: user._id,
         name: user.name,
-        email: user.email
+        email: user.email,
+        profilePictures: user.profilePictures || []
       }
     });
 };
@@ -353,7 +354,8 @@ export const getMe = async (req, res) => {
       user: {
         id: user._id,
         name: user.name,
-        email: user.email
+        email: user.email,
+        profilePictures: user.profilePictures || []
       }
     });
   } catch (error) {

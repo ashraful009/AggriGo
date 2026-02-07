@@ -6,6 +6,8 @@ import mongoose from 'mongoose';
 import authRoutes from './routes/auth.js';
 import businessDataRoutes from './routes/businessData.js';
 import uploadRoutes from './routes/upload.js';
+import profileRoutes from './routes/profile.js';
+import galleryRoutes from './routes/gallery.js';
 
 // Load environment variables
 dotenv.config();
@@ -22,15 +24,9 @@ mongoose.connect(process.env.MONGODB_URI)
 
 // Middleware
 app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'http://localhost:5174',
-    'http://localhost:5175',
-    process.env.FRONTEND_URL // Add this for production
-  ].filter(Boolean), // Remove undefined values
+  origin: ['http://localhost:5173'],
   credentials: true
 }));
-
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -40,6 +36,8 @@ app.use(cookieParser());
 app.use('/api/auth', authRoutes);
 app.use('/api/business', businessDataRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/profile', profileRoutes);
+app.use('/api/gallery', galleryRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {
@@ -67,18 +65,8 @@ app.use((req, res) => {
   });
 });
 
-// ... existing code ...
+const PORT = process.env.PORT || 5000;
 
-// For local development
-if (process.env.NODE_ENV !== 'production') {
-  const PORT = process.env.PORT || 5000;
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-    console.log(`📡 Environment: ${process.env.NODE_ENV || 'development'}`);
-  });
-}
-
-
-// Export for Vercel serverless
-export default app;
-
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});

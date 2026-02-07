@@ -19,6 +19,8 @@ import {
   FaUserTie,
   FaMapMarkerAlt
 } from 'react-icons/fa';
+import ProfilePicture from '../components/ProfilePicture';
+import VisualGallery from '../components/VisualGallery';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -245,6 +247,9 @@ const Dashboard = () => {
               </div>
             </div>
 
+            {/* MANAGE VISUAL GALLERY - Upload/Delete */}
+            <VisualGallery onUpdate={fetchBusinessData} />
+
           </div>
 
           {/* 3. RIGHT COLUMN (Identity & Docs) */}
@@ -253,10 +258,8 @@ const Dashboard = () => {
             {/* Identity Card */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
               <div className="p-6 text-center border-b border-gray-100 bg-gradient-to-br from-emerald-50 to-white">
-                <div className="w-20 h-20 bg-white rounded-full mx-auto mb-3 shadow-md flex items-center justify-center text-3xl font-bold text-emerald-600 border border-emerald-100">
-                  {businessData.brandName ? businessData.brandName.charAt(0).toUpperCase() : 'B'}
-                </div>
-                <h3 className="text-xl font-bold text-gray-800">{businessData.brandName || t('dashboard.myBrand')}</h3>
+                <ProfilePicture user={user} onUpdate={fetchBusinessData} />
+                <h3 className="text-xl font-bold text-gray-800 mt-3">{businessData.brandName || t('dashboard.myBrand')}</h3>
                 <p className="text-sm text-gray-500">{businessData.ownerName}</p>
               </div>
               <div className="p-6 space-y-3">
