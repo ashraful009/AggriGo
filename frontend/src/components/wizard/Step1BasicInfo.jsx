@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useForm } from '../../context/FormContext';
+import { useLanguage } from '../../context/LanguageContext';
 import bangladeshLocations from '../../data/bangladesh-locations.json';
 
 const Step1BasicInfo = ({ onNext }) => {
   const { formData, updateFormData } = useForm();
+  const { t } = useLanguage();
 
   const [stepData, setStepData] = useState({
     productType: formData.productType || '',
@@ -78,35 +80,35 @@ const Step1BasicInfo = ({ onNext }) => {
       {/* Header */}
       <div>
         <h3 className="text-2xl font-extrabold text-green-700 mb-1">
-          প্রাথমিক তথ্য ও যোগাযোগ
+          {t('form.step1.title')}
         </h3>
         <p className="text-sm text-gray-500">
-          Basic Information & Contact Details
+          {t('form.step1.subtitle')}
         </p>
       </div>
 
       {/* Product Info */}
       <section className="bg-green-50/40 rounded-2xl p-6 border border-green-100">
-        <h4 className="font-bold text-green-700 mb-5">📦 Product Information</h4>
+        <h4 className="font-bold text-green-700 mb-5">📦 {t('form.step1.productInfo')}</h4>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div>
-            <label className="label-text">পণ্যের ধরন</label>
+            <label className="label-text">{t('form.step1.productType')}</label>
             <input name="productType" value={stepData.productType} onChange={handleChange} className="input-field" required />
           </div>
 
           <div>
-            <label className="label-text">ক্যাটাগরি / সাব-ক্যাটাগরি</label>
+            <label className="label-text">{t('form.step1.category')}</label>
             <input name="category" value={stepData.category} onChange={handleChange} className="input-field" required />
           </div>
 
           <div>
-            <label className="label-text">ব্র্যান্ডের নাম *</label>
+            <label className="label-text">{t('form.step1.brandName')} *</label>
             <input name="brandName" value={stepData.brandName} onChange={handleChange} className="input-field" required />
           </div>
 
           <div>
-            <label className="label-text">রেজিস্টার্ড নাম (Optional)</label>
+            <label className="label-text">{t('form.step1.registeredName')} (Optional)</label>
             <input name="registeredName" value={stepData.registeredName} onChange={handleChange} className="input-field" />
           </div>
         </div>
@@ -114,21 +116,21 @@ const Step1BasicInfo = ({ onNext }) => {
 
       {/* Owner Info */}
       <section className="bg-white rounded-2xl p-6 border border-gray-200">
-        <h4 className="font-bold text-gray-700 mb-5">👤 Owner Information</h4>
+        <h4 className="font-bold text-gray-700 mb-5">👤 {t('form.step1.ownerInfo')}</h4>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div>
-            <label className="label-text">মালিকের নাম *</label>
+            <label className="label-text">{t('form.step1.ownerName')} *</label>
             <input name="ownerName" value={stepData.ownerName} onChange={handleChange} className="input-field" required />
           </div>
 
           <div>
-            <label className="label-text">মালিকের বয়স *</label>
+            <label className="label-text">{t('form.step1.ownerAge')} *</label>
             <input type="number" name="ownerAge" value={stepData.ownerAge} onChange={handleChange} className="input-field" required />
           </div>
 
           <div>
-            <label className="label-text">লিঙ্গ *</label>
+            <label className="label-text">{t('form.step1.gender')} *</label>
             <div className="flex gap-6 mt-2">
               {['Male', 'Female', 'Other'].map(g => (
                 <label key={g} className="flex items-center gap-2 text-sm">
@@ -140,7 +142,7 @@ const Step1BasicInfo = ({ onNext }) => {
           </div>
 
           <div>
-            <label className="label-text">Ownership Type *</label>
+            <label className="label-text">{t('form.step1.ownershipType')} *</label>
             <div className="flex gap-6 mt-2">
               {['Single', 'Partnership', 'Ltd. Company'].map(type => (
                 <label key={type} className="flex items-center gap-2 text-sm">
@@ -153,7 +155,7 @@ const Step1BasicInfo = ({ onNext }) => {
 
           {stepData.ownershipType === 'Partnership' && (
             <div className="md:col-span-2">
-              <label className="label-text">Partner Name *</label>
+              <label className="label-text">{t('form.step1.partnerName')} *</label>
               <input name="partnerName" value={stepData.partnerName} onChange={handleChange} className="input-field" required />
             </div>
           )}
@@ -162,11 +164,11 @@ const Step1BasicInfo = ({ onNext }) => {
 
       {/* Contact */}
       <section className="bg-green-50/40 rounded-2xl p-6 border border-green-100">
-        <h4 className="font-bold text-green-700 mb-5">📞 Contact Information</h4>
+        <h4 className="font-bold text-green-700 mb-5">📞 {t('form.step1.contactInfo')}</h4>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div>
-            <label className="label-text">মোবাইল নম্বর *</label>
+            <label className="label-text">{t('form.step1.mobileNumber')} *</label>
             <div className="flex">
               <span className="px-3 flex items-center bg-gray-100 border border-r-0 rounded-l-lg">+880</span>
               <input name="mobileNumber" value={stepData.mobileNumber} onChange={handleChange} className="input-field rounded-l-none" required />
@@ -174,20 +176,20 @@ const Step1BasicInfo = ({ onNext }) => {
           </div>
 
           <div>
-            <label className="label-text">ইমেইল *</label>
+            <label className="label-text">{t('form.step1.email')} *</label>
             <input type="email" name="email" value={stepData.email} onChange={handleChange} className="input-field" required />
           </div>
 
           <div className="md:col-span-2">
             <label className="flex items-center gap-2 text-sm">
               <input type="checkbox" name="whatsappSameAsMobile" checked={stepData.whatsappSameAsMobile} onChange={handleChange} />
-              WhatsApp number is same as mobile
+              {t('form.step1.whatsappSame')}
             </label>
           </div>
 
           {!stepData.whatsappSameAsMobile && (
             <div>
-              <label className="label-text">WhatsApp Number</label>
+              <label className="label-text">{t('form.step1.whatsappNumber')}</label>
               <div className="flex">
                 <span className="px-3 flex items-center bg-gray-100 border border-r-0 rounded-l-lg">+880</span>
                 <input name="whatsappNumber" value={stepData.whatsappNumber} onChange={handleChange} className="input-field rounded-l-none" />
@@ -199,33 +201,33 @@ const Step1BasicInfo = ({ onNext }) => {
 
       {/* Address */}
       <section className="bg-white rounded-2xl p-6 border border-gray-200">
-        <h4 className="font-bold text-gray-700 mb-5">📍 Address</h4>
+        <h4 className="font-bold text-gray-700 mb-5">📍 {t('form.step1.address')}</h4>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           <select name="division" value={stepData.division} onChange={handleChange} className="input-field" required>
-            <option value="">Division</option>
+            <option value="">{t('form.step1.division')}</option>
             {bangladeshLocations.map(d => <option key={d.division}>{d.division}</option>)}
           </select>
 
           <select name="district" value={stepData.district} onChange={handleChange} className="input-field" required disabled={!stepData.division}>
-            <option value="">District</option>
+            <option value="">{t('form.step1.district')}</option>
             {districts.map(d => <option key={d.name}>{d.name}</option>)}
           </select>
 
           <select name="thana" value={stepData.thana} onChange={handleChange} className="input-field" required disabled={!stepData.district}>
-            <option value="">Thana</option>
+            <option value="">{t('form.step1.thana')}</option>
             {thanas.map(t => <option key={t}>{t}</option>)}
           </select>
 
-          <input name="postOffice" placeholder="Post Office" value={stepData.postOffice} onChange={handleChange} className="input-field" required />
-          <input name="postCode" placeholder="Post Code" value={stepData.postCode} onChange={handleChange} className="input-field" required />
+          <input name="postOffice" placeholder={t('form.step1.postOffice')} value={stepData.postOffice} onChange={handleChange} className="input-field" required />
+          <input name="postCode" placeholder={t('form.step1.postCode')} value={stepData.postCode} onChange={handleChange} className="input-field" required />
 
           <textarea
             name="detailedAddress"
             value={stepData.detailedAddress}
             onChange={handleChange}
             rows="3"
-            placeholder="Village, Road, House No"
+            placeholder={t('form.step1.detailedAddress')}
             className="input-field md:col-span-3"
             required
           />
@@ -238,7 +240,7 @@ const Step1BasicInfo = ({ onNext }) => {
           type="submit"
           className="px-8 py-3 rounded-xl bg-green-600 text-white font-bold hover:bg-green-700 transition shadow-md"
         >
-          Save & Next →
+          {t('form.buttons.saveNext')} →
         </button>
       </div>
     </form>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import api from '../utils/api';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -21,6 +22,7 @@ import {
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [businessData, setBusinessData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -75,7 +77,7 @@ const Dashboard = () => {
         <div className="flex-1 flex items-center justify-center">
           <div className="flex flex-col items-center">
             <div className="w-16 h-16 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin"></div>
-            <p className="mt-4 text-emerald-800 font-medium">Loading your profile...</p>
+            <p className="mt-4 text-emerald-800 font-medium">{t('dashboard.loading')}</p>
           </div>
         </div>
         <Footer />
@@ -92,12 +94,12 @@ const Dashboard = () => {
             <div className="w-20 h-20 bg-lime-100 text-lime-600 rounded-full flex items-center justify-center mx-auto mb-6">
               <FaDraftingCompass size={32} />
             </div>
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">Welcome to AggriGo!</h2>
+            <h2 className="text-3xl font-bold text-gray-800 mb-4">{t('dashboard.welcome')}</h2>
             <p className="text-gray-600 mb-8 text-lg">
-              You haven't submitted your business registration yet. Let's build your profile together.
+              {t('dashboard.noDataMessage')}
             </p>
             <button onClick={() => navigate('/wizard')} className="bg-emerald-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-emerald-700 transition shadow-lg hover:shadow-emerald-500/30 transform hover:-translate-y-1">
-              Start Registration Wizard
+              {t('dashboard.startWizard')}
             </button>
           </div>
         </div>
@@ -120,26 +122,26 @@ const Dashboard = () => {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-3xl md:text-4xl font-bold text-white">Dashboard</h1>
+                <h1 className="text-3xl md:text-4xl font-bold text-white">{t('dashboard.title')}</h1>
                 {businessData.submissionStatus === 'submitted' ? (
                   <span className="bg-lime-500/20 text-lime-400 border border-lime-400/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide flex items-center">
-                    <FaCheckCircle className="mr-1.5" /> Live
+                    <FaCheckCircle className="mr-1.5" /> {t('dashboard.status.active')}
                   </span>
                 ) : (
                   <span className="bg-yellow-500/20 text-yellow-400 border border-yellow-400/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide flex items-center">
-                    <FaDraftingCompass className="mr-1.5" /> Draft
+                      <FaDraftingCompass className="mr-1.5" /> {t('dashboard.status.draft')}
                   </span>
                 )}
               </div>
-              <p className="text-emerald-100/80">Welcome back, {user?.name}</p>
+              <p className="text-emerald-100/80">{t('dashboard.welcomeUser', { name: user?.name })}</p>
             </div>
 
             <div className="flex gap-3">
               <button onClick={downloadPDF} className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white border border-white/20 px-5 py-2.5 rounded-lg transition-all text-sm font-semibold backdrop-blur-sm">
-                <FaFilePdf /> Download PDF
+                <FaFilePdf /> {t('dashboard.buttons.downloadPDF')}
               </button>
               <button onClick={handleEdit} className="flex items-center gap-2 bg-lime-500 hover:bg-lime-400 text-emerald-950 px-5 py-2.5 rounded-lg transition-all shadow-lg hover:shadow-lime-500/20 text-sm font-bold">
-                <FaEdit /> Edit Profile
+                <FaEdit /> {t('dashboard.buttons.editProfile')}
               </button>
             </div>
           </div>
@@ -152,20 +154,20 @@ const Dashboard = () => {
         {/* 1. KEY METRICS ROW */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <StatCard
-            label="Business Age"
-            value={businessData.businessAge ? `${businessData.businessAge} Years` : 'N/A'}
+            label={t('dashboard.metrics.businessAge')}
+            value={businessData.businessAge ? `${businessData.businessAge} ${t('dashboard.years')}` : t('dashboard.notApplicable')}
             icon={<FaIndustry />}
             color="blue"
           />
           <StatCard
-            label="Monthly Sales"
-            value={businessData.monthlySales ? `৳${businessData.monthlySales}` : 'N/A'}
+            label={t('dashboard.metrics.monthlySales')}
+            value={businessData.monthlySales ? `৳${businessData.monthlySales}` : t('dashboard.notApplicable')}
             icon={<FaChartLine />}
             color="emerald"
           />
           <StatCard
-            label="Total Customers"
-            value={businessData.totalCustomers || 'N/A'}
+            label={t('dashboard.metrics.totalCustomers')}
+            value={businessData.totalCustomers || t('dashboard.notApplicable')}
             icon={<FaUserTie />}
             color="purple"
           />
@@ -180,23 +182,23 @@ const Dashboard = () => {
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
                 <h3 className="font-bold text-gray-800 flex items-center gap-2">
-                  <FaBoxOpen className="text-emerald-600" /> Product & Production
+                  <FaBoxOpen className="text-emerald-600" /> {t('dashboard.sections.productProduction')}
                 </h3>
               </div>
               <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
-                <InfoItem label="Product Name" value={businessData.productName} />
-                <InfoItem label="Brand Name" value={businessData.brandName} />
-                <InfoItem label="Category" value={businessData.category} />
-                <InfoItem label="Product Type" value={businessData.productType} />
-                <InfoItem label="Retail Price" value={businessData.retailPrice ? `৳${businessData.retailPrice}` : null} />
-                <InfoItem label="Production Type" value={businessData.productionType} />
-                <InfoItem label="Capacity" value={businessData.productionCapacity} />
-                <InfoItem label="Place" value={businessData.productionPlace} />
+                <InfoItem label={t('dashboard.labels.productName')} value={businessData.productName} />
+                <InfoItem label={t('dashboard.labels.brandName')} value={businessData.brandName} />
+                <InfoItem label={t('dashboard.labels.category')} value={businessData.category} />
+                <InfoItem label={t('dashboard.labels.productType')} value={businessData.productType} />
+                <InfoItem label={t('dashboard.labels.retailPrice')} value={businessData.retailPrice ? `৳${businessData.retailPrice}` : null} />
+                <InfoItem label={t('dashboard.labels.productionType')} value={businessData.productionType} />
+                <InfoItem label={t('dashboard.labels.capacity')} value={businessData.productionCapacity} />
+                <InfoItem label={t('dashboard.labels.place')} value={businessData.productionPlace} />
                 <div className="md:col-span-2 mt-2 p-3 bg-gray-50 rounded-lg border border-gray-100 flex justify-between items-center">
-                  <span className="text-sm font-medium text-gray-500">Workforce</span>
+                  <span className="text-sm font-medium text-gray-500">{t('dashboard.labels.workforce')}</span>
                   <div className="flex gap-4 text-sm font-bold text-gray-700">
-                    <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-500"></span> Male: {businessData.maleWorkers || 0}</span>
-                    <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-pink-500"></span> Female: {businessData.femaleWorkers || 0}</span>
+                    <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-500"></span> {t('dashboard.labels.male')}: {businessData.maleWorkers || 0}</span>
+                    <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-pink-500"></span> {t('dashboard.labels.female')}: {businessData.femaleWorkers || 0}</span>
                   </div>
                 </div>
               </div>
@@ -206,17 +208,17 @@ const Dashboard = () => {
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
                 <h3 className="font-bold text-gray-800 flex items-center gap-2">
-                  <FaImages className="text-emerald-600" /> Visual Gallery
+                  <FaImages className="text-emerald-600" /> {t('dashboard.sections.visualGallery')}
                 </h3>
               </div>
               <div className="p-6">
                 {/* Product Images */}
                 {businessData.productImages?.length > 0 && (
                   <div className="mb-8">
-                    <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">Product Showcase</h4>
+                    <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">{t('dashboard.gallery.productShowcase')}</h4>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                       {businessData.productImages.map((img, idx) => (
-                        <ImageCard key={idx} src={img} label={`Product ${idx + 1}`} />
+                        <ImageCard key={idx} src={img} label={`${t('dashboard.gallery.product')} ${idx + 1}`} />
                       ))}
                     </div>
                   </div>
@@ -225,20 +227,20 @@ const Dashboard = () => {
                 {/* Process Images */}
                 {(businessData.packagingImage || businessData.productionProcessImage) && (
                   <div>
-                    <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">Process & Packaging</h4>
+                    <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">{t('dashboard.gallery.processPackaging')}</h4>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                       {businessData.packagingImage && (
-                        <ImageCard src={businessData.packagingImage} label="Packaging" />
+                        <ImageCard src={businessData.packagingImage} label={t('dashboard.gallery.packaging')} />
                       )}
                       {businessData.productionProcessImage && (
-                        <ImageCard src={businessData.productionProcessImage} label="Production Process" />
+                        <ImageCard src={businessData.productionProcessImage} label={t('dashboard.gallery.productionProcess')} />
                       )}
                     </div>
                   </div>
                 )}
 
                 {(!businessData.productImages?.length && !businessData.packagingImage && !businessData.productionProcessImage) && (
-                  <p className="text-center text-gray-400 italic py-4">No images uploaded yet.</p>
+                  <p className="text-center text-gray-400 italic py-4">{t('dashboard.gallery.noImages')}</p>
                 )}
               </div>
             </div>
@@ -254,7 +256,7 @@ const Dashboard = () => {
                 <div className="w-20 h-20 bg-white rounded-full mx-auto mb-3 shadow-md flex items-center justify-center text-3xl font-bold text-emerald-600 border border-emerald-100">
                   {businessData.brandName ? businessData.brandName.charAt(0).toUpperCase() : 'B'}
                 </div>
-                <h3 className="text-xl font-bold text-gray-800">{businessData.brandName || "My Brand"}</h3>
+                <h3 className="text-xl font-bold text-gray-800">{businessData.brandName || t('dashboard.myBrand')}</h3>
                 <p className="text-sm text-gray-500">{businessData.ownerName}</p>
               </div>
               <div className="p-6 space-y-3">
@@ -268,25 +270,25 @@ const Dashboard = () => {
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-100 flex items-center bg-gray-50/50">
                 <h3 className="font-bold text-gray-800 flex items-center gap-2">
-                  <FaFileContract className="text-emerald-600" /> Documents
+                  <FaFileContract className="text-emerald-600" /> {t('dashboard.sections.documents')}
                 </h3>
               </div>
               <div className="p-4 space-y-3">
-                <DocLink title="Trade License" file={businessData.registrationDocuments?.tradeLicenseFile} />
-                <DocLink title="TIN Certificate" file={businessData.registrationDocuments?.tinFile} />
-                <DocLink title="BSTI Certificate" file={businessData.registrationDocuments?.bstiFile} />
-                <DocLink title="Export License" file={businessData.registrationDocuments?.exportLicenseFile} />
+                <DocLink title={t('dashboard.docs.tradeLicense')} file={businessData.registrationDocuments?.tradeLicenseFile} />
+                <DocLink title={t('dashboard.docs.tin')} file={businessData.registrationDocuments?.tinFile} />
+                <DocLink title={t('dashboard.docs.bsti')} file={businessData.registrationDocuments?.bstiFile} />
+                <DocLink title={t('dashboard.docs.exportLicense')} file={businessData.registrationDocuments?.exportLicenseFile} />
               </div>
             </div>
 
             {/* Future Goals */}
             <div className="bg-lime-50 rounded-2xl p-6 border border-lime-100">
-              <h4 className="font-bold text-lime-800 mb-2">Future Goals</h4>
-              <p className="text-sm text-lime-900/80 mb-3">{businessData.futureGoals || "No specific goals set yet."}</p>
+              <h4 className="font-bold text-lime-800 mb-2">{t('dashboard.futureGoals.title')}</h4>
+              <p className="text-sm text-lime-900/80 mb-3">{businessData.futureGoals || t('dashboard.futureGoals.noGoals')}</p>
               <div className="flex flex-wrap gap-2">
-                {businessData.interestInOnlineExport && <Badge text="Interest in Export" />}
-                {businessData.needFunding && <Badge text="Needs Funding" />}
-                {businessData.needTraining && <Badge text="Needs Training" />}
+                {businessData.interestInOnlineExport && <Badge text={t('dashboard.badges.exportInterest')} />}
+                {businessData.needFunding && <Badge text={t('dashboard.badges.needFunding')} />}
+                {businessData.needTraining && <Badge text={t('dashboard.badges.needTraining')} />}
               </div>
             </div>
 
@@ -325,7 +327,7 @@ const StatCard = ({ label, value, icon, color }) => {
 const InfoItem = ({ label, value }) => (
   <div className="mb-2">
     <p className="text-xs text-gray-400 font-medium uppercase">{label}</p>
-    <p className="text-sm font-semibold text-gray-700">{value || 'N/A'}</p>
+    <p className="text-sm font-semibold text-gray-700">{value || 'প্রযোজ্য নয়'}</p>
   </div>
 );
 

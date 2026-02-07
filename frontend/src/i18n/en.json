@@ -80,89 +80,73 @@
   },
   "form": {
     "step1": {
-      "title": "Step 1: Basic Info & Contact",
+      "title": "Basic Information & Contact",
+      "subtitle": "Basic Information & Contact Details",
+      "productInfo": "Product Information",
       "productType": "Product Type",
-      "category": "Category",
+      "category": "Category / Sub-category",
       "brandName": "Brand Name",
-      "registeredName": "Registered Business Name",
+      "registeredName": "Registered Name",
+      "ownerInfo": "Owner Information",
       "ownerName": "Owner Name",
-      "gender": "Gender",
-      "male": "Male",
-      "female": "Female",
-      "other": "Other",
       "ownerAge": "Owner Age",
+      "gender": "Gender",
       "ownershipType": "Ownership Type",
-      "single": "Single",
-      "partnership": "Partnership",
       "partnerName": "Partner Name",
+      "contactInfo": "Contact Information",
       "mobileNumber": "Mobile Number",
-      "whatsappSame": "WhatsApp same as mobile",
+      "email": "Email",
+      "whatsappSame": "WhatsApp number is same as mobile",
       "whatsappNumber": "WhatsApp Number",
-      "email": "Email Address",
+      "address": "Address",
       "division": "Division",
       "district": "District",
-      "thana": "Thana/Upazila",
+      "thana": "Thana",
       "postOffice": "Post Office",
       "postCode": "Post Code",
-      "detailedAddress": "Detailed Address",
-      "placeholders": {
-        "productType": "e.g., Organic Food, Handicrafts",
-        "category": "Select category",
-        "brandName": "Your brand name",
-        "ownerName": "Full name",
-        "partnerName": "Partner's full name",
-        "mobile": "01XXXXXXXXX",
-        "email": "your@email.com",
-        "address": "House/Road/Area details"
-      }
+      "detailedAddress": "Village, Road, House No"
     },
     "step2": {
-      "title": "Step 2: Product Details & Production",
+      "title": "Product Details",
+      "subtitle": "Provide your product production and pricing information",
       "productName": "Product Name",
+      "productNamePlaceholder": "Example: Organic Honey",
       "shortDescription": "Short Description",
+      "descriptionPlaceholder": "Write product features and characteristics...",
       "rawMaterialSource": "Raw Material Source",
-      "local": "Local",
-      "imported": "Imported",
       "productionType": "Production Type",
-      "handmade": "Handmade",
-      "semiAutomatic": "Semi-automatic",
-      "automatic": "Automatic",
       "productionPlace": "Production Place",
-      "homeBased": "Home-based",
-      "factoryBased": "Factory-based",
-      "pricingTitle": "Pricing Information",
-      "costPerUnit": "Cost Per Unit (BDT)",
-      "wholesalePrice": "Wholesale Price (BDT)",
-      "retailPrice": "Retail Price (BDT)",
-      "moq": "Minimum Order Quantity",
+      "pricingTitle": "Pricing List (Pricing)",
+      "costPerUnit": "Cost Per Unit",
+      "wholesalePrice": "Wholesale Price",
+      "retailPrice": "Retail Price",
+      "moq": "Minimum Order (MOQ)",
       "bulkDiscount": "Bulk Discount Available?",
-      "yes": "Yes",
-      "no": "No",
-      "productionTitle": "Production Capacity",
-      "productionCapacity": "Production Capacity",
+      "capacityMachinery": "Capacity & Machinery",
+      "productionCapacity": "Production Capacity (Monthly)",
+      "capacityPlaceholder": "e.g.: 1000 pieces",
       "machineryUsed": "Machinery Used",
+      "machineryPlaceholder": "Machine names...",
+      "workforce": "Workforce",
       "maleWorkers": "Male Workers",
-      "femaleWorkers": "Female Workers",
-      "placeholders": {
-        "productName": "Name of your main product",
-        "description": "Brief description of your product",
-        "capacity": "e.g., 1000 units/month",
-        "machinery": "List machinery or tools used"
-      }
+      "femaleWorkers": "Female Workers"
     },
     "step3": {
       "title": "Step 3: Market & Business Status",
-      "buyerType": "Buyer Type (Select all that apply)",
+      "subtitle": "Define your customer base and business reach",
+      "buyerType": "Who buys your products?",
       "retailShop": "Retail Shop",
       "corporate": "Corporate",
-      "exportBuyer": "Export Buyer",
+      "exportBuyer": "Export",
       "online": "Online",
-      "exportMarketsTitle": "Export Markets",
+      "exportMarketsTitle": "Export Destinations",
       "searchCountries": "Search and select export countries",
-      "searchPlaceholder": "Type to search countries...",
+      "searchPlaceholder": "Add a country (e.g., Japan, UK)...",
       "selectedMarkets": "Selected Export Markets:",
       "buyersIn": "Number of buyers in",
+      "buyers": "Buyers",
       "noCountries": "No countries found",
+      "onlinePresenceTitle": "Online Presence",
       "onlineBuyerTitle": "Online Buyer Information",
       "onlineBuyerNote": "Provide at least one link (Facebook Page or Website)",
       "facebookLink": "Facebook Page Link",
@@ -174,83 +158,240 @@
       "businessAge": "Business Age (Years)",
       "documentsTitle": "Registration Documents",
       "tradeLicense": "Trade License",
-      "tin": "TIN",
-      "bsti": "BSTI",
+      "tin": "TIN Certificate",
+      "bsti": "BSTI Approval",
       "exportLicense": "Export License",
       "other": "Other",
       "certificateName": "Certificate/Document Name",
-      "uploadFile": "Upload File",
+      "uploadFile": "Upload File (PDF/IMG)",
       "uploading": "Uploading...",
       "uploaded": "Uploaded",
-      "bankTitle": "Bank Information",
+      "bankTitle": "Banking Information",
       "hasBankAccount": "Do you have a bank account?",
+      "yes": "Yes",
+      "no": "No",
       "bankName": "Bank Name",
       "branch": "Branch",
       "accountHolder": "Account Holder Name",
       "accountNumber": "Account Number",
-      "mobileBankingTitle": "Mobile Banking",
+      "mobileBankingTitle": "Mobile Wallets",
       "placeholders": {
         "facebook": "https://facebook.com/yourpage",
         "website": "https://yourwebsite.com",
-        "certificateName": "e.g., Import License, Business License, etc."
+        "certificateName": "e.g., Import License, Business License, etc.",
+        "buyers": "Buyers",
+        "bankName": "Bank Name",
+        "branch": "Branch",
+        "accountNumber": "Account No"
       }
     },
     "step4": {
       "title": "Step 4: Future Plans & Support",
-      "futureGoals": "Goal for Next 1-3 Years",
-      "productionIncrease": "Plan to Increase Production",
-      "newProducts": "Plan to Add New Products",
-      "interestOnlineExport": "Interest in Online Sales/Export",
-      "supportTitle": "Support Needed from Platform",
-      "marketing": "Marketing Support",
-      "packaging": "Packaging Support",
-      "quality": "Quality Improvement",
-      "financing": "Financing",
-      "exportSupport": "Export Support",
-      "training": "Training & Development",
+      "subtitle": "Tell us where you want to take your business",
+      "futureGoals": "Goals for the Next 1-3 Years",
+      "productionIncrease": "Expansion Plan",
+      "newProducts": "New Product Ideas",
+      "interestOnlineExport": "Are you interested in online export?",
+      "supportTitle": "How can AggriGo help you?",
+      "supportNote": "(Select any number)",
+      "marketing": "Marketing & Branding",
+      "marketingDesc": "Help reaching new customers",
+      "packaging": "Improved Packaging",
+      "packagingDesc": "Material & design assistance",
+      "quality": "Quality Control",
+      "qualityDesc": "Quality certification",
+      "financing": "Financial Support",
+      "financingDesc": "Loans or grants",
+      "exportSupport": "Export Logistics",
+      "exportSupportDesc": "Shipping & customs support",
+      "training": "Skills Training",
+      "trainingDesc": "Workshops for staff",
       "placeholders": {
-        "goals": "Describe your business goals and vision",
-        "production": "How do you plan to scale up production?",
-        "newProducts": "List any new products you plan to introduce"
+        "goals": "e.g., Expand to 3 new districts and increase production by 50%...",
+        "production": "How will you increase capacity?",
+        "newProducts": "What new products do you want to launch?"
       }
     },
     "step5": {
       "title": "Step 5: Media Upload",
-      "productImagesTitle": "Product Images",
-      "productImagesNote": "Upload at least one product image (max 5)",
-      "packagingImage": "Packaging Image (Optional)",
-      "productionImage": "Production Process Image (Optional)",
-      "videoTitle": "Product Video (Optional)",
-      "videoNote": "Upload a video showcasing your product",
+      "subtitle": "Upload high-quality images to build trust with buyers",
+      "productImagesTitle": "Product Gallery",
+      "productImagesNote": "(3-5 recommended)",
+      "imagesAdded": "images added",
+      "addImages": "Add Images",
+      "uploading": "Uploading...",
+      "packagingImage": "Packaging Image",
+      "packagingSubtitle": "Show how your product is packaged",
+      "productionImage": "Production Process",
+      "productionSubtitle": "Show your farm or factory",
+      "videoTitle": "Promotional Video",
+      "videoNote": "(Optional)",
+      "uploadVideo": "Click to upload video",
+      "videoFormats": "MP4, WebM (max 50MB)",
+      "uploadingVideo": "Uploading video (this may take time)...",
+      "removeVideo": "Remove Video",
+      "uploadImage": "Upload Image",
+      "saveAndReview": "Save & Review",
       "selectImages": "Select Images",
       "selectImage": "Select Image",
       "selectVideo": "Select Video",
       "remove": "Remove"
     },
     "step6": {
-      "title": "Step 6: Review & Consent",
-      "reviewTitle": "Review Your Information",
+      "title": "Final Review",
+      "subtitle": "Please verify your information before official submission",
       "basicInfo": "Basic Information",
       "productDetails": "Product Details",
+      "visualAssets": "Visual Assets",
+      "attachedDocuments": "Attached Documents",
+      "termsTitle": "Terms & Conditions",
+      "accuracyRequired": "You must certify that all information is correct to proceed.",
+      "accuracyConsent": "I hereby certify that the information provided is true, accurate, and complete. I understand that false information may result in rejection.",
+      "marketingConsent": "(Optional) I consent to AggriGo using my business information for marketing and export opportunities.",
+      "digitalSignature": "Digital Signature",
+      "typeName": "Type Name",
+      "uploadImage": "Upload Image",
+      "enterFullName": "Enter your full name",
+      "yourSignature": "Your Signature",
+      "clickToUploadSignature": "Click to upload signature",
+      "submitApplication": "Submit Application",
+      "reviewTitle": "Review Your Information",
       "marketBusiness": "Market & Business",
       "futurePlans": "Future Plans",
       "mediaUploads": "Media Uploads",
-      "consentTitle": "Consent & Declaration",
-      "consentAccuracy": "I certify that all information provided is accurate and correct",
-      "consentMarketing": "I agree to receive marketing communications from AggriGo",
-      "digitalSignature": "Digital Signature",
-      "signaturePlaceholder": "Type your full name as signature",
-      "edit": "Edit"
+      "consentTitle": "Consent & Declaration"
     },
     "buttons": {
-      "next": "Save & Next",
       "back": "Back",
+      "next": "Save & Next",
       "submit": "Submit",
       "cancel": "Cancel",
       "save": "Save",
       "delete": "Delete",
       "download": "Download",
       "close": "Close"
+    }
+  },
+  "dashboard": {
+    "loading": "Loading your profile...",
+    "welcome": "Welcome to AggriGo!",
+    "noDataMessage": "You haven't submitted your business registration yet. Let's create your profile together.",
+    "startWizard": "Start Registration Wizard",
+    "title": "Dashboard",
+    "status": {
+      "active": "Active",
+      "draft": "Draft"
+    },
+    "welcomeUser": "Welcome, ",
+    "buttons": {
+      "downloadPDF": "Download PDF",
+      "editProfile": "Edit Profile"
+    },
+    "metrics": {
+      "businessAge": "Business Age",
+      "monthlySales": "Monthly Sales",
+      "totalCustomers": "Total Customers"
+    },
+    "years": "years",
+    "notApplicable": "N/A",
+    "sections": {
+      "productProduction": "Product & Production",
+      "visualGallery": "Visual Gallery",
+      "documents": "Documents"
+    },
+    "labels": {
+      "productName": "Product Name",
+      "brandName": "Brand Name",
+      "category": "Category",
+      "productType": "Product Type",
+      "retailPrice": "Retail Price",
+      "productionType": "Production Type",
+      "capacity": "Capacity",
+      "place": "Place",
+      "workforce": "Workforce",
+      "male": "Male",
+      "female": "Female"
+    },
+    "gallery": {
+      "productShowcase": "Product Showcase",
+      "product": "Product",
+      "processPackaging": "Process & Packaging",
+      "packaging": "Packaging",
+      "productionProcess": "Production Process",
+      "noImages": "No images uploaded yet."
+    },
+    "myBrand": "My Brand",
+    "docs": {
+      "tradeLicense": "Trade License",
+      "tin": "TIN Certificate",
+      "bsti": "BSTI Certificate",
+      "exportLicense": "Export License"
+    },
+    "futureGoals": {
+      "title": "Future Goals",
+      "noGoals": "No specific goals set yet."
+    },
+    "badges": {
+      "exportInterest": "Interested in Export",
+      "needFunding": "Funding Needed",
+      "needTraining": "Training Needed"
+    }
+  },
+  "footer": {
+    "description": "Empowering businesses to grow and showcase their products on a unified platform.",
+    "quickLinks": "Quick Links",
+    "connectWithUs": "Connect With Us",
+    "allRightsReserved": "All rights reserved."
+  },
+  "about": {
+    "title": "About AggriGo",
+    "hero": {
+      "cultivating": "Cultivating",
+      "growth": "Growth",
+      "subtitle": "The story behind AggriGo and our commitment to the future of farming."
+    },
+    "intro": {
+      "part1": "AggriGo is a comprehensive platform designed to empower business owners by providing them with the tools and resources needed to",
+      "highlight": "grow their businesses",
+      "part2": "and reach a wider audience."
+    },
+    "mission": {
+      "title": "Our Mission",
+      "statement": "To bridge the gap between local businesses and global markets.",
+      "details": "We achieve this by offering a seamless registration process, business support services, and access to a vast network of buyers and partners. We believe in the power of connection to transform local potential into global success."
+    },
+    "offerings": {
+      "title": "What We Offer",
+      "subtitle": "A holistic ecosystem for agricultural success",
+      "registration": {
+        "title": "Easy Registration",
+        "desc": "Seamless business onboarding process."
+      },
+      "showcase": {
+        "title": "Product Showcase",
+        "desc": "A dedicated platform to display your harvest."
+      },
+      "training": {
+        "title": "Training & Support",
+        "desc": "Access to expert resources and guides."
+      },
+      "networking": {
+        "title": "Business Networking",
+        "desc": "Connect with potential buyers and partners."
+      },
+      "globalReach": {
+        "title": "Global Reach",
+        "desc": "Bridge the gap to international markets."
+      },
+      "marketing": {
+        "title": "Marketing & Export",
+        "desc": "Strategic support to grow your brand."
+      }
+    },
+    "cta": {
+      "title": "Ready to grow with us?",
+      "description": "Register your business today and join a growing community of entrepreneurs who are transforming the agriculture and manufacturing sectors.",
+      "button": "Get Started"
     }
   },
   "validation": {
@@ -274,27 +415,6 @@
     "consentRequired": "You must certify that all information is correct",
     "signatureRequired": "Digital signature is required"
   },
-  "dashboard": {
-    "title": "Dashboard",
-    "welcome": "Welcome",
-    "yourInfo": "Your Business Information",
-    "productInfo": "Product Information",
-    "contactInfo": "Contact Information",
-    "businessStatus": "Business Status",
-    "downloadPDF": "Download PDF",
-    "editInfo": "Edit Information",
-    "logout": "Logout",
-    "productType": "Product Type",
-    "category": "Category",
-    "brandName": "Brand Name",
-    "ownerName": "Owner Name",
-    "mobile": "Mobile",
-    "email": "Email",
-    "address": "Address",
-    "productName": "Product Name",
-    "price": "Price",
-    "production": "Production Capacity"
-  },
   "common": {
     "loading": "Loading...",
     "error": "Error",
@@ -305,13 +425,13 @@
     "to": "to",
     "from": "from",
     "in": "in",
-    "at": "at"
-  },
-  "footer": {
-    "copyright": "© 2026 AggriGo. All rights reserved.",
-    "about": "About",
-    "contact": "Contact",
-    "privacy": "Privacy Policy",
-    "terms": "Terms of Service"
+    "at": "at",
+    "years": "Years",
+    "number": "Number",
+    "amount": "Amount",
+    "image": "Image",
+    "change": "Change",
+    "view": "View",
+    "uploading": "Uploading..."
   }
 }

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useForm } from '../../context/FormContext';
+import { useLanguage } from '../../context/LanguageContext';
 import api from '../../utils/api';
 import {
   FaCheckCircle,
@@ -16,6 +17,7 @@ import {
 
 const Step6Review = ({ onSubmit, onBack }) => {
   const { formData } = useForm();
+  const { t } = useLanguage();
   const [consents, setConsents] = useState({
     accuracy: formData.consentAccuracy || false,
     marketing: formData.consentMarketing || false
@@ -51,7 +53,7 @@ const Step6Review = ({ onSubmit, onBack }) => {
   const handleSubmitForm = (e) => {
     e.preventDefault();
     if (!consents.accuracy) {
-      alert('You must certify that all information is correct to proceed.');
+      alert(t('form.step6.accuracyRequired'));
       return;
     }
     onSubmit({
@@ -67,8 +69,8 @@ const Step6Review = ({ onSubmit, onBack }) => {
 
       {/* Header */}
       <div className="text-center mb-10">
-        <h2 className="text-3xl font-bold text-gray-800">Final Review</h2>
-        <p className="text-gray-500 mt-2">Please verify your information before official submission.</p>
+        <h2 className="text-3xl font-bold text-gray-800">{t('form.step6.title')}</h2>
+        <p className="text-gray-500 mt-2">{t('form.step6.subtitle')}</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -77,37 +79,37 @@ const Step6Review = ({ onSubmit, onBack }) => {
         <div className="lg:col-span-2 space-y-6">
 
           {/* 1. Identity & Contact */}
-          <ReviewCard title="Basic Information" icon={<FaUser />}>
+          <ReviewCard title={t('form.step6.basicInfo')} icon={<FaUser />}>
             <DataGrid>
-              <DataItem label="Owner Name" value={formData.ownerName} />
-              <DataItem label="Brand Name" value={formData.brandName} />
-              <DataItem label="Gender" value={formData.gender} />
-              <DataItem label="Mobile" value={formData.mobileNumber} />
-              <DataItem label="Email" value={formData.email} />
-              <DataItem label="Location" value={`${formData.thana}, ${formData.district}`} />
-              <DataItem label="Full Address" value={formData.detailedAddress} fullWidth />
+              <DataItem label="মালিকের নাম" value={formData.ownerName} />
+              <DataItem label="ব্র্যান্ডের নাম" value={formData.brandName} />
+              <DataItem label="লিঙ্গ" value={formData.gender} />
+              <DataItem label="মোবাইল" value={formData.mobileNumber} />
+              <DataItem label="ইমেইল" value={formData.email} />
+              <DataItem label="অবস্থান" value={`${formData.thana}, ${formData.district}`} />
+              <DataItem label="সম্পূর্ণ ঠিকানা" value={formData.detailedAddress} fullWidth />
             </DataGrid>
           </ReviewCard>
 
           {/* 2. Product Info */}
-          <ReviewCard title="Product Details" icon={<FaBoxOpen />}>
+          <ReviewCard title={t('form.step6.productDetails')} icon={<FaBoxOpen />}>
             <DataGrid>
-              <DataItem label="Product Name" value={formData.productName} />
-              <DataItem label="Category" value={formData.productType} />
-              <DataItem label="Production Type" value={formData.productionType} />
-              <DataItem label="Place" value={formData.productionPlace} />
-              <DataItem label="Capacity" value={formData.productionCapacity} />
-              <DataItem label="Retail Price" value={formData.retailPrice ? `৳${formData.retailPrice}` : 'N/A'} />
+              <DataItem label="পণ্যের নাম" value={formData.productName} />
+              <DataItem label="শ্রেণী" value={formData.productType} />
+              <DataItem label="উৎপাদন ধরন" value={formData.productionType} />
+              <DataItem label="স্থান" value={formData.productionPlace} />
+              <DataItem label="সক্ষমতা" value={formData.productionCapacity} />
+              <DataItem label="খুচরা মূল্য" value={formData.retailPrice ? `৳${formData.retailPrice}` : 'প্রযোজ্য নয়'} />
             </DataGrid>
           </ReviewCard>
 
           {/* 3. Visual Gallery (No Crop) */}
-          <ReviewCard title="Visual Assets" icon={<FaImages />}>
+          <ReviewCard title={t('form.step6.visualAssets')} icon={<FaImages />}>
             <div className="space-y-4">
               {/* Product Images */}
               {formData.productImages?.length > 0 && (
                 <div>
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Product Images</p>
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">পণ্যের ছবি</p>
                   <div className="grid grid-cols-3 gap-3">
                     {formData.productImages.slice(0, 3).map((img, idx) => (
                       <ImagePreview key={idx} src={img} alt={`Product ${idx + 1}`} />
@@ -119,7 +121,7 @@ const Step6Review = ({ onSubmit, onBack }) => {
               {/* Process Images */}
               {(formData.packagingImage || formData.productionProcessImage) && (
                 <div>
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Process</p>
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">প্রক্রিয়া</p>
                   <div className="grid grid-cols-2 gap-3">
                     {formData.packagingImage && <ImagePreview src={formData.packagingImage} alt="Packaging" />}
                     {formData.productionProcessImage && <ImagePreview src={formData.productionProcessImage} alt="Production" />}
@@ -130,12 +132,12 @@ const Step6Review = ({ onSubmit, onBack }) => {
           </ReviewCard>
 
           {/* 4. Documents */}
-          <ReviewCard title="Attached Documents" icon={<FaFileContract />}>
+          <ReviewCard title={t('form.step6.attachedDocuments')} icon={<FaFileContract />}>
             <div className="space-y-2">
-              <DocItem label="Trade License" file={formData.registrationDocuments?.tradeLicenseFile} />
-              <DocItem label="TIN Certificate" file={formData.registrationDocuments?.tinFile} />
-              <DocItem label="BSTI Certificate" file={formData.registrationDocuments?.bstiFile} />
-              <DocItem label="Export License" file={formData.registrationDocuments?.exportLicenseFile} />
+              <DocItem label={t('dashboard.docs.tradeLicense')} file={formData.registrationDocuments?.tradeLicenseFile} t={t} />
+              <DocItem label={t('dashboard.docs.tin')} file={formData.registrationDocuments?.tinFile} t={t} />
+              <DocItem label={t('dashboard.docs.bsti')} file={formData.registrationDocuments?.bstiFile} t={t} />
+              <DocItem label={t('dashboard.docs.exportLicense')} file={formData.registrationDocuments?.exportLicenseFile} t={t} />
             </div>
           </ReviewCard>
         </div>
@@ -147,7 +149,7 @@ const Step6Review = ({ onSubmit, onBack }) => {
           <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
             <div className="bg-emerald-50 px-6 py-4 border-b border-emerald-100">
               <h3 className="font-bold text-emerald-800 flex items-center gap-2">
-                <FaCheckCircle /> Terms & Conditions
+                <FaCheckCircle /> {t('form.step6.termsTitle')}
               </h3>
             </div>
             <div className="p-6 space-y-4">
@@ -159,7 +161,7 @@ const Step6Review = ({ onSubmit, onBack }) => {
                   onChange={(e) => setConsents(prev => ({ ...prev, accuracy: e.target.checked }))}
                 />
                 <span className="text-sm text-gray-700 leading-snug">
-                  I hereby certify that the information provided is true, accurate, and complete. I understand that false information may lead to rejection. <span className="text-red-500">*</span>
+                  {t('form.step6.accuracyConsent')} <span className="text-red-500">*</span>
                 </span>
               </label>
 
@@ -171,7 +173,7 @@ const Step6Review = ({ onSubmit, onBack }) => {
                   onChange={(e) => setConsents(prev => ({ ...prev, marketing: e.target.checked }))}
                 />
                 <span className="text-sm text-gray-700 leading-snug">
-                  (Optional) I consent to AggriGo using my business data for marketing and export opportunities.
+                  {t('form.step6.marketingConsent')}
                 </span>
               </label>
             </div>
@@ -181,7 +183,7 @@ const Step6Review = ({ onSubmit, onBack }) => {
           <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
             <div className="bg-gray-50 px-6 py-4 border-b border-gray-100">
               <h3 className="font-bold text-gray-800 flex items-center gap-2">
-                <FaPenNib className="text-gray-500" /> Digital Signature
+                <FaPenNib className="text-gray-500" /> {t('form.step6.digitalSignature')}
               </h3>
             </div>
 
@@ -193,34 +195,34 @@ const Step6Review = ({ onSubmit, onBack }) => {
                   onClick={() => setSignMethod('type')}
                   className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${signMethod === 'type' ? 'bg-white shadow-sm text-emerald-600' : 'text-gray-500 hover:text-gray-700'}`}
                 >
-                  Type Name
+                  {t('form.step6.typeName')}
                 </button>
                 <button
                   type="button"
                   onClick={() => setSignMethod('upload')}
                   className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${signMethod === 'upload' ? 'bg-white shadow-sm text-emerald-600' : 'text-gray-500 hover:text-gray-700'}`}
                 >
-                  Upload Image
+                  {t('form.step6.uploadImage')}
                 </button>
               </div>
 
               <div className="min-h-[120px] flex flex-col justify-center">
                 {signMethod === 'type' ? (
                   <div className="relative">
-                    <label className="text-xs text-gray-400 mb-1 block">Type your full name</label>
+                    <label className="text-xs text-gray-400 mb-1 block">{t('form.step6.enterFullName')}</label>
                     <input
                       type="text"
                       value={signature.startsWith('http') ? '' : signature}
                       onChange={(e) => setSignature(e.target.value)}
                       className="w-full border-b-2 border-gray-300 focus:border-emerald-500 outline-none py-2 text-3xl font-serif italic text-gray-800 placeholder-gray-300 text-center bg-transparent"
-                      placeholder="Your Signature"
+                      placeholder={t('form.step6.yourSignature')}
                     />
                   </div>
                 ) : (
                   <div className="text-center">
                     <label className="cursor-pointer flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-emerald-400 hover:bg-emerald-50 transition-all">
                       <FaCloudUploadAlt className="text-3xl text-gray-400 mb-2" />
-                      <span className="text-sm text-gray-500">{uploading ? 'Uploading...' : 'Click to Upload Signature'}</span>
+                        <span className="text-sm text-gray-500">{uploading ? t('common.uploading') : t('form.step6.clickToUploadSignature')}</span>
                       <input type="file" accept="image/*" className="hidden" onChange={(e) => handleSignatureUpload(e.target.files[0])} />
                     </label>
                   </div>
@@ -230,7 +232,7 @@ const Step6Review = ({ onSubmit, onBack }) => {
               {/* Signature Preview */}
               {signature && (
                 <div className="mt-4 pt-4 border-t border-gray-100">
-                  <p className="text-xs text-center text-gray-400 mb-2">Preview</p>
+                  <p className="text-xs text-center text-gray-400 mb-2">পূর্বরূপ</p>
                   <div className="bg-gray-50 p-4 rounded-lg flex justify-center items-center h-20">
                     {signature.startsWith('http') ? (
                       <img src={signature} alt="Sign" className="h-full object-contain" />
@@ -250,7 +252,7 @@ const Step6Review = ({ onSubmit, onBack }) => {
               disabled={!consents.accuracy || !signature}
               className="w-full bg-gradient-to-r from-emerald-600 to-lime-600 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-emerald-500/30 transform hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-              <FaPaperPlane /> Submit Application
+              <FaPaperPlane /> আবেদন জমা দিন
             </button>
 
             <button
@@ -258,7 +260,7 @@ const Step6Review = ({ onSubmit, onBack }) => {
               onClick={onBack}
               className="w-full bg-white text-gray-600 font-semibold py-3 rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
             >
-              <FaArrowLeft /> Back to Step 5
+              <FaArrowLeft /> ধাপ ৫ এ ফিরে যান
             </button>
           </div>
 
@@ -305,7 +307,7 @@ const ImagePreview = ({ src, alt }) => (
   </div>
 );
 
-const DocItem = ({ label, file }) => {
+const DocItem = ({ label, file, t }) => {
   if (!file) return null;
   return (
     <div className="flex items-center justify-between p-2.5 bg-gray-50 rounded-lg border border-gray-100">
@@ -314,7 +316,7 @@ const DocItem = ({ label, file }) => {
         <span className="text-sm text-gray-700 font-medium">{label}</span>
       </div>
       <a href={file} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">
-        View
+        {t('common.view')}
       </a>
     </div>
   );

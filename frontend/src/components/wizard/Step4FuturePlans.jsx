@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useForm } from '../../context/FormContext';
+import { useLanguage } from '../../context/LanguageContext';
 import {
   FaBullseye,
   FaChartLine,
@@ -17,6 +18,7 @@ import {
 
 const Step4FuturePlans = ({ onNext, onBack }) => {
   const { formData, updateFormData } = useForm();
+  const { t } = useLanguage();
 
   const [stepData, setStepData] = useState({
     futureGoals: formData.futureGoals || '',
@@ -59,20 +61,20 @@ const Step4FuturePlans = ({ onNext, onBack }) => {
 
   // Configuration for Support Cards
   const supportOptions = [
-    { key: 'marketing', label: 'Marketing & Branding', icon: <FaBullhorn />, desc: 'Help reaching new customers' },
-    { key: 'packaging', label: 'Better Packaging', icon: <FaBoxOpen />, desc: 'Materials & design support' },
-    { key: 'quality', label: 'Quality Control', icon: <FaCheckDouble />, desc: 'Standards certification' },
-    { key: 'financing', label: 'Financial Aid', icon: <FaHandHoldingUsd />, desc: 'Loans or grants' },
-    { key: 'exportSupport', label: 'Export Logistics', icon: <FaShip />, desc: 'Shipping & customs help' },
-    { key: 'training', label: 'Skill Training', icon: <FaChalkboardTeacher />, desc: 'Workshops for staff' }
+    { key: 'marketing', label: t('form.step4.marketing'), icon: <FaBullhorn />, desc: t('form.step4.marketingDesc') },
+    { key: 'packaging', label: t('form.step4.packaging'), icon: <FaBoxOpen />, desc: t('form.step4.packagingDesc') },
+    { key: 'quality', label: t('form.step4.quality'), icon: <FaCheckDouble />, desc: t('form.step4.qualityDesc') },
+    { key: 'financing', label: t('form.step4.financing'), icon: <FaHandHoldingUsd />, desc: t('form.step4.financingDesc') },
+    { key: 'exportSupport', label: t('form.step4.exportSupport'), icon: <FaShip />, desc: t('form.step4.exportSupportDesc') },
+    { key: 'training', label: t('form.step4.training'), icon: <FaChalkboardTeacher />, desc: t('form.step4.trainingDesc') }
   ];
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8 max-w-4xl mx-auto">
 
       <div className="text-center mb-8">
-        <h3 className="text-2xl font-bold text-gray-800">Future Growth</h3>
-        <p className="text-gray-500">Tell us where you want to take your business next.</p>
+        <h3 className="text-2xl font-bold text-gray-800">{t('form.step4.title')}</h3>
+        <p className="text-gray-500">{t('form.step4.subtitle')}</p>
       </div>
 
       {/* --- SECTION 1: VISION (Text Inputs) --- */}
@@ -81,7 +83,7 @@ const Step4FuturePlans = ({ onNext, onBack }) => {
         {/* Goals */}
         <div>
           <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2">
-            <FaBullseye className="text-emerald-500" /> Goal for Next 1-3 Years
+            <FaBullseye className="text-emerald-500" /> {t('form.step4.futureGoals')}
           </label>
           <textarea
             name="futureGoals"
@@ -89,7 +91,7 @@ const Step4FuturePlans = ({ onNext, onBack }) => {
             onChange={handleChange}
             className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all resize-none bg-gray-50 focus:bg-white"
             rows="3"
-            placeholder="e.g., Expand to 3 new districts and increase production by 50%..."
+            placeholder={t('form.step4.placeholders.goals')}
           />
         </div>
 
@@ -97,7 +99,7 @@ const Step4FuturePlans = ({ onNext, onBack }) => {
           {/* Production Plan */}
           <div>
             <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2">
-              <FaChartLine className="text-blue-500" /> Scaling Plan
+              <FaChartLine className="text-blue-500" /> {t('form.step4.productionIncrease')}
             </label>
             <textarea
               name="productionIncreasePlan"
@@ -105,14 +107,14 @@ const Step4FuturePlans = ({ onNext, onBack }) => {
               onChange={handleChange}
               className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all resize-none bg-gray-50 focus:bg-white"
               rows="3"
-              placeholder="How will you increase capacity?"
+              placeholder={t('form.step4.placeholders.production')}
             />
           </div>
 
           {/* New Products */}
           <div>
             <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2">
-              <FaLightbulb className="text-yellow-500" /> New Product Ideas
+              <FaLightbulb className="text-yellow-500" /> {t('form.step4.newProducts')}
             </label>
             <textarea
               name="newProductsPlan"
@@ -120,7 +122,7 @@ const Step4FuturePlans = ({ onNext, onBack }) => {
               onChange={handleChange}
               className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all resize-none bg-gray-50 focus:bg-white"
               rows="3"
-              placeholder="Any new items you want to launch?"
+              placeholder={t('form.step4.placeholders.newProducts')}
             />
           </div>
         </div>
@@ -129,26 +131,26 @@ const Step4FuturePlans = ({ onNext, onBack }) => {
       {/* --- SECTION 2: EXPORT INTEREST (Big Toggle) --- */}
       <div className="bg-gradient-to-r from-emerald-50 to-teal-50 p-6 rounded-2xl border border-emerald-100">
         <h4 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-          <FaGlobeAmericas className="text-emerald-600" /> Are you interested in Online Export?
+          <FaGlobeAmericas className="text-emerald-600" /> {t('form.step4.interestOnlineExport')}
         </h4>
         <div className="grid grid-cols-2 gap-4">
-          {['Yes', 'No'].map(option => (
+          {[t('form.step3.yes'), t('form.step3.no')].map((option, index) => (
             <label key={option} className={`
                   relative flex items-center justify-center py-4 px-6 rounded-xl border-2 cursor-pointer transition-all duration-200
-                  ${stepData.interestInOnlineExport === option
+                  ${((index === 0 && stepData.interestInOnlineExport === 'Yes') || (index === 1 && stepData.interestInOnlineExport === 'No'))
                 ? 'border-emerald-500 bg-white shadow-md text-emerald-700'
                 : 'border-transparent bg-white/50 text-gray-500 hover:bg-white'}
                `}>
               <input
                 type="radio"
                 name="interestInOnlineExport"
-                value={option}
-                checked={stepData.interestInOnlineExport === option}
+                value={index === 0 ? 'Yes' : 'No'}
+                checked={(index === 0 && stepData.interestInOnlineExport === 'Yes') || (index === 1 && stepData.interestInOnlineExport === 'No')}
                 onChange={handleChange}
                 className="hidden"
               />
               <span className="font-bold text-lg">{option}</span>
-              {stepData.interestInOnlineExport === option && (
+              {((index === 0 && stepData.interestInOnlineExport === 'Yes') || (index === 1 && stepData.interestInOnlineExport === 'No')) && (
                 <div className="absolute top-2 right-2 w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
               )}
             </label>
@@ -158,7 +160,7 @@ const Step4FuturePlans = ({ onNext, onBack }) => {
 
       {/* --- SECTION 3: SUPPORT NEEDS (Grid Selection) --- */}
       <div>
-        <h4 className="font-bold text-gray-800 mb-4 px-1">How can AggriGo support you? <span className="text-gray-400 font-normal text-sm">(Select all that apply)</span></h4>
+        <h4 className="font-bold text-gray-800 mb-4 px-1">{t('form.step4.supportTitle')} <span className="text-gray-400 font-normal text-sm">{t('form.step4.supportNote')}</span></h4>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {supportOptions.map((item) => {
@@ -200,10 +202,10 @@ const Step4FuturePlans = ({ onNext, onBack }) => {
       {/* Navigation */}
       <div className="flex justify-between pt-6 border-t border-gray-100">
         <button type="button" onClick={onBack} className="px-6 py-3 bg-white text-gray-700 font-bold rounded-xl border border-gray-200 hover:bg-gray-50 transition shadow-sm flex items-center gap-2">
-          <FaArrowLeft /> Back
+          <FaArrowLeft /> {t('form.buttons.back')}
         </button>
         <button type="submit" className="px-8 py-3 bg-gradient-to-r from-emerald-600 to-lime-600 text-white font-bold rounded-xl hover:shadow-lg hover:shadow-emerald-500/30 transition transform hover:-translate-y-1 flex items-center gap-2">
-          Next Step <FaArrowRight />
+          {t('form.buttons.next')} <FaArrowRight />
         </button>
       </div>
     </form>

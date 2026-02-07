@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useForm } from '../../context/FormContext';
+import { useLanguage } from '../../context/LanguageContext';
 import api from '../../utils/api';
 import {
   FaStore,
@@ -31,6 +32,7 @@ const COUNTRIES = [
 
 const Step3MarketBusiness = ({ onNext, onBack }) => {
   const { formData, updateFormData } = useForm();
+  const { t } = useLanguage();
 
   const [stepData, setStepData] = useState({
     buyerType: formData.buyerType || { retailShop: false, corporate: false, exportBuyer: false, online: false },
@@ -157,34 +159,34 @@ const Step3MarketBusiness = ({ onNext, onBack }) => {
     <form onSubmit={handleSubmit} className="space-y-8 max-w-5xl mx-auto">
 
       <div className="text-center mb-8">
-        <h3 className="text-2xl font-bold text-gray-800">Market Presence</h3>
-        <p className="text-gray-500">Define your customers and business reach.</p>
+        <h3 className="text-2xl font-bold text-gray-800">{t('form.step3.title')}</h3>
+        <p className="text-gray-500">{t('form.step3.subtitle')}</p>
       </div>
 
       {/* --- SECTION 1: BUYER TYPES --- */}
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-        <label className="block text-sm font-bold text-gray-700 mb-4 uppercase tracking-wider">Who buys your products?</label>
+        <label className="block text-sm font-bold text-gray-700 mb-4 uppercase tracking-wider">{t('form.step3.buyerType')}</label>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <BuyerTypeCard
-            label="Retail Shop"
+            label={t('form.step3.retailShop')}
             icon={<FaStore />}
             active={stepData.buyerType.retailShop}
             onClick={() => handleCheckboxChange('buyerType', 'retailShop')}
           />
           <BuyerTypeCard
-            label="Corporate"
+            label={t('form.step3.corporate')}
             icon={<FaBuilding />}
             active={stepData.buyerType.corporate}
             onClick={() => handleCheckboxChange('buyerType', 'corporate')}
           />
           <BuyerTypeCard
-            label="Export"
+            label={t('form.step3.exportBuyer')}
             icon={<FaPlaneDeparture />}
             active={stepData.buyerType.exportBuyer}
             onClick={() => handleCheckboxChange('buyerType', 'exportBuyer')}
           />
           <BuyerTypeCard
-            label="Online"
+            label={t('form.step3.online')}
             icon={<FaGlobe />}
             active={stepData.buyerType.online}
             onClick={() => handleCheckboxChange('buyerType', 'online')}
@@ -194,7 +196,7 @@ const Step3MarketBusiness = ({ onNext, onBack }) => {
         {/* Conditional Export Section */}
         {stepData.buyerType.exportBuyer && (
           <div className="mt-6 p-4 bg-blue-50/50 rounded-xl border border-blue-100 animate-fade-in">
-            <h4 className="font-bold text-blue-800 mb-3 flex items-center gap-2"><FaPlaneDeparture /> Export Destinations</h4>
+            <h4 className="font-bold text-blue-800 mb-3 flex items-center gap-2"><FaPlaneDeparture /> {t('form.step3.exportMarketsTitle')}</h4>
 
             {/* Search */}
             <div className="relative mb-4">
@@ -206,7 +208,7 @@ const Step3MarketBusiness = ({ onNext, onBack }) => {
                   onChange={(e) => { setCountrySearch(e.target.value); setShowCountryDropdown(true); }}
                   onFocus={() => setShowCountryDropdown(true)}
                   className="w-full p-3 outline-none text-sm"
-                  placeholder="Add a country (e.g., Japan, UK)..."
+                  placeholder={t('form.step3.searchPlaceholder')}
                 />
               </div>
               {showCountryDropdown && countrySearch && (
@@ -228,7 +230,7 @@ const Step3MarketBusiness = ({ onNext, onBack }) => {
                   <div className="flex items-center gap-2">
                     <input
                       type="number"
-                      placeholder="Buyers"
+                      placeholder={t('form.step3.placeholders.buyers')}
                       className="w-20 p-1 text-sm border rounded text-center outline-none focus:border-blue-400"
                       value={market.buyers}
                       onChange={(e) => handleBuyerCountChange(market.country, e.target.value)}
@@ -246,13 +248,13 @@ const Step3MarketBusiness = ({ onNext, onBack }) => {
         {/* Conditional Online Section */}
         {stepData.buyerType.online && (
           <div className="mt-6 p-4 bg-purple-50/50 rounded-xl border border-purple-100 animate-fade-in">
-            <h4 className="font-bold text-purple-800 mb-3 flex items-center gap-2"><FaGlobe /> Online Presence</h4>
+            <h4 className="font-bold text-purple-800 mb-3 flex items-center gap-2"><FaGlobe /> {t('form.step3.onlinePresenceTitle')}</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex items-center bg-white border border-purple-100 rounded-lg px-3">
                 <FaFacebook className="text-blue-600 text-xl" />
                 <input
                   type="text"
-                  placeholder="Facebook Page Link"
+                  placeholder={t('form.step3.placeholders.facebook')}
                   className="w-full p-3 outline-none text-sm"
                   value={stepData.onlineBuyer.facebookLink}
                   onChange={(e) => handleNestedChange('onlineBuyer', 'facebookLink', e.target.value)}
@@ -262,7 +264,7 @@ const Step3MarketBusiness = ({ onNext, onBack }) => {
                 <FaLink className="text-gray-500 text-xl" />
                 <input
                   type="text"
-                  placeholder="Website URL"
+                  placeholder={t('form.step3.placeholders.website')}
                   className="w-full p-3 outline-none text-sm"
                   value={stepData.onlineBuyer.websiteLink}
                   onChange={(e) => handleNestedChange('onlineBuyer', 'websiteLink', e.target.value)}
@@ -276,10 +278,10 @@ const Step3MarketBusiness = ({ onNext, onBack }) => {
       {/* --- SECTION 2: BUSINESS STATS --- */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: 'Business Age', icon: <FaClock className="text-orange-500" />, name: 'businessAge', placeholder: 'Years', type: 'number' },
-          { label: 'Total Customers', icon: <FaUsers className="text-blue-500" />, name: 'totalCustomers', placeholder: 'Count', type: 'number' },
-          { label: 'Regular Customers', icon: <FaUsers className="text-teal-500" />, name: 'regularCustomers', placeholder: 'Count', type: 'number' },
-          { label: 'Monthly Sales', icon: <FaMoneyBillWave className="text-emerald-500" />, name: 'monthlySales', placeholder: 'BDT Amount', type: 'number' }
+          { label: t('form.step3.businessAge'), icon: <FaClock className="text-orange-500" />, name: 'businessAge', placeholder: t('common.years'), type: 'number' },
+          { label: t('form.step3.totalCustomers'), icon: <FaUsers className="text-blue-500" />, name: 'totalCustomers', placeholder: t('common.number'), type: 'number' },
+          { label: t('form.step3.regularCustomers'), icon: <FaUsers className="text-teal-500" />, name: 'regularCustomers', placeholder: t('common.number'), type: 'number' },
+          { label: t('form.step3.monthlySales'), icon: <FaMoneyBillWave className="text-emerald-500" />, name: 'monthlySales', placeholder: t('common.amount'), type: 'number' }
         ].map((field, idx) => (
           <div key={idx} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col">
             <div className="flex items-center gap-2 mb-2 text-sm font-bold text-gray-600">
@@ -303,14 +305,14 @@ const Step3MarketBusiness = ({ onNext, onBack }) => {
         {/* Documents Column */}
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
           <h4 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-            <FaFileUpload className="text-emerald-500" /> Documents
+            <FaFileUpload className="text-emerald-500" /> {t('form.step3.documentsTitle')}
           </h4>
           <div className="space-y-3">
             {[
-              { key: 'tradeLicense', label: 'Trade License' },
-              { key: 'tin', label: 'TIN Certificate' },
-              { key: 'bsti', label: 'BSTI Approval' },
-              { key: 'exportLicense', label: 'Export License' }
+              { key: 'tradeLicense', label: t('form.step3.tradeLicense') },
+              { key: 'tin', label: t('form.step3.tin') },
+              { key: 'bsti', label: t('form.step3.bsti') },
+              { key: 'exportLicense', label: t('form.step3.exportLicense') }
             ].map(doc => (
               <div key={doc.key} className={`p-3 rounded-lg border transition-all ${stepData.registrationDocuments[doc.key] ? 'bg-emerald-50 border-emerald-200' : 'bg-gray-50 border-gray-100'}`}>
                 <div className="flex items-center justify-between mb-2">
@@ -328,7 +330,7 @@ const Step3MarketBusiness = ({ onNext, onBack }) => {
 
                 {stepData.registrationDocuments[doc.key] && (
                   <label className="flex items-center justify-center w-full py-2 border border-dashed border-emerald-300 rounded bg-white cursor-pointer hover:bg-emerald-50 text-xs text-emerald-600 font-medium">
-                    {uploading[doc.key] ? 'Uploading...' : 'Upload File (PDF/IMG)'}
+                    {uploading[doc.key] ? t('form.step3.uploading') : t('form.step3.uploadFile')}
                     <input type="file" className="hidden" onChange={(e) => handleFileUpload(doc.key, e.target.files[0])} accept="image/*,.pdf" />
                   </label>
                 )}
@@ -340,19 +342,19 @@ const Step3MarketBusiness = ({ onNext, onBack }) => {
         {/* Financials Column */}
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
           <h4 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-            <FaUniversity className="text-emerald-500" /> Banking Info
+            <FaUniversity className="text-emerald-500" /> {t('form.step3.bankTitle')}
           </h4>
 
           {/* Traditional Bank Toggle */}
           <div className="mb-6">
-            <label className="text-sm text-gray-500 mb-2 block">Do you have a bank account?</label>
+            <label className="text-sm text-gray-500 mb-2 block">{t('form.step3.hasBankAccount')}</label>
             <div className="flex bg-gray-100 p-1 rounded-lg w-full">
-              {['Yes', 'No'].map(opt => (
+              {[t('form.step3.yes'), t('form.step3.no')].map((opt, index) => (
                 <button
                   type="button"
                   key={opt}
-                  onClick={() => handleChange({ target: { name: 'hasBankAccount', value: opt } })}
-                  className={`flex-1 py-2 rounded-md text-sm font-bold transition-all ${stepData.hasBankAccount === opt ? 'bg-white shadow text-emerald-600' : 'text-gray-400'}`}
+                  onClick={() => handleChange({ target: { name: 'hasBankAccount', value: index === 0 ? 'Yes' : 'No' } })}
+                  className={`flex-1 py-2 rounded-md text-sm font-bold transition-all ${(index === 0 && stepData.hasBankAccount === 'Yes') || (index === 1 && stepData.hasBankAccount === 'No') ? 'bg-white shadow text-emerald-600' : 'text-gray-400'}`}
                 >
                   {opt}
                 </button>
@@ -360,15 +362,15 @@ const Step3MarketBusiness = ({ onNext, onBack }) => {
             </div>
             {stepData.hasBankAccount === 'Yes' && (
               <div className="mt-4 grid grid-cols-2 gap-3 animate-fade-in">
-                <input type="text" name="bankName" placeholder="Bank Name" value={stepData.bankName} onChange={handleChange} className="input-field text-sm" />
-                <input type="text" name="bankBranch" placeholder="Branch" value={stepData.bankBranch} onChange={handleChange} className="input-field text-sm" />
-                <input type="text" name="accountNumber" placeholder="Account No." value={stepData.accountNumber} onChange={handleChange} className="input-field text-sm col-span-2" />
+                <input type="text" name="bankName" placeholder={t('form.step3.placeholders.bankName')} value={stepData.bankName} onChange={handleChange} className="input-field text-sm" />
+                <input type="text" name="bankBranch" placeholder={t('form.step3.placeholders.branch')} value={stepData.bankBranch} onChange={handleChange} className="input-field text-sm" />
+                <input type="text" name="accountNumber" placeholder={t('form.step3.placeholders.accountNumber')} value={stepData.accountNumber} onChange={handleChange} className="input-field text-sm col-span-2" />
               </div>
             )}
           </div>
 
           {/* Mobile Banking */}
-          <h5 className="font-bold text-gray-700 mb-3 text-sm flex items-center gap-2"><FaMobileAlt /> Mobile Wallets</h5>
+          <h5 className="font-bold text-gray-700 mb-3 text-sm flex items-center gap-2"><FaMobileAlt /> {t('form.step3.mobileBankingTitle')}</h5>
           <div className="space-y-3">
             {[
               { key: 'bkash', label: 'bKash', color: 'bg-pink-500' },
@@ -406,10 +408,10 @@ const Step3MarketBusiness = ({ onNext, onBack }) => {
       {/* Navigation */}
       <div className="flex justify-between pt-4">
         <button type="button" onClick={onBack} className="px-6 py-3 bg-white text-gray-700 font-bold rounded-xl border border-gray-200 hover:bg-gray-50 transition shadow-sm flex items-center gap-2">
-          <FaArrowLeft /> Back
+          <FaArrowLeft /> {t('form.buttons.back')}
         </button>
         <button type="submit" className="px-8 py-3 bg-gradient-to-r from-emerald-600 to-lime-600 text-white font-bold rounded-xl hover:shadow-lg hover:shadow-emerald-500/30 transition transform hover:-translate-y-1 flex items-center gap-2">
-          Next Step <FaArrowRight />
+          {t('form.buttons.next')} <FaArrowRight />
         </button>
       </div>
     </form>

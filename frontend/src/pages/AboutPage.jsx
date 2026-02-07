@@ -2,39 +2,41 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { Link } from 'react-router-dom';
 import { FaLeaf, FaStore, FaChalkboardTeacher, FaHandshake, FaGlobeAmericas, FaChartLine, FaSeedling } from 'react-icons/fa';
+import { useLanguage } from '../context/LanguageContext';
 
 const AboutPage = () => {
+  const { t } = useLanguage();
   // Data for the "What We Offer" section to make mapping cleaner
   const offerings = [
     {
       icon: <FaStore />,
-      title: "Easy Registration",
-      desc: "Seamless business onboarding process."
+      title: t('about.offerings.registration.title'),
+      desc: t('about.offerings.registration.desc')
     },
     {
       icon: <FaLeaf />,
-      title: "Product Showcase",
-      desc: "A dedicated platform to display your harvest."
+      title: t('about.offerings.showcase.title'),
+      desc: t('about.offerings.showcase.desc')
     },
     {
       icon: <FaChalkboardTeacher />,
-      title: "Training & Support",
-      desc: "Access to expert resources and guides."
+      title: t('about.offerings.training.title'),
+      desc: t('about.offerings.training.desc')
     },
     {
       icon: <FaHandshake />,
-      title: "Business Networking",
-      desc: "Connect with potential buyers and partners."
+      title: t('about.offerings.networking.title'),
+      desc: t('about.offerings.networking.desc')
     },
     {
       icon: <FaGlobeAmericas />,
-      title: "Global Reach",
-      desc: "Bridge the gap to international markets."
+      title: t('about.offerings.globalReach.title'),
+      desc: t('about.offerings.globalReach.desc')
     },
     {
       icon: <FaChartLine />,
-      title: "Marketing & Export",
-      desc: "Strategic support to grow your brand."
+      title: t('about.offerings.marketing.title'),
+      desc: t('about.offerings.marketing.desc')
     }
   ];
 
@@ -54,10 +56,10 @@ const AboutPage = () => {
             <FaSeedling className="text-lime-400 text-2xl" />
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">
-            Cultivating <span className="text-lime-400">Growth</span>
+            {t('about.hero.cultivating')} <span className="text-lime-400">{t('about.hero.growth')}</span>
           </h1>
           <p className="text-emerald-100 text-lg max-w-2xl mx-auto">
-            The story behind AggriGo and our commitment to the future of farming.
+            {t('about.hero.subtitle')}
           </p>
         </div>
 
@@ -75,10 +77,10 @@ const AboutPage = () => {
           {/* --- INTRO CARD --- */}
           <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 mb-16 border-l-8 border-lime-500">
             <h2 className="text-3xl font-bold text-gray-800 mb-6 flex items-center">
-              About AggriGo
+              {t('about.title')}
             </h2>
             <p className="text-xl text-gray-600 leading-relaxed">
-              AggriGo is a comprehensive platform designed to empower business owners by providing them with the tools and resources needed to <span className="font-semibold text-emerald-700">grow their businesses</span> and reach a wider audience.
+              {t('about.intro.part1')} <span className="font-semibold text-emerald-700">{t('about.intro.highlight')}</span> {t('about.intro.part2')}
             </p>
           </div>
 
@@ -86,15 +88,15 @@ const AboutPage = () => {
           <div className="grid md:grid-cols-2 gap-0 mb-20 rounded-3xl overflow-hidden shadow-lg">
             <div className="bg-emerald-800 p-10 md:p-14 text-white flex flex-col justify-center relative overflow-hidden">
               <FaGlobeAmericas className="absolute -right-10 -bottom-10 text-9xl text-white opacity-10" />
-              <h2 className="text-3xl font-bold mb-4">Our Mission</h2>
+              <h2 className="text-3xl font-bold mb-4">{t('about.mission.title')}</h2>
               <div className="w-20 h-1 bg-lime-400 mb-6"></div>
               <p className="text-emerald-100 text-lg leading-relaxed relative z-10">
-                To bridge the gap between local businesses and global markets.
+                {t('about.mission.statement')}
               </p>
             </div>
             <div className="bg-white p-10 md:p-14 flex items-center">
               <p className="text-gray-600 text-lg">
-                We achieve this by offering a seamless registration process, business support services, and access to a vast network of buyers and partners. We believe in the power of connection to transform local potential into global success.
+                {t('about.mission.details')}
               </p>
             </div>
           </div>
@@ -102,8 +104,8 @@ const AboutPage = () => {
           {/* --- WHAT WE OFFER (Grid Infographic) --- */}
           <div className="mb-20">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-800">What We Offer</h2>
-              <p className="text-gray-500 mt-2">A holistic ecosystem for agricultural success</p>
+              <h2 className="text-3xl font-bold text-gray-800">{t('about.offerings.title')}</h2>
+              <p className="text-gray-500 mt-2">{t('about.offerings.subtitle')}</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -131,17 +133,17 @@ const AboutPage = () => {
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 via-lime-500 to-emerald-500"></div>
 
             <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
-              Ready to grow with us?
+              {t('about.cta.title')}
             </h2>
             <p className="text-gray-400 mb-8 max-w-2xl mx-auto">
-              Register your business today and join a growing community of entrepreneurs who are transforming the agriculture and manufacturing sectors.
+              {t('about.cta.description')}
             </p>
             <Link
               to="/register"
               className="inline-flex items-center bg-lime-500 text-emerald-900 px-8 py-3 rounded-lg font-bold hover:bg-lime-400 transition-colors shadow-lg hover:shadow-lime-500/20"
             >
               <FaSeedling className="mr-2" />
-              Get Started
+              {t('about.cta.button')}
             </Link>
           </div>
 

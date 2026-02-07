@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useForm } from '../../context/FormContext';
+import { useLanguage } from '../../context/LanguageContext';
 import {
   FaTag,
   FaAlignLeft,
@@ -20,6 +21,7 @@ import {
 
 const Step2ProductDetails = ({ onNext, onBack }) => {
   const { formData, updateFormData } = useForm();
+  const { t } = useLanguage();
 
   const [stepData, setStepData] = useState({
     productName: formData.productName || '',
@@ -57,8 +59,8 @@ const Step2ProductDetails = ({ onNext, onBack }) => {
     <form onSubmit={handleSubmit} className="space-y-8 max-w-5xl mx-auto">
 
       <div className="text-center mb-6">
-        <h3 className="text-2xl font-bold text-gray-800">পণ্যের বিবরণ</h3>
-        <p className="text-gray-500">আপনার পণ্যের উৎপাদন এবং মূল্যের তথ্য প্রদান করুন</p>
+        <h3 className="text-2xl font-bold text-gray-800">{t('form.step2.title')}</h3>
+        <p className="text-gray-500">{t('form.step2.subtitle')}</p>
       </div>
 
       {/* --- SECTION 1: BASIC IDENTITY --- */}
@@ -67,14 +69,14 @@ const Step2ProductDetails = ({ onNext, onBack }) => {
         {/* Product Name */}
         <div>
           <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2">
-            <FaTag className="text-emerald-500" /> পণ্যের নাম *
+            <FaTag className="text-emerald-500" /> {t('form.step2.productName')} *
           </label>
           <input
             type="text"
             name="productName"
             value={stepData.productName}
             onChange={handleChange}
-            placeholder="উদাহরণ: অর্গানিক মধু"
+            placeholder={t('form.step2.productNamePlaceholder')}
             className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
             required
           />
@@ -83,13 +85,13 @@ const Step2ProductDetails = ({ onNext, onBack }) => {
         {/* Description */}
         <div>
           <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2">
-            <FaAlignLeft className="text-blue-500" /> সংক্ষিপ্ত বিবরণ *
+            <FaAlignLeft className="text-blue-500" /> {t('form.step2.shortDescription')} *
           </label>
           <textarea
             name="shortDescription"
             value={stepData.shortDescription}
             onChange={handleChange}
-            placeholder="পণ্যের গুণাগুণ এবং বৈশিষ্ট্য লিখুন..."
+            placeholder={t('form.step2.descriptionPlaceholder')}
             className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all resize-none"
             rows="3"
             required
@@ -103,7 +105,7 @@ const Step2ProductDetails = ({ onNext, onBack }) => {
         {/* Production Type */}
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
           <h4 className="font-bold text-gray-700 mb-4 flex items-center gap-2">
-            <FaCogs className="text-orange-500" /> উৎপাদনের ধরন
+            <FaCogs className="text-orange-500" /> {t('form.step2.productionType')}
           </h4>
           <div className="grid grid-cols-3 gap-2">
             {[
@@ -132,7 +134,7 @@ const Step2ProductDetails = ({ onNext, onBack }) => {
 
           {/* Raw Material Source */}
           <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-            <label className="text-sm font-bold text-gray-700 mb-3 block">কাঁচামালের উৎস</label>
+            <label className="text-sm font-bold text-gray-700 mb-3 block">{t('form.step2.rawMaterialSource')}</label>
             <div className="flex bg-gray-100 p-1 rounded-lg">
               {[
                 { label: 'স্থানীয় (Local)', value: 'Local', icon: <FaHome /> },
@@ -154,7 +156,7 @@ const Step2ProductDetails = ({ onNext, onBack }) => {
 
           {/* Production Place */}
           <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-            <label className="text-sm font-bold text-gray-700 mb-3 block">উৎপাদনের স্থান</label>
+            <label className="text-sm font-bold text-gray-700 mb-3 block">{t('form.step2.productionPlace')}</label>
             <div className="flex bg-gray-100 p-1 rounded-lg">
               {[
                 { label: 'বাড়ি (Home)', value: 'Home-based', icon: <FaHome /> },
@@ -179,7 +181,7 @@ const Step2ProductDetails = ({ onNext, onBack }) => {
       {/* --- SECTION 3: PRICING TABLE --- */}
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
         <h4 className="font-bold text-gray-700 mb-6 flex items-center gap-2">
-          <FaMoneyBillWave className="text-emerald-500" /> মূল্য তালিকা (Pricing)
+          <FaMoneyBillWave className="text-emerald-500" /> {t('form.step2.pricingTitle')}
         </h4>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -208,7 +210,7 @@ const Step2ProductDetails = ({ onNext, onBack }) => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 pt-6 border-t border-gray-100">
           <div>
-            <label className="text-sm font-bold text-gray-700 mb-2 block">ন্যূনতম অর্ডার (MOQ)</label>
+            <label className="text-sm font-bold text-gray-700 mb-2 block">{t('form.step2.moq')}</label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                 <FaBox />
@@ -225,7 +227,7 @@ const Step2ProductDetails = ({ onNext, onBack }) => {
           </div>
 
           <div>
-            <label className="text-sm font-bold text-gray-700 mb-2 block">বাল্ক ডিসকাউন্ট আছে?</label>
+            <label className="text-sm font-bold text-gray-700 mb-2 block">{t('form.step2.bulkDiscount')}</label>
             <div className="flex gap-4">
               {['Yes', 'No'].map(val => (
                 <label key={val} className="flex items-center cursor-pointer">
@@ -251,27 +253,27 @@ const Step2ProductDetails = ({ onNext, onBack }) => {
         {/* Capacity & Machinery */}
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
           <h4 className="font-bold text-gray-700 mb-4 flex items-center gap-2">
-            <FaIndustry className="text-purple-500" /> সক্ষমতা ও যন্ত্রপাতি
+            <FaIndustry className="text-purple-500" /> {t('form.step2.capacityMachinery')}
           </h4>
           <div className="space-y-4">
             <div>
-              <label className="text-xs font-bold text-gray-500 uppercase">উৎপাদন ক্ষমতা (মাসিক)</label>
+              <label className="text-xs font-bold text-gray-500 uppercase">{t('form.step2.productionCapacity')}</label>
               <input
                 type="text"
                 name="productionCapacity"
                 value={stepData.productionCapacity}
                 onChange={handleChange}
-                placeholder="যেমন: ১০০০ পিস"
+                placeholder={t('form.step2.capacityPlaceholder')}
                 className="w-full mt-1 px-3 py-2 border-b-2 border-gray-200 focus:border-purple-500 outline-none bg-transparent transition-colors font-semibold text-gray-700"
               />
             </div>
             <div>
-              <label className="text-xs font-bold text-gray-500 uppercase">ব্যবহৃত যন্ত্রপাতি</label>
+              <label className="text-xs font-bold text-gray-500 uppercase">{t('form.step2.machineryUsed')}</label>
               <textarea
                 name="machineryUsed"
                 value={stepData.machineryUsed}
                 onChange={handleChange}
-                placeholder="মেশিনের নাম..."
+                placeholder={t('form.step2.machineryPlaceholder')}
                 rows="2"
                 className="w-full mt-1 px-3 py-2 border rounded-lg focus:border-purple-500 outline-none bg-gray-50 text-sm"
               />
@@ -282,12 +284,12 @@ const Step2ProductDetails = ({ onNext, onBack }) => {
         {/* Workforce */}
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
           <h4 className="font-bold text-gray-700 mb-4 flex items-center gap-2">
-            <FaUsers className="text-teal-500" /> কর্মী সংখ্যা
+            <FaUsers className="text-teal-500" /> {t('form.step2.workforce')}
           </h4>
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 text-center">
               <FaMale className="text-3xl text-blue-500 mx-auto mb-2" />
-              <label className="text-xs font-bold text-blue-700 uppercase block mb-1">পুরুষ কর্মী</label>
+              <label className="text-xs font-bold text-blue-700 uppercase block mb-1">{t('form.step2.maleWorkers')}</label>
               <input
                 type="number"
                 name="maleWorkers"
@@ -298,7 +300,7 @@ const Step2ProductDetails = ({ onNext, onBack }) => {
             </div>
             <div className="bg-pink-50 p-4 rounded-xl border border-pink-100 text-center">
               <FaFemale className="text-3xl text-pink-500 mx-auto mb-2" />
-              <label className="text-xs font-bold text-pink-700 uppercase block mb-1">মহিলা কর্মী</label>
+              <label className="text-xs font-bold text-pink-700 uppercase block mb-1">{t('form.step2.femaleWorkers')}</label>
               <input
                 type="number"
                 name="femaleWorkers"
@@ -314,10 +316,10 @@ const Step2ProductDetails = ({ onNext, onBack }) => {
       {/* Navigation */}
       <div className="flex justify-between pt-6 border-t border-gray-100">
         <button type="button" onClick={onBack} className="px-6 py-3 bg-white text-gray-700 font-bold rounded-xl border border-gray-200 hover:bg-gray-50 transition shadow-sm flex items-center gap-2">
-          <FaArrowLeft /> পিছনে যান
+          <FaArrowLeft /> {t('form.buttons.back')}
         </button>
         <button type="submit" className="px-8 py-3 bg-gradient-to-r from-emerald-600 to-lime-600 text-white font-bold rounded-xl hover:shadow-lg hover:shadow-emerald-500/30 transition transform hover:-translate-y-1 flex items-center gap-2">
-          পরবর্তী ধাপ <FaArrowRight />
+          {t('form.buttons.next')} <FaArrowRight />
         </button>
       </div>
     </form>
