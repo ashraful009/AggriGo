@@ -32,6 +32,24 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+// Root route - API information
+app.get('/', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'AggriGo Backend API',
+    version: '1.0.0',
+    endpoints: {
+      health: '/api/health',
+      auth: '/api/auth/*',
+      business: '/api/business/*',
+      upload: '/api/upload/*',
+      profile: '/api/profile/*',
+      gallery: '/api/gallery/*'
+    },
+    documentation: 'https://github.com/ashraful009/AggriGo'
+  });
+});
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/business', businessDataRoutes);
