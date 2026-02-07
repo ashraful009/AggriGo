@@ -1,5 +1,5 @@
 {
-  "name": "aggrigo-backend",
+  "name": "aggrigo_backend",
   "version": "1.0.0",
   "description": "AggriGo Business Registration Platform - Backend API",
   "main": "server.js",
