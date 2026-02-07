@@ -14,13 +14,31 @@ dotenv.config();
 
 const app = express();
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('✅ MongoDB Connected Successfully'))
-  .catch((err) => {
+// MongoDB connection with proper serverless handling
+let isConnected = false;
+
+const connectDB = async () => {
+  if (isConnected) {
+    console.log('Using existing MongoDB connection');
+    return;
+  }
+
+  try {
+    const db = await mongoose.connect(process.env.MONGODB_URI, {
+      serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+    });
+
+    isConnected = db.connections[0].readyState === 1;
+    console.log('✅ MongoDB Connected Successfully');
+  } catch (err) {
     console.error('❌ MongoDB Connection Error:', err.message);
-    process.exit(1);
-  });
+    // Don't exit in serverless - just log the error
+    isConnected = false;
+  }
+};
+
+// Initialize connection
+connectDB();
 
 // Middleware
 app.use(cors({
