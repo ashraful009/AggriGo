@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import api from '../utils/api';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
@@ -54,16 +55,9 @@ const VerifyOTPPage = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/verify-otp', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({ email, otp }),
-      });
+      const response = await api.post('/auth/verify-otp', { email, otp });
 
-      const data = await response.json();
+      const data = response.data;
 
       if (data.success) {
         setSuccess('Email verified successfully! Redirecting...');
@@ -95,15 +89,9 @@ const VerifyOTPPage = () => {
     setResendLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/resend-otp', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email }),
-      });
+      const response = await api.post('/auth/resend-otp', { email });
 
-      const data = await response.json();
+      const data = response.data;
 
       if (data.success) {
         setSuccess('New verification code sent to your email!');
