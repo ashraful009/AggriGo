@@ -1,150 +1,192 @@
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { Link } from 'react-router-dom';
-import { FaLeaf, FaStore, FaChalkboardTeacher, FaHandshake, FaGlobeAmericas, FaChartLine, FaSeedling } from 'react-icons/fa';
+import { FaLeaf, FaStore, FaChalkboardTeacher, FaHandshake, FaGlobeAmericas, FaChartLine, FaSeedling, FaUsers, FaArrowRight, FaLightbulb } from 'react-icons/fa';
 import { useLanguage } from '../context/LanguageContext';
 
 const AboutPage = () => {
   const { t } = useLanguage();
-  // Data for the "What We Offer" section to make mapping cleaner
+
+  // Updated icons to match the new blue/amber theme
   const offerings = [
     {
       icon: <FaStore />,
       title: t('about.offerings.registration.title'),
-      desc: t('about.offerings.registration.desc')
+      desc: t('about.offerings.registration.desc'),
+      color: "text-blue-600",
+      bg: "bg-blue-50"
     },
     {
-      icon: <FaLeaf />,
+      icon: <FaLeaf />, // Changed context: Growth/Sustainability
       title: t('about.offerings.showcase.title'),
-      desc: t('about.offerings.showcase.desc')
+      desc: t('about.offerings.showcase.desc'),
+      color: "text-emerald-600",
+      bg: "bg-emerald-50"
     },
     {
       icon: <FaChalkboardTeacher />,
       title: t('about.offerings.training.title'),
-      desc: t('about.offerings.training.desc')
+      desc: t('about.offerings.training.desc'),
+      color: "text-amber-600",
+      bg: "bg-amber-50"
     },
     {
       icon: <FaHandshake />,
       title: t('about.offerings.networking.title'),
-      desc: t('about.offerings.networking.desc')
+      desc: t('about.offerings.networking.desc'),
+      color: "text-indigo-600",
+      bg: "bg-indigo-50"
     },
     {
       icon: <FaGlobeAmericas />,
       title: t('about.offerings.globalReach.title'),
-      desc: t('about.offerings.globalReach.desc')
+      desc: t('about.offerings.globalReach.desc'),
+      color: "text-cyan-600",
+      bg: "bg-cyan-50"
     },
     {
       icon: <FaChartLine />,
       title: t('about.offerings.marketing.title'),
-      desc: t('about.offerings.marketing.desc')
+      desc: t('about.offerings.marketing.desc'),
+      color: "text-rose-600",
+      bg: "bg-rose-50"
     }
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 font-sans">
+    <div className="min-h-screen flex flex-col bg-slate-50 font-sans text-slate-800">
       <Navbar />
 
       {/* --- HERO HEADER --- */}
-      <div className="relative bg-emerald-900 py-24 overflow-hidden">
-        {/* Abstract Background Pattern */}
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_2px,transparent_2px)] [background-size:20px_20px]"></div>
-        <div className="absolute top-0 right-0 w-96 h-96 bg-lime-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-emerald-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+      {/* Matches Home Page Deep Slate/Blue Theme */}
+      <div className="relative bg-slate-900 py-24 overflow-hidden">
+
+        {/* Background Gradients */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/20 rounded-full blur-[100px] opacity-60"></div>
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-600/20 rounded-full blur-[100px] opacity-60"></div>
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10"></div>
 
         <div className="container mx-auto px-4 relative z-10 text-center">
-          <div className="inline-block p-3 rounded-full bg-white/10 backdrop-blur-sm mb-4 border border-white/20">
-            <FaSeedling className="text-lime-400 text-2xl" />
+
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-800/50 border border-slate-700 backdrop-blur-md mb-6">
+            <FaUsers className="text-amber-500" />
+            <span className="text-slate-300 text-sm font-semibold tracking-wider uppercase">Who We Are</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">
-            {t('about.hero.cultivating')} <span className="text-lime-400">{t('about.hero.growth')}</span>
+
+          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight">
+            {t('about.hero.cultivating') || "Building the Future of"} <br className="hidden md:block" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">
+              {t('about.hero.growth') || "Entrepreneurship"}
+            </span>
           </h1>
-          <p className="text-emerald-100 text-lg max-w-2xl mx-auto">
+
+          <p className="text-slate-400 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed font-light">
             {t('about.hero.subtitle')}
           </p>
         </div>
-
-        {/* Bottom Curve */}
-        <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none">
-          <svg className="relative block w-full h-16" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-            <path d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z" className="fill-gray-50"></path>
-          </svg>
-        </div>
       </div>
 
-      <div className="flex-1 container mx-auto px-4 py-12 -mt-10 relative z-20">
+      <div className="flex-1 container mx-auto px-4 py-16 -mt-10 relative z-20">
         <div className="max-w-6xl mx-auto">
 
           {/* --- INTRO CARD --- */}
-          <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 mb-16 border-l-8 border-lime-500">
-            <h2 className="text-3xl font-bold text-gray-800 mb-6 flex items-center">
+          <div className="bg-white rounded-2xl shadow-xl border border-slate-100 p-8 md:p-12 mb-20 relative overflow-hidden">
+            {/* Accent Line */}
+            <div className="absolute left-0 top-0 bottom-0 w-2 bg-amber-500"></div>
+
+            <h2 className="text-3xl font-bold text-slate-900 mb-6">
               {t('about.title')}
             </h2>
-            <p className="text-xl text-gray-600 leading-relaxed">
-              {t('about.intro.part1')} <span className="font-semibold text-emerald-700">{t('about.intro.highlight')}</span> {t('about.intro.part2')}
+            <p className="text-xl text-slate-600 leading-relaxed">
+              {t('about.intro.part1')} <span className="font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">{t('about.intro.highlight')}</span> {t('about.intro.part2')}
             </p>
           </div>
 
-          {/* --- MISSION SECTION (Split Layout) --- */}
-          <div className="grid md:grid-cols-2 gap-0 mb-20 rounded-3xl overflow-hidden shadow-lg">
-            <div className="bg-emerald-800 p-10 md:p-14 text-white flex flex-col justify-center relative overflow-hidden">
-              <FaGlobeAmericas className="absolute -right-10 -bottom-10 text-9xl text-white opacity-10" />
-              <h2 className="text-3xl font-bold mb-4">{t('about.mission.title')}</h2>
-              <div className="w-20 h-1 bg-lime-400 mb-6"></div>
-              <p className="text-emerald-100 text-lg leading-relaxed relative z-10">
-                {t('about.mission.statement')}
-              </p>
+          {/* --- MISSION & VISION (Side-by-Side Cards) --- */}
+          <div className="grid md:grid-cols-2 gap-8 mb-24">
+
+            {/* Mission Card (Dark Blue) */}
+            <div className="bg-blue-900 text-white p-10 rounded-2xl relative overflow-hidden shadow-lg flex flex-col justify-center min-h-[300px]">
+              <div className="absolute top-0 right-0 p-8 opacity-10">
+                <FaGlobeAmericas className="text-9xl" />
+              </div>
+              <div className="relative z-10">
+                <div className="w-12 h-12 bg-blue-800 rounded-lg flex items-center justify-center mb-6 text-2xl">
+                  <FaSeedling className="text-blue-300" />
+                </div>
+                <h3 className="text-2xl font-bold mb-4">{t('about.mission.title') || "Our Mission"}</h3>
+                <p className="text-blue-100 leading-relaxed text-lg opacity-90">
+                  {t('about.mission.statement')}
+                </p>
+              </div>
             </div>
-            <div className="bg-white p-10 md:p-14 flex items-center">
-              <p className="text-gray-600 text-lg">
+
+            {/* Vision/Details Card (White/Light) */}
+            <div className="bg-white p-10 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-center min-h-[300px]">
+              <div className="w-12 h-12 bg-amber-50 rounded-lg flex items-center justify-center mb-6 text-2xl">
+                <FaLightbulb className="text-amber-500" />
+              </div>
+              <h3 className="text-2xl font-bold text-slate-800 mb-4">Why We Do It</h3>
+              <p className="text-slate-600 leading-relaxed text-lg">
                 {t('about.mission.details')}
               </p>
             </div>
+
           </div>
 
-          {/* --- WHAT WE OFFER (Grid Infographic) --- */}
-          <div className="mb-20">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-800">{t('about.offerings.title')}</h2>
-              <p className="text-gray-500 mt-2">{t('about.offerings.subtitle')}</p>
+          {/* --- WHAT WE OFFER (Grid) --- */}
+          <div className="mb-24">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+                {t('about.offerings.title')}
+              </h2>
+              <div className="w-16 h-1 bg-amber-500 mx-auto rounded-full mb-4"></div>
+              <p className="text-slate-500 max-w-2xl mx-auto">
+                {t('about.offerings.subtitle') || "Comprehensive tools tailored for modern businesses."}
+              </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {offerings.map((item, index) => (
-                <div key={index} className="group bg-white p-6 rounded-2xl shadow-sm hover:shadow-xl border border-gray-100 transition-all duration-300 hover:-translate-y-1">
-                  <div className="flex items-start space-x-4">
-                    <div className="flex-shrink-0 w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center group-hover:bg-lime-500 transition-colors duration-300">
-                      <div className="text-emerald-600 group-hover:text-white text-xl transition-colors">
-                        {item.icon}
-                      </div>
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-gray-800 mb-1 group-hover:text-emerald-700 transition-colors">{item.title}</h3>
-                      <p className="text-sm text-gray-500 leading-snug">{item.desc}</p>
-                    </div>
+                <div key={index} className="group bg-white p-8 rounded-xl shadow-sm hover:shadow-lg border border-slate-100 transition-all duration-300 hover:-translate-y-1">
+                  <div className={`w-14 h-14 ${item.bg} rounded-lg flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                    <span className={`text-2xl ${item.color}`}>
+                      {item.icon}
+                    </span>
                   </div>
+                  <h3 className="text-xl font-bold text-slate-800 mb-3 group-hover:text-blue-700 transition-colors">
+                    {item.title}
+                  </h3>
+                  <p className="text-slate-500 leading-relaxed text-sm">
+                    {item.desc}
+                  </p>
                 </div>
               ))}
             </div>
           </div>
 
           {/* --- CTA SECTION --- */}
-          <div className="bg-gray-900 rounded-3xl p-10 text-center relative overflow-hidden">
-            {/* Decorative lines */}
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 via-lime-500 to-emerald-500"></div>
+          <div className="bg-gradient-to-r from-slate-900 to-blue-900 rounded-2xl p-12 md:p-16 text-center relative overflow-hidden shadow-2xl">
+            {/* Texture */}
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10"></div>
 
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
-              {t('about.cta.title')}
-            </h2>
-            <p className="text-gray-400 mb-8 max-w-2xl mx-auto">
-              {t('about.cta.description')}
-            </p>
-            <Link
-              to="/register"
-              className="inline-flex items-center bg-lime-500 text-emerald-900 px-8 py-3 rounded-lg font-bold hover:bg-lime-400 transition-colors shadow-lg hover:shadow-lime-500/20"
-            >
-              <FaSeedling className="mr-2" />
-              {t('about.cta.button')}
-            </Link>
+            <div className="relative z-10 max-w-3xl mx-auto">
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+                {t('about.cta.title')}
+              </h2>
+              <p className="text-slate-300 mb-10 text-lg leading-relaxed">
+                {t('about.cta.description')}
+              </p>
+
+              <Link
+                to="/register"
+                className="inline-flex items-center gap-2 bg-amber-500 text-slate-900 px-8 py-4 rounded-lg font-bold text-lg hover:bg-amber-400 transition-all transform hover:-translate-y-1 shadow-lg shadow-amber-500/20"
+              >
+                {t('about.cta.button')}
+                <FaArrowRight />
+              </Link>
+            </div>
           </div>
 
         </div>

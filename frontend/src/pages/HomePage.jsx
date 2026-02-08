@@ -2,56 +2,63 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import Navbar from '../components/Navbar';
-import Footer from '../components/Footer'; // Assuming you have this
-import { FaRocket, FaChartLine, FaHandshake, FaGlobe, FaArrowRight, FaLeaf } from 'react-icons/fa';
+import Footer from '../components/Footer';
+import { FaRocket, FaChartLine, FaHandshake, FaGlobe, FaArrowRight, FaLightbulb, FaUsers, FaCheckCircle } from 'react-icons/fa';
 
 const HomePage = () => {
   const { isAuthenticated } = useAuth();
   const { t } = useLanguage();
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 font-sans">
+    <div className="min-h-screen flex flex-col bg-slate-50 font-sans text-slate-800">
       <Navbar />
 
       {/* --- HERO SECTION --- */}
-      {/* Uses a dark gradient with a pattern overlay to look like a modern dashboard or night field */}
-      <section className="relative bg-gradient-to-br from-emerald-900 via-emerald-800 to-teal-900 text-white overflow-hidden pb-32 pt-20">
+      {/* Changed to Deep Slate Blue for a Tech/Business look */}
+      <section className="relative pt-24 pb-32 bg-slate-900 overflow-hidden">
 
-        {/* Background Pattern (Abstract Data Fields) */}
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_2px,transparent_2px)] [background-size:24px_24px]"></div>
+        {/* Background Abstract Shapes (Blue & Indigo) */}
+        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-[600px] h-[600px] bg-blue-600/20 rounded-full blur-[100px] opacity-70"></div>
+        <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-[500px] h-[500px] bg-indigo-600/20 rounded-full blur-[100px] opacity-70"></div>
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10"></div>
 
-        {/* Decorative Circle (Sun/Moon) */}
-        <div className="absolute top-10 right-10 w-64 h-64 bg-lime-400 rounded-full blur-3xl opacity-20 animate-pulse"></div>
+        <div className="container mx-auto px-6 relative z-10">
+          <div className="flex flex-col items-center text-center">
 
-        <div className="container mx-auto px-4 relative z-10 text-center">
-          <div className="max-w-4xl mx-auto">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1 mb-8">
-              <span className="w-2 h-2 bg-lime-400 rounded-full animate-ping"></span>
-              <span className="text-emerald-100 text-sm font-medium tracking-wider uppercase">The Future of Farming</span>
+            {/* Pill Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-800/50 border border-slate-700 backdrop-blur-md mb-8">
+              <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+              <span className="text-slate-300 text-xs font-semibold tracking-wider uppercase">
+                AggriGo Platform v1.0
+              </span>
             </div>
 
-            <h1 className="text-5xl md:text-6xl font-extrabold mb-6 leading-tight tracking-tight">
-              {t('home.hero.title')}
-              <span className="text-lime-400">.</span>
+            {/* Main Title */}
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight tracking-tight">
+              {t('home.hero.title') || "Empowering Your"} <br className="hidden md:block" />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">
+                {t('home.hero.highlight') || "Business Journey"}
+              </span>
             </h1>
 
-            <p className="text-xl md:text-2xl mb-10 text-emerald-100 font-light max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-slate-400 mb-10 max-w-2xl mx-auto font-light leading-relaxed">
               {t('home.hero.subtitle')}
             </p>
 
+            {/* Buttons - Using Amber/Orange for Action (Not Green) */}
             {!isAuthenticated && (
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
                 <Link
                   to="/register"
-                  className="group relative bg-lime-500 hover:bg-lime-400 text-emerald-950 px-8 py-4 rounded-xl text-lg font-bold transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(132,204,22,0.5)] flex items-center justify-center"
+                  className="px-8 py-4 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold rounded-lg text-lg transition-all transform hover:-translate-y-1 shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2"
                 >
                   {t('home.hero.cta')}
-                  <FaArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                  <FaArrowRight />
                 </Link>
+
                 <Link
                   to="/about"
-                  className="px-8 py-4 rounded-xl text-lg font-bold text-white border border-white/30 hover:bg-white/10 transition-colors"
+                  className="px-8 py-4 rounded-lg text-lg font-medium text-white border border-slate-700 hover:bg-slate-800 transition-all text-center"
                 >
                   Learn More
                 </Link>
@@ -59,96 +66,101 @@ const HomePage = () => {
             )}
           </div>
         </div>
+      </section>
 
-        {/* SVG Wave Divider: Creates an organic transition to the next section */}
-        <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none">
-          <svg className="relative block w-full h-24 md:h-48" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" className="fill-gray-50"></path>
-          </svg>
+      {/* --- STATS / TRUST BAR --- */}
+      {/* Floating white card over dark background */}
+      <section className="relative -mt-16 z-20 px-4">
+        <div className="container mx-auto max-w-5xl">
+          <div className="bg-white rounded-xl shadow-xl border-t border-slate-100 p-8 grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+
+            <StatItem
+              icon={<FaUsers className="text-blue-600" />}
+              number="10k+"
+              label="Entrepreneurs"
+            />
+            <StatItem
+              icon={<FaChartLine className="text-indigo-600" />}
+              number="$2M+"
+              label="Revenue Generated"
+            />
+            <StatItem
+              icon={<FaCheckCircle className="text-amber-500" />}
+              number="98%"
+              label="Success Rate"
+            />
+
+          </div>
         </div>
       </section>
 
-      {/* --- FEATURES / INFOGRAPHIC SECTION --- */}
-      <section className="py-20 bg-gray-50 relative">
+      {/* --- FEATURES SECTION --- */}
+      <section className="py-24 bg-slate-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
               {t('home.features.title')}
             </h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-emerald-500 to-lime-500 mx-auto rounded-full"></div>
+            <div className="w-16 h-1 bg-blue-600 mx-auto rounded-full"></div>
+            <p className="mt-4 text-slate-600 max-w-xl mx-auto">
+              Everything you need to launch and scale your business in one place.
+            </p>
           </div>
 
-          {/* Connected Grid */}
-          <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-
-            {/* Dashed Connector Line (Visible on Desktop) */}
-            <div className="hidden lg:block absolute top-12 left-0 w-full h-0.5 border-t-2 border-dashed border-emerald-200 -z-10 transform translate-y-4"></div>
-
-            {/* Feature 1 */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <FeatureCard
               icon={<FaRocket />}
               title={t('home.features.easy.title')}
-              desc={t('home.features.easy.desc')}
-              color="text-blue-500"
-              bg="bg-blue-50"
-              step="01"
+              desc="Launch your idea quickly with our streamlined tools."
+              iconColor="text-blue-600"
+              bgClass="bg-blue-50"
             />
-
-            {/* Feature 2 */}
             <FeatureCard
-              icon={<FaChartLine />}
+              icon={<FaLightbulb />}
               title={t('home.features.growth.title')}
-              desc={t('home.features.growth.desc')}
-              color="text-emerald-500"
-              bg="bg-emerald-50"
-              step="02"
+              desc="Get smart insights to make better business decisions."
+              iconColor="text-amber-600"
+              bgClass="bg-amber-50"
             />
-
-            {/* Feature 3 */}
             <FeatureCard
               icon={<FaHandshake />}
               title={t('home.features.support.title')}
-              desc={t('home.features.support.desc')}
-              color="text-orange-500"
-              bg="bg-orange-50"
-              step="03"
+              desc="Connect with mentors and investors easily."
+              iconColor="text-indigo-600"
+              bgClass="bg-indigo-50"
             />
-
-            {/* Feature 4 */}
             <FeatureCard
               icon={<FaGlobe />}
               title={t('home.features.market.title')}
-              desc={t('home.features.market.desc')}
-              color="text-purple-500"
-              bg="bg-purple-50"
-              step="04"
+              desc="Access global markets and expand your reach."
+              iconColor="text-cyan-600"
+              bgClass="bg-cyan-50"
             />
           </div>
         </div>
       </section>
 
       {/* --- BIG CTA SECTION --- */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="bg-emerald-900 rounded-3xl p-8 md:p-16 relative overflow-hidden shadow-2xl text-center">
+      <section className="py-20 px-4">
+        <div className="container mx-auto">
+          {/* Changed gradient to Blue/Indigo instead of Green */}
+          <div className="bg-gradient-to-r from-blue-700 to-indigo-800 rounded-2xl p-10 md:p-16 text-center text-white relative overflow-hidden shadow-2xl">
 
-            {/* Decorative Background Elements */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
-            <div className="absolute bottom-0 left-0 w-40 h-40 bg-lime-500 opacity-20 rounded-full translate-y-1/3 -translate-x-1/3 blur-xl"></div>
+            <div className="absolute top-0 left-0 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
+            <div className="absolute -top-24 -right-24 w-64 h-64 bg-blue-500 rounded-full blur-3xl opacity-50"></div>
 
-            <div className="relative z-10">
-              <FaLeaf className="text-lime-400 text-5xl mx-auto mb-6 animate-bounce" />
-              <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
+            <div className="relative z-10 max-w-3xl mx-auto">
+              <h2 className="text-3xl md:text-5xl font-bold mb-6">
                 {t('home.cta.title')}
               </h2>
-              <p className="text-emerald-100 text-xl mb-10 max-w-2xl mx-auto">
+              <p className="text-blue-100 text-lg mb-8">
                 {t('home.cta.subtitle')}
               </p>
 
               {!isAuthenticated && (
                 <Link
                   to="/register"
-                  className="inline-block bg-white text-emerald-900 px-10 py-4 rounded-full text-lg font-bold hover:bg-lime-400 transition-all duration-300 shadow-lg transform hover:-translate-y-1"
+                  className="inline-block bg-white text-blue-900 px-10 py-4 rounded-lg text-lg font-bold hover:bg-slate-100 transition-colors shadow-lg"
                 >
                   {t('home.cta.button')}
                 </Link>
@@ -163,26 +175,25 @@ const HomePage = () => {
   );
 };
 
-// --- Sub-Component for Clean Code ---
-// Renders the individual feature cards with the "Infographic" step number
-const FeatureCard = ({ icon, title, desc, color, bg, step }) => (
-  <div className="group bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 relative overflow-hidden">
+// --- Helper Components ---
 
-    {/* Step Number Background */}
-    <span className="absolute -right-4 -top-4 text-9xl font-bold text-gray-50 opacity-50 select-none group-hover:text-emerald-50 transition-colors">
-      {step}
-    </span>
-
-    <div className={`w-16 h-16 ${bg} rounded-2xl flex items-center justify-center mb-6 transform rotate-3 group-hover:rotate-6 transition-transform duration-300 shadow-sm`}>
-      <span className={`text-3xl ${color}`}>
-        {icon}
-      </span>
+const StatItem = ({ icon, number, label }) => (
+  <div className="flex flex-col md:flex-row items-center gap-4 justify-center md:justify-start">
+    <div className="text-4xl p-3 bg-slate-50 rounded-full">{icon}</div>
+    <div className="text-center md:text-left">
+      <h4 className="text-3xl font-bold text-slate-800">{number}</h4>
+      <p className="text-sm text-slate-500 font-medium uppercase tracking-wide">{label}</p>
     </div>
+  </div>
+);
 
-    <h3 className="text-xl font-bold text-gray-800 mb-3 relative z-10">
-      {title}
-    </h3>
-    <p className="text-gray-600 leading-relaxed relative z-10">
+const FeatureCard = ({ icon, title, desc, iconColor, bgClass }) => (
+  <div className="bg-white p-8 rounded-xl border border-slate-100 shadow-sm hover:shadow-lg transition-all duration-300 group hover:-translate-y-1">
+    <div className={`w-12 h-12 ${bgClass} ${iconColor} rounded-lg flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform`}>
+      {icon}
+    </div>
+    <h3 className="text-xl font-bold text-slate-800 mb-3">{title}</h3>
+    <p className="text-slate-500 leading-relaxed text-sm">
       {desc}
     </p>
   </div>

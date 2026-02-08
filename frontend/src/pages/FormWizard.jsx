@@ -9,6 +9,7 @@ import Step3MarketBusiness from '../components/wizard/Step3MarketBusiness';
 import Step4FuturePlans from '../components/wizard/Step4FuturePlans';
 import Step5MediaUpload from '../components/wizard/Step5MediaUpload';
 import Step6Review from '../components/wizard/Step6Review';
+import { FaCheck, FaBuilding } from 'react-icons/fa';
 import {
   validateStep1,
   validateStep2,
@@ -41,27 +42,16 @@ const FormWizard = () => {
 
     // Validate current step before proceeding
     let validation = { isValid: true, errors: {} };
-    
+
     switch (currentStep) {
-      case 1:
-        validation = validateStep1({ ...formData, ...stepData });
-        break;
-      case 2:
-        validation = validateStep2({ ...formData, ...stepData });
-        break;
-      case 3:
-        validation = validateStep3({ ...formData, ...stepData });
-        break;
-      case 4:
-        validation = validateStep4({ ...formData, ...stepData });
-        break;
-      case 5:
-        validation = validateStep5({ ...formData, ...stepData });
-        break;
-      default:
-        break;
+      case 1: validation = validateStep1({ ...formData, ...stepData }); break;
+      case 2: validation = validateStep2({ ...formData, ...stepData }); break;
+      case 3: validation = validateStep3({ ...formData, ...stepData }); break;
+      case 4: validation = validateStep4({ ...formData, ...stepData }); break;
+      case 5: validation = validateStep5({ ...formData, ...stepData }); break;
+      default: break;
     }
-    
+
     if (!validation.isValid) {
       const errorMessages = Object.values(validation.errors).join('. ');
       setError(`Please fix the following errors: ${errorMessages}`);
@@ -76,7 +66,7 @@ const FormWizard = () => {
 
     if (result?.success) {
       setSuccess('Progress saved successfully');
-      setTimeout(() => setSuccess(''), 2500);
+      setTimeout(() => setSuccess(''), 2000);
 
       if (currentStep < totalSteps) {
         setCurrentStep(currentStep + 1);
@@ -96,17 +86,15 @@ const FormWizard = () => {
 
   const handleFinalSubmit = async (stepData) => {
     setError('');
-    
-    // Validate Step 6 consent and signature
     const validation = validateStep6({ ...formData, ...stepData });
-    
+
     if (!validation.isValid) {
       const errorMessages = Object.values(validation.errors).join('. ');
       setError(`Please fix the following errors: ${errorMessages}`);
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
-    
+
     const result = await submitFinal();
     if (result.success) {
       navigate('/dashboard');
@@ -128,103 +116,146 @@ const FormWizard = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-green-50 via-white to-green-100">
+    <div className="min-h-screen flex flex-col bg-slate-50 font-sans text-slate-800">
+
+      {/* CSS Styles for Input Fields (Global for Wizard) */}
       <style>{`
         .wizard-container input,
         .wizard-container textarea,
         .wizard-container select {
           width: 100%;
-          padding: 0.75rem 1rem;
-          border-radius: 0.75rem;
-          border: 1px solid #d1fae5;
+          padding: 0.875rem 1rem;
+          border-radius: 0.5rem;
+          border: 1px solid #e2e8f0; /* slate-200 */
           background-color: #ffffff;
-          color: #065f46;
+          color: #1e293b; /* slate-800 */
           outline: none;
           transition: all 0.2s ease;
-          margin-top: 0.25rem;
+          font-size: 0.95rem;
         }
         .wizard-container input:focus,
-        .wizard-container textarea:focus {
-          border-color: #22c55e;
-          box-shadow: 0 0 0 4px rgba(34,197,94,0.15);
+        .wizard-container textarea:focus,
+        .wizard-container select:focus {
+          border-color: #3b82f6; /* blue-500 */
+          box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
         .wizard-container label {
           display: block;
           font-weight: 600;
-          color: #065f46;
+          color: #475569; /* slate-600 */
           font-size: 0.875rem;
-          margin-top: 1rem;
+          margin-bottom: 0.5rem;
+          margin-top: 1.25rem;
+          text-transform: uppercase;
+          letter-spacing: 0.025em;
+        }
+        /* Style for placeholder */
+        .wizard-container input::placeholder,
+        .wizard-container textarea::placeholder {
+          color: #94a3b8; /* slate-400 */
         }
       `}</style>
 
       <Navbar />
 
-      <div className="flex-1 container mx-auto px-4 py-12 max-w-5xl">
-        {/* Header */}
+      <div className="flex-1 container mx-auto px-4 py-16 max-w-6xl relative">
+
+        {/* Background Decor */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/5 rounded-full blur-3xl -z-10"></div>
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-amber-500/5 rounded-full blur-3xl -z-10"></div>
+
+        {/* Header Section */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-extrabold text-green-700 mb-2">
+          <div className="inline-flex items-center justify-center p-3 mb-4 bg-white rounded-xl shadow-sm border border-slate-100">
+            <FaBuilding className="text-2xl text-blue-600" />
+          </div>
+          <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-3 tracking-tight">
             Business Registration
           </h1>
-          <p className="text-green-600 font-medium">
-            Step {currentStep} of {totalSteps} — {steps[currentStep - 1].name}
+          <p className="text-slate-500 font-medium">
+            Step <span className="text-blue-600 font-bold">{currentStep}</span> of {totalSteps} — {steps[currentStep - 1].name}
           </p>
         </div>
 
-        {/* Stepper */}
-        <div className="relative mb-14 max-w-4xl mx-auto">
-          <div className="absolute top-1/2 left-0 w-full h-1 bg-green-100 -translate-y-1/2 rounded-full"></div>
-          <div
-            className="absolute top-1/2 left-0 h-1 bg-green-600 -translate-y-1/2 transition-all duration-500 rounded-full"
-            style={{ width: `${((currentStep - 1) / (totalSteps - 1)) * 100}%` }}
-          />
+        {/* Modern Stepper */}
+        <div className="max-w-4xl mx-auto mb-12">
+          <div className="relative">
+            {/* Connecting Line */}
+            <div className="absolute top-1/2 left-0 w-full h-1 bg-slate-200 -translate-y-1/2 rounded-full z-0"></div>
+            <div
+              className="absolute top-1/2 left-0 h-1 bg-blue-600 -translate-y-1/2 transition-all duration-500 rounded-full z-0"
+              style={{ width: `${((currentStep - 1) / (totalSteps - 1)) * 100}%` }}
+            ></div>
 
-          <div className="flex justify-between">
-            {steps.map(step => (
-              <div key={step.id} className="flex flex-col items-center">
-                <div className={`w-11 h-11 rounded-xl flex items-center justify-center border-2 font-bold transition
-                  ${currentStep >= step.id
-                    ? 'bg-green-600 border-green-600 text-white shadow-md'
-                    : 'bg-white border-green-200 text-green-400'}`}>
-                  {step.id}
-                </div>
-                <span className={`mt-2 text-[11px] font-semibold hidden md:block
-                  ${currentStep >= step.id ? 'text-green-600' : 'text-green-300'}`}>
-                  {step.name}
-                </span>
-              </div>
-            ))}
+            <div className="flex justify-between relative z-10">
+              {steps.map((step) => {
+                const isCompleted = currentStep > step.id;
+                const isCurrent = currentStep === step.id;
+
+                return (
+                  <div key={step.id} className="flex flex-col items-center group cursor-default">
+                    <div
+                      className={`w-10 h-10 rounded-full flex items-center justify-center border-4 transition-all duration-300 shadow-sm
+                        ${isCompleted
+                          ? 'bg-blue-600 border-blue-600 text-white'
+                          : isCurrent
+                            ? 'bg-amber-500 border-amber-500 text-white scale-110 shadow-amber-500/30'
+                            : 'bg-white border-slate-200 text-slate-300'
+                        }`}
+                    >
+                      {isCompleted ? <FaCheck size={14} /> : <span className="text-sm font-bold">{step.id}</span>}
+                    </div>
+
+                    {/* Step Label (Desktop) */}
+                    <span
+                      className={`absolute top-12 text-xs font-bold uppercase tracking-wider transition-all duration-300 whitespace-nowrap hidden md:block
+                        ${isCurrent ? 'text-amber-600 -translate-y-1' : isCompleted ? 'text-blue-600' : 'text-slate-300'}
+                      `}
+                    >
+                      {step.name}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
 
         {/* Alerts */}
-        <div className="max-w-3xl mx-auto mb-6">
+        <div className="max-w-4xl mx-auto mb-8">
           {error && (
-            <div className="bg-red-50 text-red-700 p-4 rounded-xl border border-red-200">
+            <div className="bg-red-50 text-red-700 p-4 rounded-lg border border-red-200 text-sm font-medium flex items-center shadow-sm animate-fade-in">
+              <span className="w-2 h-2 bg-red-500 rounded-full mr-3"></span>
               {error}
             </div>
           )}
           {success && (
-            <div className="bg-green-50 text-green-700 p-4 rounded-xl border border-green-200">
+            <div className="bg-emerald-50 text-emerald-700 p-4 rounded-lg border border-emerald-200 text-sm font-medium flex items-center shadow-sm animate-fade-in">
+              <span className="w-2 h-2 bg-emerald-500 rounded-full mr-3"></span>
               {success}
             </div>
           )}
         </div>
 
-        {/* Content */}
-        <div className="max-w-3xl mx-auto">
-          <div className="bg-white rounded-3xl shadow-xl border border-green-100 wizard-container">
-            <div className="p-10 md:p-14">
+        {/* Main Form Content */}
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 wizard-container relative overflow-hidden">
+            {/* Top accent line */}
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-blue-500"></div>
+
+            <div className="p-8 md:p-12">
               {renderStep()}
             </div>
           </div>
 
-          {/* Progress dots */}
+          {/* Bottom Progress Indicator (Dots) */}
           <div className="mt-8 flex justify-center gap-2">
             {[...Array(totalSteps)].map((_, i) => (
               <div
                 key={i}
-                className={`h-1.5 rounded-full transition-all
-                ${currentStep === i + 1 ? 'w-8 bg-green-600' : 'w-2 bg-green-200'}`}
+                className={`h-1.5 rounded-full transition-all duration-300
+                  ${currentStep === i + 1 ? 'w-8 bg-amber-500' : currentStep > i + 1 ? 'w-2 bg-blue-500' : 'w-2 bg-slate-200'}
+                `}
               />
             ))}
           </div>

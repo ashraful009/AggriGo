@@ -13,9 +13,6 @@ import {
   FaIndustry,
   FaBoxOpen,
   FaChartLine,
-  FaImages,
-  FaFileContract,
-  FaExternalLinkAlt,
   FaUserTie,
   FaMapMarkerAlt
 } from 'react-icons/fa';
@@ -206,47 +203,6 @@ const Dashboard = () => {
               </div>
             </div>
 
-            {/* VISUAL GALLERY (Designed to not cut images) */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
-                <h3 className="font-bold text-gray-800 flex items-center gap-2">
-                  <FaImages className="text-emerald-600" /> {t('dashboard.sections.visualGallery')}
-                </h3>
-              </div>
-              <div className="p-6">
-                {/* Product Images */}
-                {businessData.productImages?.length > 0 && (
-                  <div className="mb-8">
-                    <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">{t('dashboard.gallery.productShowcase')}</h4>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                      {businessData.productImages.map((img, idx) => (
-                        <ImageCard key={idx} src={img} label={`${t('dashboard.gallery.product')} ${idx + 1}`} />
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Process Images */}
-                {(businessData.packagingImage || businessData.productionProcessImage) && (
-                  <div>
-                    <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">{t('dashboard.gallery.processPackaging')}</h4>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                      {businessData.packagingImage && (
-                        <ImageCard src={businessData.packagingImage} label={t('dashboard.gallery.packaging')} />
-                      )}
-                      {businessData.productionProcessImage && (
-                        <ImageCard src={businessData.productionProcessImage} label={t('dashboard.gallery.productionProcess')} />
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {(!businessData.productImages?.length && !businessData.packagingImage && !businessData.productionProcessImage) && (
-                  <p className="text-center text-gray-400 italic py-4">{t('dashboard.gallery.noImages')}</p>
-                )}
-              </div>
-            </div>
-
             {/* MANAGE VISUAL GALLERY - Upload/Delete */}
             <VisualGallery onUpdate={fetchBusinessData} />
 
@@ -266,21 +222,6 @@ const Dashboard = () => {
                 <ContactRow icon={<FaMapMarkerAlt />} text={`${businessData.thana}, ${businessData.district}`} />
                 <ContactRow icon="@" text={businessData.email} />
                 <ContactRow icon="📞" text={`+880${businessData.mobileNumber}`} />
-              </div>
-            </div>
-
-            {/* Documents Section */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-100 flex items-center bg-gray-50/50">
-                <h3 className="font-bold text-gray-800 flex items-center gap-2">
-                  <FaFileContract className="text-emerald-600" /> {t('dashboard.sections.documents')}
-                </h3>
-              </div>
-              <div className="p-4 space-y-3">
-                <DocLink title={t('dashboard.docs.tradeLicense')} file={businessData.registrationDocuments?.tradeLicenseFile} />
-                <DocLink title={t('dashboard.docs.tin')} file={businessData.registrationDocuments?.tinFile} />
-                <DocLink title={t('dashboard.docs.bsti')} file={businessData.registrationDocuments?.bstiFile} />
-                <DocLink title={t('dashboard.docs.exportLicense')} file={businessData.registrationDocuments?.exportLicenseFile} />
               </div>
             </div>
 
@@ -313,6 +254,7 @@ const StatCard = ({ label, value, icon, color }) => {
     emerald: 'bg-emerald-50 text-emerald-600',
     purple: 'bg-purple-50 text-purple-600'
   };
+
   return (
     <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
       <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl ${colors[color] || colors.emerald}`}>
@@ -353,32 +295,7 @@ const ImageCard = ({ src, label }) => (
   </div>
 );
 
-// 4. Document Link
-const DocLink = ({ title, file }) => {
-  if (!file) return null;
-  const isImage = file.match(/\.(jpg|jpeg|png|gif)$/i);
-
-  return (
-    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100 hover:bg-emerald-50 hover:border-emerald-200 transition-colors group">
-      <div className="flex items-center gap-3">
-        <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-emerald-600 shadow-sm text-xs">
-          {isImage ? <FaImages /> : <FaFilePdf />}
-        </div>
-        <span className="text-sm font-semibold text-gray-700">{title}</span>
-      </div>
-      <a
-        href={file}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-gray-400 group-hover:text-emerald-600 transition-colors"
-      >
-        <FaExternalLinkAlt size={12} />
-      </a>
-    </div>
-  );
-};
-
-// 5. Contact Row
+// 4. Contact Row
 const ContactRow = ({ icon, text }) => (
   <div className="flex items-center gap-3 text-sm text-gray-600">
     <span className="w-6 flex justify-center text-emerald-500">{icon}</span>
@@ -386,7 +303,7 @@ const ContactRow = ({ icon, text }) => (
   </div>
 );
 
-// 6. Badge
+// 5. Badge
 const Badge = ({ text }) => (
   <span className="bg-white/60 text-lime-800 text-xs px-2 py-1 rounded-md border border-lime-200 font-semibold">
     {text}

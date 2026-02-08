@@ -1,11 +1,11 @@
 import { useState, useRef } from 'react';
-import { FaCamera, FaTrash, FaUser, FaTimes } from 'react-icons/fa';
+import { FaCamera, FaTrash, FaUser, FaTimes, FaCheck } from 'react-icons/fa';
 import api from '../utils/api';
 
 const ProfilePicture = ({ user, onUpdate }) => {
   const [currentPicture, setCurrentPicture] = useState(
-    user?.profilePictures?.length > 0 
-      ? user.profilePictures[user.profilePictures.length - 1].url 
+    user?.profilePictures?.length > 0
+      ? user.profilePictures[user.profilePictures.length - 1].url
       : null
   );
   const [loading, setLoading] = useState(false);
@@ -74,7 +74,7 @@ const ProfilePicture = ({ user, onUpdate }) => {
         setCurrentPicture(response.data.profilePicture.url);
         setShowPreview(false);
         setPreviewImage(null);
-        
+
         // Notify parent component to refresh user data
         if (onUpdate) onUpdate();
       }
@@ -92,7 +92,7 @@ const ProfilePicture = ({ user, onUpdate }) => {
   // Delete profile picture
   const handleDelete = async () => {
     if (!currentPicture) return;
-    
+
     if (!window.confirm('Are you sure you want to remove your profile picture?')) {
       return;
     }
@@ -104,13 +104,12 @@ const ProfilePicture = ({ user, onUpdate }) => {
       const response = await api.delete('/profile/picture');
 
       if (response.data.success) {
-        // Set to previous picture if exists, otherwise null
         setCurrentPicture(
-          response.data.profilePicture 
-            ? response.data.profilePicture.url 
+          response.data.profilePicture
+            ? response.data.profilePicture.url
             : null
         );
-        
+
         if (onUpdate) onUpdate();
       }
     } catch (error) {
@@ -132,36 +131,43 @@ const ProfilePicture = ({ user, onUpdate }) => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative flex flex-col items-center">
       {/* Profile Picture Display */}
-      <div className="relative group">
-        <div className="w-24 h-24 bg-white rounded-full mx-auto shadow-md flex items-center justify-center text-4xl font-bold text-emerald-600 border-2 border-emerald-100 overflow-hidden">
+      <div className="relative group w-28 h-28">
+        <div className="w-full h-full bg-slate-100 rounded-full shadow-md flex items-center justify-center text-4xl font-bold text-slate-400 border-4 border-white overflow-hidden ring-1 ring-slate-200">
           {currentPicture ? (
-            <img 
-              src={currentPicture} 
-              alt="Profile" 
-              className="w-full h-full object-cover"
+            <img
+              src={currentPicture}
+              alt="Profile"
+              className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-300"
             />
           ) : (
-            <FaUser className="text-emerald-400 text-3xl" />
+            <FaUser className="text-slate-300 text-4xl" />
           )}
         </div>
 
         {/* Overlay on hover */}
-        <div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+        <div className="absolute inset-0 bg-slate-900/60 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center cursor-pointer backdrop-blur-[1px]">
           <button
             onClick={() => fileInputRef.current?.click()}
             disabled={loading}
-            className="text-white hover:text-emerald-300 transition-colors"
+            className="text-white hover:text-blue-200 transition-colors transform hover:scale-110"
             title={currentPicture ? "Change Picture" : "Upload Picture"}
           >
             <FaCamera size={24} />
           </button>
         </div>
+
+        {/* Loading Overlay */}
+        {loading && !showPreview && (
+          <div className="absolute inset-0 bg-white/80 rounded-full flex items-center justify-center z-10">
+            <div className="w-8 h-8 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin"></div>
+          </div>
+        )}
       </div>
 
       {/* Action Buttons */}
-      <div className="mt-3 flex flex-col gap-2">
+      <div className="mt-4 flex flex-col items-center gap-2 w-full max-w-[200px]">
         <input
           ref={fileInputRef}
           type="file"
@@ -169,87 +175,84 @@ const ProfilePicture = ({ user, onUpdate }) => {
           onChange={handleFileSelect}
           className="hidden"
         />
-        
+
         <button
           onClick={() => fileInputRef.current?.click()}
           disabled={loading}
-          className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-2 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed font-semibold"
+          className="text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors flex items-center gap-1.5 py-1"
         >
-          <FaCamera size={12} />
-          {currentPicture ? 'Change Picture' : 'Upload Picture'}
+          <FaCamera /> {currentPicture ? 'Change Photo' : 'Upload Photo'}
         </button>
 
         {currentPicture && (
           <button
             onClick={handleDelete}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-2 bg-red-50 hover:bg-red-100 text-red-600 text-xs px-3 py-2 rounded-lg transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed font-semibold border border-red-200"
+            className="text-xs font-medium text-red-500 hover:text-red-700 transition-colors flex items-center gap-1.5 py-1"
           >
-            <FaTrash size={10} />
-            Delete Picture
+            <FaTrash size={10} /> Remove
           </button>
         )}
       </div>
 
       {/* Error Message */}
       {error && (
-        <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-xs text-red-600 text-center">{error}</p>
+        <div className="mt-3 p-2.5 bg-red-50 border border-red-100 rounded-lg w-full text-center">
+          <p className="text-xs font-semibold text-red-600">{error}</p>
         </div>
       )}
 
       {/* Preview Modal */}
       {showPreview && previewImage && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-bold text-gray-800">Preview Profile Picture</h3>
-              <button
-                onClick={cancelPreview}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                <FaTimes size={20} />
-              </button>
-            </div>
+        <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in zoom-in duration-200">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 relative">
 
-            <div className="mb-4">
-              <div className="w-48 h-48 mx-auto bg-gray-100 rounded-full overflow-hidden border-4 border-emerald-100">
+            <button
+              onClick={cancelPreview}
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100"
+            >
+              <FaTimes size={16} />
+            </button>
+
+            <h3 className="text-lg font-bold text-slate-800 mb-6 text-center">Preview Photo</h3>
+
+            <div className="mb-6 relative">
+              <div className="w-40 h-40 mx-auto bg-slate-100 rounded-full overflow-hidden border-4 border-white shadow-lg ring-1 ring-slate-200">
                 <img
                   src={previewImage.url}
                   alt="Preview"
                   className="w-full h-full object-cover"
                 />
               </div>
+              {/* Checkmark Badge */}
+              <div className="absolute bottom-1 right-1/2 translate-x-12 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center shadow-md border-2 border-white">
+                <FaCheck size={12} />
+              </div>
             </div>
 
-            <p className="text-sm text-gray-600 text-center mb-4">
-              This is how your profile picture will look
+            <p className="text-xs text-slate-500 text-center mb-6 px-4">
+              Looks good? Click confirm to save this as your new profile picture.
             </p>
 
-            <div className="flex gap-3">
+            <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={cancelPreview}
                 disabled={loading}
-                className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-semibold disabled:opacity-50"
+                className="px-4 py-2.5 border border-slate-200 text-slate-600 rounded-xl hover:bg-slate-50 transition-colors font-bold text-sm disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 onClick={handleUpload}
                 disabled={loading}
-                className="flex-1 px-4 py-2.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors font-semibold disabled:bg-emerald-400 disabled:cursor-not-allowed"
+                className="px-4 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-bold text-sm shadow-lg shadow-blue-500/20 disabled:bg-blue-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                {loading ? 'Uploading...' : 'Confirm Upload'}
+                {loading ? (
+                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                ) : 'Confirm'}
               </button>
             </div>
           </div>
-        </div>
-      )}
-
-      {/* Loading Overlay */}
-      {loading && !showPreview && (
-        <div className="absolute inset-0 bg-white/80 rounded-full flex items-center justify-center">
-          <div className="w-8 h-8 border-3 border-emerald-200 border-t-emerald-600 rounded-full animate-spin"></div>
         </div>
       )}
     </div>

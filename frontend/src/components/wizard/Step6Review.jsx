@@ -12,7 +12,11 @@ import {
   FaCloudUploadAlt,
   FaArrowLeft,
   FaPaperPlane,
-  FaFilePdf
+  FaFilePdf,
+  FaMapMarkerAlt,
+  FaPhone,
+  FaEnvelope,
+  FaCheck
 } from 'react-icons/fa';
 
 const Step6Review = ({ onSubmit, onBack }) => {
@@ -53,7 +57,7 @@ const Step6Review = ({ onSubmit, onBack }) => {
   const handleSubmitForm = (e) => {
     e.preventDefault();
     if (!consents.accuracy) {
-      alert(t('form.step6.accuracyRequired'));
+      alert(t('form.step6.accuracyRequired') || "Please confirm that the information is accurate.");
       return;
     }
     onSubmit({
@@ -65,203 +69,225 @@ const Step6Review = ({ onSubmit, onBack }) => {
   };
 
   return (
-    <form onSubmit={handleSubmitForm} className="max-w-5xl mx-auto">
+    // Change 1: Max width increased to 7xl and added responsive horizontal padding
+    <form onSubmit={handleSubmitForm} className="w-full max-w-10xl mx-auto px-4 sm:px-6 lg:px-8 font-sans text-slate-800">
 
       {/* Header */}
-      <div className="text-center mb-10">
-        <h2 className="text-3xl font-bold text-gray-800">{t('form.step6.title')}</h2>
-        <p className="text-gray-500 mt-2">{t('form.step6.subtitle')}</p>
+      <div className="text-center mb-12">
+        <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-blue-50 text-blue-600 mb-5 shadow-sm">
+          <FaCheckCircle className="text-3xl" />
+        </div>
+        <h2 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">{t('form.step6.title') || "Review Application"}</h2>
+        <p className="text-slate-500 mt-3 max-w-2xl mx-auto text-lg">
+          {t('form.step6.subtitle') || "Please review all the information below carefully before submitting your application."}
+        </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
 
-        {/* LEFT COLUMN: Data Review */}
-        <div className="lg:col-span-2 space-y-6">
+        {/* LEFT COLUMN: Data Review (Span 8 on Large Screens) */}
+        <div className="lg:col-span-8 space-y-8">
 
           {/* 1. Identity & Contact */}
-          <ReviewCard title={t('form.step6.basicInfo')} icon={<FaUser />}>
-            <DataGrid>
-              <DataItem label="মালিকের নাম" value={formData.ownerName} />
-              <DataItem label="ব্র্যান্ডের নাম" value={formData.brandName} />
-              <DataItem label="লিঙ্গ" value={formData.gender} />
-              <DataItem label="মোবাইল" value={formData.mobileNumber} />
-              <DataItem label="ইমেইল" value={formData.email} />
-              <DataItem label="অবস্থান" value={`${formData.thana}, ${formData.district}`} />
-              <DataItem label="সম্পূর্ণ ঠিকানা" value={formData.detailedAddress} fullWidth />
-            </DataGrid>
-          </ReviewCard>
+          <ReviewSection title={t('form.step6.basicInfo') || "Basic Information"} icon={<FaUser />}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <ReadOnlyField label="Owner Name" value={formData.ownerName} />
+              <ReadOnlyField label="Brand Name" value={formData.brandName} />
+              <ReadOnlyField label="Gender" value={formData.gender} />
+
+              <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-slate-100 mt-2">
+                <ContactField icon={<FaPhone />} label="Mobile" value={formData.mobileNumber} />
+                <ContactField icon={<FaEnvelope />} label="Email" value={formData.email} />
+                <ContactField icon={<FaMapMarkerAlt />} label="Location" value={`${formData.thana}, ${formData.district}`} fullWidth />
+                <ReadOnlyField label="Detailed Address" value={formData.detailedAddress} fullWidth />
+              </div>
+            </div>
+          </ReviewSection>
 
           {/* 2. Product Info */}
-          <ReviewCard title={t('form.step6.productDetails')} icon={<FaBoxOpen />}>
-            <DataGrid>
-              <DataItem label="পণ্যের নাম" value={formData.productName} />
-              <DataItem label="শ্রেণী" value={formData.productType} />
-              <DataItem label="উৎপাদন ধরন" value={formData.productionType} />
-              <DataItem label="স্থান" value={formData.productionPlace} />
-              <DataItem label="সক্ষমতা" value={formData.productionCapacity} />
-              <DataItem label="খুচরা মূল্য" value={formData.retailPrice ? `৳${formData.retailPrice}` : 'প্রযোজ্য নয়'} />
-            </DataGrid>
-          </ReviewCard>
+          <ReviewSection title={t('form.step6.productDetails') || "Product Details"} icon={<FaBoxOpen />}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <ReadOnlyField label="Product Name" value={formData.productName} />
+              <ReadOnlyField label="Category" value={formData.productType} />
+              <ReadOnlyField label="Production Type" value={formData.productionType} />
+              <ReadOnlyField label="Production Place" value={formData.productionPlace} />
+              <ReadOnlyField label="Capacity" value={formData.productionCapacity} />
+              <ReadOnlyField label="Retail Price" value={formData.retailPrice ? `৳${formData.retailPrice}` : 'N/A'} />
+            </div>
+          </ReviewSection>
 
-          {/* 3. Visual Gallery (No Crop) */}
-          <ReviewCard title={t('form.step6.visualAssets')} icon={<FaImages />}>
-            <div className="space-y-4">
+          {/* 3. Visual Gallery */}
+          <ReviewSection title={t('form.step6.visualAssets') || "Visual Assets"} icon={<FaImages />}>
+            <div className="space-y-6">
               {/* Product Images */}
-              {formData.productImages?.length > 0 && (
-                <div>
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">পণ্যের ছবি</p>
-                  <div className="grid grid-cols-3 gap-3">
+              <div>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">Product Showcase</p>
+                {formData.productImages?.length > 0 ? (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
                     {formData.productImages.slice(0, 3).map((img, idx) => (
-                      <ImagePreview key={idx} src={img} alt={`Product ${idx + 1}`} />
+                      <ImagePreview key={idx} src={img} label={`Product ${idx + 1}`} />
                     ))}
+                    {formData.productImages.length > 3 && (
+                      <div className="flex items-center justify-center bg-slate-50 rounded-lg p-4 text-slate-500 text-sm font-medium">
+                        +{formData.productImages.length - 3} more
+                      </div>
+                    )}
                   </div>
-                </div>
-              )}
+                ) : (
+                  <MissingLabel text="No product images uploaded" />
+                )}
+              </div>
 
               {/* Process Images */}
-              {(formData.packagingImage || formData.productionProcessImage) && (
-                <div>
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">প্রক্রিয়া</p>
-                  <div className="grid grid-cols-2 gap-3">
-                    {formData.packagingImage && <ImagePreview src={formData.packagingImage} alt="Packaging" />}
-                    {formData.productionProcessImage && <ImagePreview src={formData.productionProcessImage} alt="Production" />}
-                  </div>
+              <div>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">Process & Packaging</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  {formData.packagingImage ? (
+                    <ImagePreview src={formData.packagingImage} label="Packaging" />
+                  ) : (
+                    <MissingLabel text="No packaging image" />
+                  )}
+                  {formData.productionProcessImage ? (
+                    <ImagePreview src={formData.productionProcessImage} label="Production Process" />
+                  ) : (
+                    <MissingLabel text="No production image" />
+                  )}
                 </div>
-              )}
+              </div>
             </div>
-          </ReviewCard>
+          </ReviewSection>
 
           {/* 4. Documents */}
-          <ReviewCard title={t('form.step6.attachedDocuments')} icon={<FaFileContract />}>
-            <div className="space-y-2">
-              <DocItem label={t('dashboard.docs.tradeLicense')} file={formData.registrationDocuments?.tradeLicenseFile} t={t} />
-              <DocItem label={t('dashboard.docs.tin')} file={formData.registrationDocuments?.tinFile} t={t} />
-              <DocItem label={t('dashboard.docs.bsti')} file={formData.registrationDocuments?.bstiFile} t={t} />
-              <DocItem label={t('dashboard.docs.exportLicense')} file={formData.registrationDocuments?.exportLicenseFile} t={t} />
+          <ReviewSection title={t('form.step6.attachedDocuments') || "Documents"} icon={<FaFileContract />}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <DocItem label={t('dashboard.docs.tradeLicense') || "Trade License"} file={formData.registrationDocuments?.tradeLicenseFile} checked={formData.registrationDocuments?.tradeLicense} />
+              <DocItem label={t('dashboard.docs.tin') || "TIN Certificate"} file={formData.registrationDocuments?.tinFile} checked={formData.registrationDocuments?.tin} />
+              <DocItem label={t('dashboard.docs.bsti') || "BSTI Approval"} file={formData.registrationDocuments?.bstiFile} checked={formData.registrationDocuments?.bsti} />
+              <DocItem label={t('dashboard.docs.exportLicense') || "Export License"} file={formData.registrationDocuments?.exportLicenseFile} checked={formData.registrationDocuments?.exportLicense} />
             </div>
-          </ReviewCard>
+          </ReviewSection>
         </div>
 
-        {/* RIGHT COLUMN: Consent & Sign */}
-        <div className="space-y-6">
+        {/* RIGHT COLUMN: Consent & Sign (Span 4 on Large Screens) */}
+        <div className="lg:col-span-4 space-y-8">
 
-          {/* Consent Box */}
-          <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
-            <div className="bg-emerald-50 px-6 py-4 border-b border-emerald-100">
-              <h3 className="font-bold text-emerald-800 flex items-center gap-2">
-                <FaCheckCircle /> {t('form.step6.termsTitle')}
+          {/* Consent Box - Sticky for better UX on large screens */}
+          <div className="bg-white rounded-2xl shadow-lg shadow-slate-200/50 border border-slate-200 overflow-hidden lg:sticky lg:top-28">
+            <div className="bg-gradient-to-r from-blue-50 to-white px-6 py-5 border-b border-blue-100">
+              <h3 className="font-bold text-blue-900 flex items-center gap-2 text-sm uppercase tracking-wide">
+                <FaCheckCircle /> Terms & Confirmation
               </h3>
             </div>
+
             <div className="p-6 space-y-4">
-              <label className={`flex items-start gap-3 p-3 rounded-lg border transition-all cursor-pointer ${consents.accuracy ? 'bg-emerald-50 border-emerald-200' : 'bg-gray-50 border-gray-100 hover:border-emerald-200'}`}>
+              <label className={`flex items-start gap-4 p-4 rounded-xl border cursor-pointer transition-all duration-200 ${consents.accuracy ? 'bg-blue-50/50 border-blue-200 shadow-sm' : 'bg-slate-50 border-slate-100 hover:border-blue-200'}`}>
+                <div className={`mt-0.5 w-6 h-6 rounded-md border-2 flex items-center justify-center transition-colors flex-shrink-0 ${consents.accuracy ? 'bg-blue-600 border-blue-600 text-white' : 'bg-white border-slate-300'}`}>
+                  {consents.accuracy && <FaCheck size={12} />}
+                </div>
                 <input
                   type="checkbox"
-                  className="mt-1 accent-emerald-600 w-4 h-4"
+                  className="hidden"
                   checked={consents.accuracy}
                   onChange={(e) => setConsents(prev => ({ ...prev, accuracy: e.target.checked }))}
                 />
-                <span className="text-sm text-gray-700 leading-snug">
-                  {t('form.step6.accuracyConsent')} <span className="text-red-500">*</span>
+                <span className="text-sm text-slate-700 leading-relaxed select-none font-medium">
+                  I hereby declare that the information provided is true and accurate. <span className="text-red-500">*</span>
                 </span>
               </label>
 
-              <label className={`flex items-start gap-3 p-3 rounded-lg border transition-all cursor-pointer ${consents.marketing ? 'bg-blue-50 border-blue-200' : 'bg-gray-50 border-gray-100 hover:border-blue-200'}`}>
+              <label className={`flex items-start gap-4 p-4 rounded-xl border cursor-pointer transition-all duration-200 ${consents.marketing ? 'bg-amber-50/50 border-amber-200 shadow-sm' : 'bg-slate-50 border-slate-100 hover:border-amber-200'}`}>
+                <div className={`mt-0.5 w-6 h-6 rounded-md border-2 flex items-center justify-center transition-colors flex-shrink-0 ${consents.marketing ? 'bg-amber-500 border-amber-500 text-white' : 'bg-white border-slate-300'}`}>
+                  {consents.marketing && <FaCheck size={12} />}
+                </div>
                 <input
                   type="checkbox"
-                  className="mt-1 accent-blue-600 w-4 h-4"
+                  className="hidden"
                   checked={consents.marketing}
                   onChange={(e) => setConsents(prev => ({ ...prev, marketing: e.target.checked }))}
                 />
-                <span className="text-sm text-gray-700 leading-snug">
-                  {t('form.step6.marketingConsent')}
+                <span className="text-sm text-slate-700 leading-relaxed select-none font-medium">
+                  I agree to receive marketing updates and offers from AggriGo.
                 </span>
               </label>
             </div>
-          </div>
 
-          {/* Signature Box */}
-          <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
-            <div className="bg-gray-50 px-6 py-4 border-b border-gray-100">
-              <h3 className="font-bold text-gray-800 flex items-center gap-2">
-                <FaPenNib className="text-gray-500" /> {t('form.step6.digitalSignature')}
+            {/* Signature Box */}
+            <div className="border-t border-slate-100 p-6 bg-slate-50/50">
+              <h3 className="font-bold text-slate-800 flex items-center gap-2 text-sm uppercase tracking-wide mb-4">
+                <FaPenNib className="text-slate-400" /> Digital Signature
               </h3>
-            </div>
 
-            <div className="p-6">
-              {/* Sign Method Tabs */}
-              <div className="flex bg-gray-100 p-1 rounded-lg mb-4">
+              {/* Tabs */}
+              <div className="flex bg-slate-200/60 p-1 rounded-xl mb-5">
                 <button
                   type="button"
                   onClick={() => setSignMethod('type')}
-                  className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${signMethod === 'type' ? 'bg-white shadow-sm text-emerald-600' : 'text-gray-500 hover:text-gray-700'}`}
+                  className={`flex-1 py-2.5 text-xs font-bold uppercase rounded-lg transition-all ${signMethod === 'type' ? 'bg-white shadow-sm text-blue-700' : 'text-slate-500 hover:text-slate-700'}`}
                 >
-                  {t('form.step6.typeName')}
+                  Type Name
                 </button>
                 <button
                   type="button"
                   onClick={() => setSignMethod('upload')}
-                  className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${signMethod === 'upload' ? 'bg-white shadow-sm text-emerald-600' : 'text-gray-500 hover:text-gray-700'}`}
+                  className={`flex-1 py-2.5 text-xs font-bold uppercase rounded-lg transition-all ${signMethod === 'upload' ? 'bg-white shadow-sm text-blue-700' : 'text-slate-500 hover:text-slate-700'}`}
                 >
-                  {t('form.step6.uploadImage')}
+                  Upload Image
                 </button>
               </div>
 
-              <div className="min-h-[120px] flex flex-col justify-center">
+              <div className="min-h-[120px] flex flex-col justify-center bg-white border-2 border-dashed border-slate-300 rounded-xl p-4 hover:border-blue-300 transition-colors">
                 {signMethod === 'type' ? (
                   <div className="relative">
-                    <label className="text-xs text-gray-400 mb-1 block">{t('form.step6.enterFullName')}</label>
                     <input
                       type="text"
                       value={signature.startsWith('http') ? '' : signature}
                       onChange={(e) => setSignature(e.target.value)}
-                      className="w-full border-b-2 border-gray-300 focus:border-emerald-500 outline-none py-2 text-3xl font-serif italic text-gray-800 placeholder-gray-300 text-center bg-transparent"
-                      placeholder={t('form.step6.yourSignature')}
+                      className="w-full bg-transparent border-b-2 border-slate-200 focus:border-blue-500 outline-none py-2 text-3xl font-serif italic text-slate-800 placeholder-slate-300 text-center transition-colors"
+                      placeholder="Type name..."
                     />
                   </div>
                 ) : (
-                  <div className="text-center">
-                    <label className="cursor-pointer flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-emerald-400 hover:bg-emerald-50 transition-all">
-                      <FaCloudUploadAlt className="text-3xl text-gray-400 mb-2" />
-                        <span className="text-sm text-gray-500">{uploading ? t('common.uploading') : t('form.step6.clickToUploadSignature')}</span>
+                    <div className="text-center w-full">
+                      <label className="cursor-pointer flex flex-col items-center justify-center h-full py-4 w-full">
+                        <FaCloudUploadAlt className="text-4xl text-slate-400 mb-2" />
+                        <span className="text-xs text-slate-500 font-bold uppercase tracking-wide">{uploading ? "Uploading..." : "Click to upload"}</span>
                       <input type="file" accept="image/*" className="hidden" onChange={(e) => handleSignatureUpload(e.target.files[0])} />
                     </label>
                   </div>
                 )}
               </div>
 
-              {/* Signature Preview */}
+              {/* Preview */}
               {signature && (
-                <div className="mt-4 pt-4 border-t border-gray-100">
-                  <p className="text-xs text-center text-gray-400 mb-2">পূর্বরূপ</p>
-                  <div className="bg-gray-50 p-4 rounded-lg flex justify-center items-center h-20">
-                    {signature.startsWith('http') ? (
-                      <img src={signature} alt="Sign" className="h-full object-contain" />
-                    ) : (
-                      <span className="font-serif italic text-2xl text-gray-800">{signature}</span>
-                    )}
-                  </div>
+                <div className="mt-5 text-center bg-white p-3 rounded-xl border border-slate-100 shadow-sm">
+                  <p className="text-[10px] text-slate-400 uppercase tracking-wider mb-2 font-bold">Signature Preview</p>
+                  {signature.startsWith('http') ? (
+                    <img src={signature} alt="Sign" className="h-16 object-contain mx-auto" />
+                  ) : (
+                    <p className="font-serif italic text-2xl text-slate-800">{signature}</p>
+                  )}
                 </div>
               )}
             </div>
-          </div>
 
-          {/* Action Buttons */}
-          <div className="pt-4 space-y-3">
-            <button
-              type="submit"
-              disabled={!consents.accuracy || !signature}
-              className="w-full bg-gradient-to-r from-emerald-600 to-lime-600 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-emerald-500/30 transform hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            >
-              <FaPaperPlane /> আবেদন জমা দিন
-            </button>
+            {/* Action Buttons */}
+            <div className="p-6 bg-white border-t border-slate-100 space-y-4">
+              <button
+                type="submit"
+                disabled={!consents.accuracy || !signature}
+                className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white font-bold py-4 rounded-xl shadow-lg shadow-amber-500/25 transform hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2 text-lg"
+              >
+                <FaPaperPlane /> {t('common.submitApplication') || "Submit Application"}
+              </button>
 
-            <button
-              type="button"
-              onClick={onBack}
-              className="w-full bg-white text-gray-600 font-semibold py-3 rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
-            >
-              <FaArrowLeft /> ধাপ ৫ এ ফিরে যান
-            </button>
+              <button
+                type="button"
+                onClick={onBack}
+                className="w-full bg-white text-slate-500 font-bold py-3.5 rounded-xl border-2 border-slate-100 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-700 transition-colors flex items-center justify-center gap-2"
+              >
+                <FaArrowLeft className="text-sm" /> Back to Edit
+              </button>
+            </div>
           </div>
 
         </div>
@@ -270,56 +296,97 @@ const Step6Review = ({ onSubmit, onBack }) => {
   );
 };
 
-// --- Helper Components ---
+// --- Sub-Components (Styled for Form Look) ---
 
-const ReviewCard = ({ title, icon, children }) => (
-  <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6">
-    <div className="px-6 py-3 border-b border-gray-100 bg-gray-50/50 flex items-center gap-2 text-gray-700 font-semibold">
-      <span className="text-emerald-600">{icon}</span> {title}
+const ReviewSection = ({ title, icon, children }) => (
+  <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+    <div className="px-6 py-5 border-b border-slate-100 bg-slate-50/50 flex items-center gap-3">
+      <div className="text-blue-600 bg-blue-100/50 p-2 rounded-lg">{icon}</div>
+      <h3 className="font-bold text-slate-700 text-lg">{title}</h3>
     </div>
-    <div className="p-6">
+    <div className="p-6 md:p-8">
       {children}
     </div>
   </div>
 );
 
-const DataGrid = ({ children }) => (
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8 text-sm">
-    {children}
-  </div>
-);
-
-const DataItem = ({ label, value, fullWidth }) => {
+// Form-like Read Only Input
+const ReadOnlyField = ({ label, value, fullWidth }) => {
   if (!value) return null;
   return (
     <div className={fullWidth ? 'md:col-span-2' : ''}>
-      <span className="block text-xs font-bold text-gray-400 uppercase tracking-wide">{label}</span>
-      <span className="block text-gray-700 font-medium mt-0.5">{value}</span>
+      <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+        {label}
+      </label>
+      <div className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 font-medium text-sm min-h-[48px] flex items-center select-text hover:border-slate-300 transition-colors">
+        {value}
+      </div>
     </div>
   );
 };
 
-// Ensures images are not cropped
-const ImagePreview = ({ src, alt }) => (
-  <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden border border-gray-200 relative group">
-    <img src={src} alt={alt} className="w-full h-full object-contain p-1" />
-    <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+const ContactField = ({ icon, label, value, fullWidth }) => {
+  if (!value) return null;
+  return (
+    <div className={fullWidth ? 'md:col-span-2' : ''}>
+      <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+        {label}
+      </label>
+      <div className="flex items-center gap-3 px-4 py-3.5 bg-white border border-slate-200 rounded-xl text-slate-700 text-sm hover:border-blue-300 transition-colors shadow-sm">
+        <span className="text-blue-500 bg-blue-50 p-1.5 rounded-md">{icon}</span>
+        <span className="font-medium">{value}</span>
+      </div>
+    </div>
+  );
+};
+
+const ImagePreview = ({ src, label }) => (
+  <div className="group relative">
+    <div className="aspect-video bg-white rounded-xl overflow-hidden border border-slate-200 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow">
+      <img src={src} alt={label} className="w-full h-full object-contain p-2" />
+    </div>
+    <p className="text-xs text-center mt-3 text-slate-500 font-bold uppercase tracking-wide">{label}</p>
   </div>
 );
 
-const DocItem = ({ label, file, t }) => {
-  if (!file) return null;
-  return (
-    <div className="flex items-center justify-between p-2.5 bg-gray-50 rounded-lg border border-gray-100">
-      <div className="flex items-center gap-2">
-        <FaFilePdf className="text-red-400" />
-        <span className="text-sm text-gray-700 font-medium">{label}</span>
-      </div>
-      <a href={file} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">
-        {t('common.view')}
-      </a>
+const MissingLabel = ({ text }) => (
+  <div className="aspect-video bg-slate-50 rounded-xl border-2 border-dashed border-slate-200 flex items-center justify-center">
+    <div className="text-center">
+      <p className="text-slate-400 text-sm font-medium">{text}</p>
+      <p className="text-slate-300 text-xs mt-1">Can be uploaded later from Dashboard</p>
     </div>
-  );
+  </div>
+);
+
+const DocItem = ({ label, file, checked }) => {
+  if (file) {
+    return (
+      <div className="flex items-center justify-between p-4 bg-white rounded-xl border border-slate-200 hover:border-blue-400 hover:shadow-md transition-all group cursor-pointer">
+        <div className="flex items-center gap-4 overflow-hidden">
+          <div className="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center text-red-500 flex-shrink-0 border border-red-100">
+            <FaFilePdf className="text-lg" />
+          </div>
+          <span className="text-sm font-bold text-slate-700 truncate group-hover:text-blue-700 transition-colors">{label}</span>
+        </div>
+        <a href={file} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-blue-600 hover:text-blue-800 bg-blue-50 px-3 py-1.5 rounded-lg flex-shrink-0">
+          View
+        </a>
+      </div>
+    );
+  }
+
+  // If no file but was checked in Step 3, show as missing
+  if (checked) {
+    return (
+      <div className="flex items-center justify-between p-4 bg-amber-50 rounded-xl border border-amber-200">
+        <span className="text-sm font-medium text-amber-800">{label}</span>
+        <span className="text-xs font-bold text-amber-600 bg-amber-100 px-3 py-1.5 rounded-lg">Missing</span>
+      </div>
+    );
+  }
+
+  // If not checked, show as not required
+  return null;
 };
 
 export default Step6Review;
