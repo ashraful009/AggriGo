@@ -97,7 +97,7 @@ const Dashboard = () => {
             <p className="text-gray-600 mb-8 text-lg">
               {t('dashboard.noDataMessage')}
             </p>
-            <button onClick={() => navigate('/wizard')} className="bg-emerald-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-emerald-700 transition shadow-lg hover:shadow-emerald-500/30 transform hover:-translate-y-1">
+            <button onClick={() => navigate('/agreement')} className="bg-emerald-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-emerald-700 transition shadow-lg hover:shadow-emerald-500/30 transform hover:-translate-y-1">
               {t('dashboard.startWizard')}
             </button>
           </div>

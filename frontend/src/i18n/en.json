@@ -85,7 +85,11 @@
       "subtitle": "Basic Information & Contact Details",
       "productInfo": "Product Information",
       "productType": "Product Type",
+      "selectProductType": "Select Product Type",
       "category": "Category / Sub-category",
+      "selectSubCategories": "Select Sub-Categories",
+      "noSubCategoriesAvailable": "Please select a product type first",
+      "subcategoriesSelected": "selected",
       "brandName": "Brand Name",
       "registeredName": "Registered Name",
       "ownerInfo": "Owner Information",
@@ -111,13 +115,14 @@
       "title": "Product Details",
       "subtitle": "Provide your product production and pricing information",
       "productName": "Product Name",
+      "basicInfo": "Product Basic Information",
       "productNamePlaceholder": "Example: Organic Honey",
       "shortDescription": "Short Description",
       "descriptionPlaceholder": "Write product features and characteristics...",
       "rawMaterialSource": "Raw Material Source",
       "productionType": "Production Type",
       "productionPlace": "Production Place",
-      "pricingTitle": "Pricing List (Pricing)",
+      "pricingTitle": "Pricing List ",
       "costPerUnit": "Cost Per Unit",
       "wholesalePrice": "Wholesale Price",
       "retailPrice": "Retail Price",
@@ -286,7 +291,8 @@
     "welcomeUser": "Welcome, ",
     "buttons": {
       "downloadPDF": "Download PDF",
-      "editProfile": "Edit Profile"
+      "editProfile": "Edit Profile",
+      "downloadAgreement": "Download Agreement PDF"
     },
     "metrics": {
       "businessAge": "Business Age",
@@ -432,7 +438,13 @@
     "amount": "Amount",
     "image": "Image",
     "change": "Change",
+    "submitApplication": "Submit",
     "view": "View",
     "uploading": "Uploading..."
+  },
+  "agreement": {
+    "checkboxLabel": "I Agree to the Terms & Conditions",
+    "proceedButton": "Proceed to Registration",
+    "scrollToEnableMessage": "⬇️ Please scroll to the bottom to continue"
   }
 }

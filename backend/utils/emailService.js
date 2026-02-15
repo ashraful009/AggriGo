@@ -488,11 +488,94 @@ export const sendProfileUpdateEmail = async (email, name, pdfBuffer) => {
   }
 };
 
+/**
+ * Send Agreement PDF Email (First submission)
+ * @param {String} email - User email
+ * @param {String} name - User name
+ * @param {Buffer} pdfBuffer - PDF buffer
+ * @param {String} language - 'en' or 'bn'
+ */
+export const sendAgreementPDF = async (email, name, pdfBuffer, language = 'en') => {
+  try {
+    const transporter = createTransporter();
+
+    const isBangla = language === 'bn';
+    const dateStr = new Date().toISOString().split('T')[0];
+
+    const mailOptions = {
+      from: process.env.EMAIL_FROM || 'SRIJON Platform <noreply@srijon.com>',
+      to: email,
+      subject: isBangla
+        ? 'চুক্তি সম্পন্ন হয়েছে – SRIJON প্ল্যাটফর্ম'
+        : 'Agreement Confirmation – SRIJON Platform',
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: white; padding: 40px 30px; text-align: center; border-radius: 8px 8px 0 0; }
+            .content { background-color: #f9f9f9; padding: 30px; border-radius: 0 0 8px 8px; }
+            .success { background-color: #d1fae5; border: 2px solid #22c55e; padding: 20px; margin: 20px 0; border-radius: 8px; text-align: center; }
+            .button { display: inline-block; padding: 14px 32px; background-color: #22c55e; color: white; text-decoration: none; border-radius: 6px; margin: 20px 0; font-weight: bold; }
+            .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #666; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1 style="margin: 0; font-size: 32px;">${isBangla ? '🎉 অভিনন্দন!' : '🎉 Congratulations!'}</h1>
+              <p style="margin: 10px 0 0 0; font-size: 18px; opacity: 0.95;">${isBangla ? 'আপনার নিবন্ধন সম্পন্ন হয়েছে' : 'Your Registration is Complete'}</p>
+            </div>
+            <div class="content">
+              <p>${isBangla ? 'প্রিয়' : 'Dear'} <strong>${name}</strong>,</p>
+              
+              <div class="success">
+                <div style="font-size: 48px; margin: 10px 0;">📄</div>
+                <strong style="font-size: 18px; color: #22c55e;">${isBangla ? 'আপনার উদ্যোক্তা অংশগ্রহণ চুক্তি সংযুক্ত করা আছে!' : 'Your Entrepreneur Participation Agreement is Attached!'}</strong>
+                <p style="margin: 10px 0 0 0; color: #666;">${isBangla ? 'এই চুক্তি SRIJON প্ল্যাটফর্মে আপনার নিবন্ধন নিশ্চিত করে।' : 'This agreement confirms your registration with the SRIJON platform.'}</p>
+              </div>
+
+              <p>${isBangla ? 'SRIJON-এ আপনার ব্যবসা নিবন্ধন সম্পন্ন করার জন্য ধন্যবাদ! আপনার উদ্যোক্তা অংশগ্রহণ চুক্তি তৈরি করা হয়েছে এবং এই ইমেইলে সংযুক্ত করা হয়েছে।' : 'Thank you for completing your business registration with SRIJON! Your Entrepreneur Participation Agreement has been generated and attached to this email.'}</p>
+
+              <p style="text-align: center; margin-top: 30px;">
+                <a href="${process.env.FRONTEND_URL || 'http://localhost:5173'}/dashboard" class="button">${isBangla ? 'ড্যাশবোর্ড দেখুন →' : 'View Dashboard →'}</a>
+              </p>
+
+              <p style="margin-top: 20px;">${isBangla ? 'শুভেচ্ছা,' : 'Best regards,'}<br><strong>${isBangla ? 'SRIJON টিম' : 'The SRIJON Team'}</strong></p>
+            </div>
+            <div class="footer">
+              <p>&copy; ${new Date().getFullYear()} SRIJON Platform. All rights reserved.</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `,
+      attachments: [
+        {
+          filename: `Agreement_${name.replace(/\s+/g, '_')}_${dateStr}.pdf`,
+          content: pdfBuffer,
+          contentType: 'application/pdf'
+        }
+      ]
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Agreement PDF email sent: ', info.messageId);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('Agreement PDF email send error:', error);
+    return { success: false, error: error.message };
+  }
+};
+
 export default { 
   sendPasswordResetEmail, 
   sendWelcomeEmail, 
   sendRegistrationCompleteEmail, 
-  sendOTPEmail, 
+  sendOTPEmail,
   sendBusinessDataPDF,
-  sendProfileUpdateEmail 
+  sendProfileUpdateEmail,
+  sendAgreementPDF
 };

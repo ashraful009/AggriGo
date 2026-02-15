@@ -222,9 +222,7 @@ const Step2ProductDetails = ({ onNext, onBack }) => {
           <div>
             <label className="text-sm font-bold text-slate-600 mb-2 block">{t('form.step2.moq') || "Minimum Order Quantity (MOQ)"}</label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-                <FaBox />
-              </div>
+              
               <input
                 type="number"
                 name="moq"
@@ -360,7 +358,7 @@ const PricingInput = ({ label, name, value, onChange, color }) => {
     <div className="flex flex-col group">
       <label className="text-xs font-bold text-slate-500 uppercase mb-2 tracking-wide">{label}</label>
       <div className="relative">
-        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">৳</span>
+        
         <input
           type="number"
           name={name}

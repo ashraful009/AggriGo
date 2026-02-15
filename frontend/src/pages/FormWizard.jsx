@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from '../context/FormContext';
 import Navbar from '../components/Navbar';
@@ -25,6 +25,14 @@ const FormWizard = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
+
+  // Check if agreement is accepted, redirect if not
+  useEffect(() => {
+    const agreementAccepted = localStorage.getItem('agreementAccepted');
+    if (!agreementAccepted) {
+      navigate('/agreement');
+    }
+  }, [navigate]);
 
   const totalSteps = 6;
   const steps = [

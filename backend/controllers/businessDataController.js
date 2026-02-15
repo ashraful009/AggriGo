@@ -63,26 +63,29 @@ export const createBusinessData = async (req, res) => {
       });
     }
 
-    // Generate and send PDF (non-blocking - don't fail if PDF fails)
+    // Generate and send Agreement PDF (non-blocking - don't fail if PDF fails)
     try {
-      // Import PDF and email utilities
-      const { generateBusinessDataPDF } = await import('../utils/pdfGenerator.js');
-      const { sendBusinessDataPDF } = await import('../utils/emailService.js');
+      // Import Agreement PDF and email utilities
+      const { generateAgreementPDF } = await import('../utils/agreementPdfGenerator.js');
+      const { sendAgreementPDF } = await import('../utils/emailService.js');
       const User = await import('../models/User.js');
       
       // Fetch user data
       const user = await User.default.findById(req.user.id);
       
       if (user) {
-        // Generate PDF
-        const pdfBuffer = await generateBusinessDataPDF(req.user.id, businessData);
-        
-        // Send PDF via email
-        await sendBusinessDataPDF(user.email, user.name, pdfBuffer);
-        console.log('Business data PDF sent to:', user.email);
+        // Detect language (default to English)
+        const language = user.preferredLanguage || 'en';
+
+        // Generate Agreement PDF
+        const pdfBuffer = await generateAgreementPDF(req.user.id, businessData, language);
+
+        // Send Agreement PDF via email
+        await sendAgreementPDF(user.email, user.name, pdfBuffer, language);
+        console.log('Agreement PDF sent to:', user.email);
       }
     } catch (pdfError) {
-      console.error('Failed to generate/send PDF:', pdfError);
+      console.error('Failed to generate/send Agreement PDF:', pdfError);
       // Don't fail the request if PDF generation fails
     }
 
@@ -137,24 +140,27 @@ export const updateBusinessData = async (req, res) => {
     // Send email notification if form is being submitted (either first time or update)
     if (isNowSubmitted) {
       try {
-        const { generateBusinessDataPDF } = await import('../utils/pdfGenerator.js');
-        const { sendBusinessDataPDF, sendProfileUpdateEmail } = await import('../utils/emailService.js');
+        const { generateAgreementPDF } = await import('../utils/agreementPdfGenerator.js');
+        const { sendAgreementPDF, sendProfileUpdateEmail } = await import('../utils/emailService.js');
         const User = await import('../models/User.js');
         
         const user = await User.default.findById(req.user.id);
         
         if (user) {
-          const pdfBuffer = await generateBusinessDataPDF(req.user.id, businessData);
+          // Detect language
+          const language = user.preferredLanguage || 'en';
+
+          const pdfBuffer = await generateAgreementPDF(req.user.id, businessData, language);
           
           // Send appropriate email based on whether this is first submission or update
           if (wasSubmitted) {
             // This is an update to already submitted data
-            await sendProfileUpdateEmail(user.email, user.name, pdfBuffer);
+            await sendProfileUpdateEmail(user.email, user.name, pdfBuffer, language);
             console.log('Profile update email sent to:', user.email);
           } else {
             // This is the first submission
-            await sendBusinessDataPDF(user.email, user.name, pdfBuffer);
-            console.log('Registration complete email sent to:', user.email);
+            await sendAgreementPDF(user.email, user.name, pdfBuffer, language);
+            console.log('Agreement PDF sent to:', user.email);
           }
         }
       } catch (emailError) {
@@ -213,9 +219,6 @@ export const deleteBusinessData = async (req, res) => {
   }
 };
 
-// @desc    Download business data as PDF
-// @route   GET /api/business/download-pdf
-// @access  Private
 export const downloadBusinessDataPDF = async (req, res) => {
   try {
     // Get user's business data
@@ -228,32 +231,39 @@ export const downloadBusinessDataPDF = async (req, res) => {
       });
     }
 
-    // Import PDF generator
-    const { generateBusinessDataPDF } = await import('../utils/pdfGenerator.js');
+    // Import Agreement PDF generator
+    const { generateAgreementPDF } = await import('../utils/agreementPdfGenerator.js');
     const User = await import('../models/User.js');
     
     // Fetch user data
     const user = await User.default.findById(req.user.id);
     
-    // Generate PDF
-    const pdfBuffer = await generateBusinessDataPDF(req.user.id, businessData);
+    // Get language from query parameter or user preference
+    const language = req.query.lang || user.preferredLanguage || 'en';
+
+    // Generate Agreement PDF
+    const pdfBuffer = await generateAgreementPDF(req.user.id, businessData, language);
+
+    // Format date for filename
+    const dateStr = new Date().toISOString().split('T')[0];
     
     // Set headers for PDF download
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename=AggriGo_Business_Profile_${user.name.replace(/\s+/g, '_')}.pdf`);
+    res.setHeader('Content-Disposition',
+      `attachment; filename=Agreement_${user.name.replace(/\s+/g, '_')}_${dateStr}.pdf`
+    );
     res.setHeader('Content-Length', pdfBuffer.length);
     
     // Send PDF
     res.send(pdfBuffer);
   } catch (error) {
-    console.error('Download PDF error:', error);
+    console.error('Download Agreement PDF error:', error);
     console.error('Error stack:', error.stack);
     console.error('User ID:', req.user?.id);
-    console.error('Business data exists:', businessData ? 'Yes' : 'No');
     
     res.status(500).json({
       success: false,
-      message: `PDF generation failed: ${error.message}`,
+      message: `Agreement PDF generation failed: ${error.message}`,
       details: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }

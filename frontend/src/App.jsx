@@ -14,6 +14,7 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import FormWizard from './pages/FormWizard';
 import Dashboard from './pages/Dashboard';
+import BusinessAgreement from './pages/BusinessAgreement';
 
 function App() {
   return (
@@ -32,6 +33,14 @@ function App() {
               <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
 
               {/* Private Routes */}
+              <Route
+                path="/agreement"
+                element={
+                  <PrivateRoute>
+                    <BusinessAgreement />
+                  </PrivateRoute>
+                }
+              />
               <Route
                 path="/wizard"
                 element={

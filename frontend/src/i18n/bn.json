@@ -85,7 +85,11 @@
       "subtitle": "Basic Information & Contact Details",
       "productInfo": "Product Information",
       "productType": "পণ্যের ধরন",
+      "selectProductType": "পণ্যের ধরন নির্বাচন করুন",
       "category": "ক্যাটাগরি / সাব-ক্যাটাগরি",
+      "selectSubCategories": "সাব-ক্যাটাগরি নির্বাচন করুন",
+      "noSubCategoriesAvailable": "প্রথমে একটি পণ্যের ধরন নির্বাচন করুন",
+      "subcategoriesSelected": "নির্বাচিত",
       "brandName": "ব্র্যান্ডের নাম",
       "registeredName": "রেজিস্টার্ড নাম",
       "ownerInfo": "Owner Information",
@@ -336,7 +340,8 @@
       "exportInterest": "রপ্তানিতে আগ্রহ",
       "needFunding": "তহবিল প্রয়োজন",
       "needTraining": "প্রশিক্ষণ প্রয়োজন"
-    }
+    },
+    "downloadAgreement": "চুক্তিপত্র PDF ডাউনলোড করুন"
   },
   "footer": {
     "description": "একটি একীভূত প্ল্যাটফর্মে ব্যবসায়গুলিকে বৃদ্ধি এবং তাদের পণ্য প্রদর্শনের ক্ষমতা প্রদান করা।",
@@ -434,5 +439,10 @@
     "change": "পরিবর্তন",
     "view": "দেখুন",
     "uploading": "আপলোড হচ্ছে..."
+  },
+  "agreement": {
+    "checkboxLabel": "আমি শর্তাবলীতে সম্মত",
+    "proceedButton": "নিবন্ধনে এগিয়ে যান",
+    "scrollToEnableMessage": "⬇️ দয়া করে চালিয়ে যেতে নিচে স্ক্রোল করুন"
   }
 }
