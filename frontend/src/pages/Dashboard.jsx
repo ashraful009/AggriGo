@@ -59,7 +59,7 @@ const Dashboard = () => {
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `AggriGo_Profile_${user?.name.replace(/\s+/g, '_')}.pdf`);
+      link.setAttribute('download', `SRIJON_Profile_${user?.name.replace(/\s+/g, '_')}.pdf`);
       document.body.appendChild(link);
       link.click();
       link.remove();

@@ -29,7 +29,7 @@ const HomePage = () => {
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-800/50 border border-slate-700 backdrop-blur-md mb-8">
               <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
               <span className="text-slate-300 text-xs font-semibold tracking-wider uppercase">
-                AggriGo Platform v1.0
+                SRIJON Platform v1.0
               </span>
             </div>
 

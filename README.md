@@ -1,4 +1,4 @@
-# AggriGo - Business Registration Platform
+# SRIJON - Business Registration Platform
 
 A comprehensive full-stack platform where business owners can register and submit detailed information about their business, products, and production capacity.
 
@@ -109,7 +109,7 @@ The frontend will run on `http://localhost:5173`
 ## 🏗️ Project Structure
 
 ```
-AggriGo/
+SRIJON/
 ├── backend/
 │   ├── config/
 │   │   └── cloudinary.js

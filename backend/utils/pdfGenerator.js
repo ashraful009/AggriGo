@@ -53,7 +53,7 @@ export const generateBusinessDataPDF = async (userId, businessData) => {
       doc.fontSize(24)
          .fillColor('#22c55e')
          .font('Helvetica-Bold')
-         .text('AggriGo Business Profile', { align: 'center' })
+        .text('SRIJON Business Profile', { align: 'center' })
          .moveDown(0.3);
 
       doc.fontSize(12)
@@ -240,7 +240,7 @@ export const generateBusinessDataPDF = async (userId, businessData) => {
          .fillColor('#999')
          .text(`Generated on: ${new Date().toLocaleString()}`, { align: 'center' })
          .moveDown(0.2)
-         .text('© AggriGo - Agricultural Entrepreneur Platform', { align: 'center' })
+        .text('© SRIJON - Agricultural Entrepreneur Platform', { align: 'center' })
          .moveDown(0.2)
          .text('This document contains confidential business information', { align: 'center' });
 

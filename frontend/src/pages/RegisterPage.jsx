@@ -138,7 +138,7 @@ const RegisterPage = () => {
                 {t('auth.register.title') || "Create Account"}
               </h3>
               <p className="text-slate-500 mb-8">
-                Join AggriGo today. It's free and takes less than a minute.
+                Join SRIJON today. It's free and takes less than a minute.
               </p>
 
               {error && (

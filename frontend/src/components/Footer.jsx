@@ -26,7 +26,7 @@ const Footer = () => {
                 <FaSeedling className="text-white text-sm" />
               </div>
               <span className="text-xl font-extrabold tracking-tight text-white">
-                Aggri<span className="text-blue-500">Go</span>
+                SRI<span className="text-blue-500">JON</span>
               </span>
             </Link>
             <p className="text-slate-400 text-sm leading-relaxed max-w-xs">
@@ -86,7 +86,7 @@ const Footer = () => {
 
         {/* Bottom Bar */}
         <div className="border-t border-slate-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
-          <p>&copy; {currentYear} AggriGo. {t('footer.allRightsReserved') || "All Rights Reserved."}</p>
+          <p>&copy; {currentYear} SRIJON. {t('footer.allRightsReserved') || "All Rights Reserved."}</p>
           <div className="flex gap-6">
             <Link to="#" className="hover:text-blue-400 transition-colors">Privacy Policy</Link>
             <Link to="#" className="hover:text-blue-400 transition-colors">Terms of Service</Link>

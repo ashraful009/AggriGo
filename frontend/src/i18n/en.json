@@ -10,12 +10,12 @@
   "home": {
     "hero": {
       "title": "Grow Your Business with",
-      "highlight": "AggriGo",
+      "highlight": "SRIJON",
       "subtitle": "Join thousands of businesses reaching more customers. Register your business today and unlock new opportunities!",
       "cta": "Register Now"
     },
     "features": {
-      "title": "Why Choose AggriGo?",
+      "title": "Why Choose SRIJON?",
       "easy": {
         "title": "Easy Registration",
         "desc": "Simple 6-step process to register your business"
@@ -35,7 +35,7 @@
     },
     "cta": {
       "title": "Ready to take your business to the next level?",
-      "subtitle": "Join AggriGo today and start your growth journey",
+      "subtitle": "Join SRIJON today and start your growth journey",
       "button": "Get Started Now"
     }
   },
@@ -198,7 +198,7 @@
       "productionIncrease": "Expansion Plan",
       "newProducts": "New Product Ideas",
       "interestOnlineExport": "Are you interested in online export?",
-      "supportTitle": "How can AggriGo help you?",
+      "supportTitle": "How can SRIJON help you?",
       "supportNote": "(Select any number)",
       "marketing": "Marketing & Branding",
       "marketingDesc": "Help reaching new customers",
@@ -253,7 +253,7 @@
       "termsTitle": "Terms & Conditions",
       "accuracyRequired": "You must certify that all information is correct to proceed.",
       "accuracyConsent": "I hereby certify that the information provided is true, accurate, and complete. I understand that false information may result in rejection.",
-      "marketingConsent": "(Optional) I consent to AggriGo using my business information for marketing and export opportunities.",
+      "marketingConsent": "(Optional) I consent to SRIJON using my business information for marketing and export opportunities.",
       "digitalSignature": "Digital Signature",
       "typeName": "Type Name",
       "uploadImage": "Upload Image",
@@ -280,7 +280,7 @@
   },
   "dashboard": {
     "loading": "Loading your profile...",
-    "welcome": "Welcome to AggriGo!",
+    "welcome": "Welcome to SRIJON!",
     "noDataMessage": "You haven't submitted your business registration yet. Let's create your profile together.",
     "startWizard": "Start Registration Wizard",
     "title": "Dashboard",
@@ -351,14 +351,14 @@
     "allRightsReserved": "All rights reserved."
   },
   "about": {
-    "title": "About AggriGo",
+    "title": "About SRIJON",
     "hero": {
       "cultivating": "Cultivating",
       "growth": "Growth",
-      "subtitle": "The story behind AggriGo and our commitment to the future of farming."
+      "subtitle": "The story behind SRIJON and our commitment to the future of farming."
     },
     "intro": {
-      "part1": "AggriGo is a comprehensive platform designed to empower business owners by providing them with the tools and resources needed to",
+      "part1": "SRIJON is a comprehensive platform designed to empower business owners by providing them with the tools and resources needed to",
       "highlight": "grow their businesses",
       "part2": "and reach a wider audience."
     },

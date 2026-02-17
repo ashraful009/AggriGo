@@ -71,7 +71,7 @@ const LoginPage = () => {
               <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
                 Welcome back to <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">
-                  AggriGo.
+                  SRIJON.
                 </span>
               </h2>
 

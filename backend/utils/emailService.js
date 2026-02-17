@@ -19,9 +19,9 @@ export const sendPasswordResetEmail = async (email, resetUrl) => {
     const transporter = createTransporter();
 
     const mailOptions = {
-      from: process.env.EMAIL_FROM || 'AggriGo <noreply@aggrigo.com>',
+      from: process.env.EMAIL_FROM || 'SRIJON <noreply@aggrigo.com>',
       to: email,
-      subject: 'Password Reset Request - AggriGo',
+      subject: 'Password Reset Request - SRIJON',
       html: `
         <!DOCTYPE html>
         <html>
@@ -42,7 +42,7 @@ export const sendPasswordResetEmail = async (email, resetUrl) => {
             </div>
             <div class="content">
               <p>Hello,</p>
-              <p>You have requested to reset your password for your AggriGo account.</p>
+              <p>You have requested to reset your password for your SRIJON account.</p>
               <p>Please click the button below to reset your password. This link will expire in 1 hour.</p>
               <p style="text-align: center;">
                 <a href="${resetUrl}" class="button">Reset Password</a>
@@ -52,7 +52,7 @@ export const sendPasswordResetEmail = async (email, resetUrl) => {
               <p>If you did not request this password reset, please ignore this email and your password will remain unchanged.</p>
             </div>
             <div class="footer">
-              <p>&copy; ${new Date().getFullYear()} AggriGo. All rights reserved.</p>
+              <p>&copy; ${new Date().getFullYear()} SRIJON. All rights reserved.</p>
             </div>
           </div>
         </body>
@@ -75,9 +75,9 @@ export const sendWelcomeEmail = async (email, name) => {
     const transporter = createTransporter();
 
     const mailOptions = {
-      from: process.env.EMAIL_FROM || 'AggriGo <noreply@aggrigo.com>',
+      from: process.env.EMAIL_FROM || 'SRIJON <noreply@aggrigo.com>',
       to: email,
-      subject: 'Welcome to AggriGo! 🎉',
+      subject: 'Welcome to SRIJON! 🎉',
       html: `
         <!DOCTYPE html>
         <html>
@@ -95,12 +95,12 @@ export const sendWelcomeEmail = async (email, name) => {
         <body>
           <div class="container">
             <div class="header">
-              <h1>🎉 Welcome to AggriGo!</h1>
+              <h1>🎉 Welcome to SRIJON!</h1>
               <p style="margin: 0; font-size: 18px;">Your journey to agricultural excellence begins here</p>
             </div>
             <div class="content">
               <p>Hello <strong>${name}</strong>,</p>
-              <p>Thank you for registering with AggriGo! We're excited to have you join our community of agricultural entrepreneurs.</p>
+              <p>Thank you for registering with SRIJON! We're excited to have you join our community of agricultural entrepreneurs.</p>
               
               <h3 style="color: #22c55e; margin-top: 25px;">What's Next?</h3>
               <div class="feature">
@@ -122,11 +122,11 @@ export const sendWelcomeEmail = async (email, name) => {
 
               <p style="margin-top: 30px;">If you have any questions or need assistance, feel free to reach out to our support team.</p>
               
-              <p style="margin-top: 20px;">Best regards,<br><strong>The AggriGo Team</strong></p>
+              <p style="margin-top: 20px;">Best regards,<br><strong>The SRIJON Team</strong></p>
             </div>
             <div class="footer">
-              <p>&copy; ${new Date().getFullYear()} AggriGo. All rights reserved.</p>
-              <p>This email was sent because you created an account on AggriGo.</p>
+              <p>&copy; ${new Date().getFullYear()} SRIJON. All rights reserved.</p>
+              <p>This email was sent because you created an account on SRIJON.</p>
             </div>
           </div>
         </body>
@@ -149,9 +149,9 @@ export const sendRegistrationCompleteEmail = async (email, name) => {
     const transporter = createTransporter();
 
     const mailOptions = {
-      from: process.env.EMAIL_FROM || 'AggriGo <noreply@aggrigo.com>',
+      from: process.env.EMAIL_FROM || 'SRIJON <noreply@aggrigo.com>',
       to: email,
-      subject: '🎉 Registration Complete - Welcome to AggriGo!',
+      subject: '🎉 Registration Complete - Welcome to SRIJON!',
       html: `
         <!DOCTYPE html>
         <html>
@@ -178,10 +178,10 @@ export const sendRegistrationCompleteEmail = async (email, name) => {
               
               <div class="success">
                 <strong>✅ Email Verified Successfully!</strong><br>
-                Your AggriGo account is now active and ready to use.
+                Your SRIJON account is now active and ready to use.
               </div>
 
-              <p>Welcome to the AggriGo community! We're thrilled to have you join our platform connecting agricultural entrepreneurs with markets and opportunities.</p>
+              <p>Welcome to the SRIJON community! We're thrilled to have you join our platform connecting agricultural entrepreneurs with markets and opportunities.</p>
               
               <h3 style="color: #22c55e; margin-top: 30px;">🚀 What's Next?</h3>
               
@@ -208,11 +208,11 @@ export const sendRegistrationCompleteEmail = async (email, name) => {
                 Need help? Our support team is here to assist you at any time.
               </p>
               
-              <p style="margin-top: 20px;">Best regards,<br><strong>The AggriGo Team</strong></p>
+              <p style="margin-top: 20px;">Best regards,<br><strong>The SRIJON Team</strong></p>
             </div>
             <div class="footer">
-              <p>&copy; ${new Date().getFullYear()} AggriGo. All rights reserved.</p>
-              <p>You're receiving this email because you successfully verified your account on AggriGo.</p>
+              <p>&copy; ${new Date().getFullYear()} SRIJON. All rights reserved.</p>
+              <p>You're receiving this email because you successfully verified your account on SRIJON.</p>
             </div>
           </div>
         </body>
@@ -235,9 +235,9 @@ export const sendOTPEmail = async (email, name, otp) => {
     const transporter = createTransporter();
 
     const mailOptions = {
-      from: process.env.EMAIL_FROM || 'AggriGo <noreply@aggrigo.com>',
+      from: process.env.EMAIL_FROM || 'SRIJON <noreply@aggrigo.com>',
       to: email,
-      subject: 'Verify Your Email - AggriGo',
+      subject: 'Verify Your Email - SRIJON',
       html: `
         <!DOCTYPE html>
         <html>
@@ -257,11 +257,11 @@ export const sendOTPEmail = async (email, name, otp) => {
           <div class="container">
             <div class="header">
               <h1>🔐 Email Verification</h1>
-              <p style="margin: 0; font-size: 16px;">Welcome to AggriGo!</p>
+              <p style="margin: 0; font-size: 16px;">Welcome to SRIJON!</p>
             </div>
             <div class="content">
               <p>Hello <strong>${name}</strong>,</p>
-              <p>Thank you for registering with AggriGo! To complete your registration, please verify your email address using the OTP code below:</p>
+              <p>Thank you for registering with SRIJON! To complete your registration, please verify your email address using the OTP code below:</p>
               
               <div class="otp-box">
                 <p style="margin: 0 0 10px 0; font-size: 14px; color: #666;">Your Verification Code</p>
@@ -272,14 +272,14 @@ export const sendOTPEmail = async (email, name, otp) => {
                 <strong>⏰ Important:</strong> This code will expire in <strong>10 minutes</strong>. If you didn't request this code, please ignore this email.
               </div>
 
-              <p style="margin-top: 25px;">Enter this code on the verification page to activate your account and start using AggriGo.</p>
+              <p style="margin-top: 25px;">Enter this code on the verification page to activate your account and start using SRIJON.</p>
               
               <p style="margin-top: 20px; font-size: 14px; color: #666;">If you're having trouble, you can request a new code on the verification page.</p>
               
-              <p style="margin-top: 30px;">Best regards,<br><strong>The AggriGo Team</strong></p>
+              <p style="margin-top: 30px;">Best regards,<br><strong>The SRIJON Team</strong></p>
             </div>
             <div class="footer">
-              <p>&copy; ${new Date().getFullYear()} AggriGo. All rights reserved.</p>
+              <p>&copy; ${new Date().getFullYear()} SRIJON. All rights reserved.</p>
               <p>This is an automated email. Please do not reply.</p>
             </div>
           </div>
@@ -303,9 +303,9 @@ export const sendBusinessDataPDF = async (email, name, pdfBuffer) => {
     const transporter = createTransporter();
 
     const mailOptions = {
-      from: process.env.EMAIL_FROM || 'AggriGo <noreply@aggrigo.com>',
+      from: process.env.EMAIL_FROM || 'SRIJON <noreply@aggrigo.com>',
       to: email,
-      subject: '📄 Your AggriGo Business Profile - PDF Attached',
+      subject: '📄 Your SRIJON Business Profile - PDF Attached',
       html: `
         <!DOCTYPE html>
         <html>
@@ -337,7 +337,7 @@ export const sendBusinessDataPDF = async (email, name, pdfBuffer) => {
                 <p style="margin: 10px 0 0 0; color: #666;">Download it from this email or access it anytime from your dashboard.</p>
               </div>
 
-              <p>Congratulations on completing your AggriGo business profile! We've compiled all your information into a comprehensive PDF document that you can use to:</p>
+              <p>Congratulations on completing your SRIJON business profile! We've compiled all your information into a comprehensive PDF document that you can use to:</p>
               
               <div class="feature">
                 <strong>📧 Share with Potential Buyers</strong>
@@ -367,11 +367,11 @@ export const sendBusinessDataPDF = async (email, name, pdfBuffer) => {
                 <strong>💡 Tip:</strong> You can download a fresh copy of your profile anytime from your dashboard using the "Download PDF" button.
               </p>
               
-              <p style="margin-top: 20px;">Best regards,<br><strong>The AggriGo Team</strong></p>
+              <p style="margin-top: 20px;">Best regards,<br><strong>The SRIJON Team</strong></p>
             </div>
             <div class="footer">
-              <p>&copy; ${new Date().getFullYear()} AggriGo. All rights reserved.</p>
-              <p>This email was sent because you completed your business profile on AggriGo.</p>
+              <p>&copy; ${new Date().getFullYear()} SRIJON. All rights reserved.</p>
+              <p>This email was sent because you completed your business profile on SRIJON.</p>
             </div>
           </div>
         </body>
@@ -379,7 +379,7 @@ export const sendBusinessDataPDF = async (email, name, pdfBuffer) => {
       `,
       attachments: [
         {
-          filename: `AggriGo_Business_Profile_${name.replace(/\s+/g, '_')}.pdf`,
+          filename: `SRIJON_Business_Profile_${name.replace(/\s+/g, '_')}.pdf`,
           content: pdfBuffer,
           contentType: 'application/pdf'
         }
@@ -401,9 +401,9 @@ export const sendProfileUpdateEmail = async (email, name, pdfBuffer) => {
     const transporter = createTransporter();
 
     const mailOptions = {
-      from: process.env.EMAIL_FROM || 'AggriGo <noreply@aggrigo.com>',
+      from: process.env.EMAIL_FROM || 'SRIJON <noreply@aggrigo.com>',
       to: email,
-      subject: '✅ Profile Updated Successfully - AggriGo',
+      subject: '✅ Profile Updated Successfully - SRIJON',
       html: `
         <!DOCTYPE html>
         <html>
@@ -435,7 +435,7 @@ export const sendProfileUpdateEmail = async (email, name, pdfBuffer) => {
                 <p style="margin: 10px 0 0 0; color: #666;">Download it from this email or access it anytime from your dashboard.</p>
               </div>
 
-              <p>Your AggriGo business profile has been successfully updated! We've compiled all your latest information into a comprehensive PDF document.</p>
+              <p>Your SRIJON business profile has been successfully updated! We've compiled all your latest information into a comprehensive PDF document.</p>
               
               <div class="feature">
                 <strong>📧 Share with Potential Buyers</strong>
@@ -460,11 +460,11 @@ export const sendProfileUpdateEmail = async (email, name, pdfBuffer) => {
                 <strong>💡 Tip:</strong> You can download a fresh copy of your profile anytime from your dashboard using the "Download PDF" button.
               </p>
               
-              <p style="margin-top: 20px;">Best regards,<br><strong>The AggriGo Team</strong></p>
+              <p style="margin-top: 20px;">Best regards,<br><strong>The SRIJON Team</strong></p>
             </div>
             <div class="footer">
-              <p>&copy; ${new Date().getFullYear()} AggriGo. All rights reserved.</p>
-              <p>This email was sent because you updated your business profile on AggriGo.</p>
+              <p>&copy; ${new Date().getFullYear()} SRIJON. All rights reserved.</p>
+              <p>This email was sent because you updated your business profile on SRIJON.</p>
             </div>
           </div>
         </body>
@@ -472,7 +472,7 @@ export const sendProfileUpdateEmail = async (email, name, pdfBuffer) => {
       `,
       attachments: [
         {
-          filename: `AggriGo_Business_Profile_${name.replace(/\s+/g, '_')}_Updated.pdf`,
+          filename: `SRIJON_Business_Profile_${name.replace(/\s+/g, '_')}_Updated.pdf`,
           content: pdfBuffer,
           contentType: 'application/pdf'
         }

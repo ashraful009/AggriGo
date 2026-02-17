@@ -206,7 +206,7 @@ const Step6Review = ({ onSubmit, onBack }) => {
                   onChange={(e) => setConsents(prev => ({ ...prev, marketing: e.target.checked }))}
                 />
                 <span className="text-sm text-slate-700 leading-relaxed select-none font-medium">
-                  I agree to receive marketing updates and offers from AggriGo.
+                  I agree to receive marketing updates and offers from SRIJON.
                 </span>
               </label>
             </div>

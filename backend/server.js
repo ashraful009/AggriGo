@@ -68,7 +68,7 @@ app.use(async (req, res, next) => {
 app.get('/', (req, res) => {
   res.status(200).json({
     success: true,
-    message: 'AggriGo Backend API',
+    message: 'SRIJON Backend API',
     version: '1.0.0',
     endpoints: {
       health: '/api/health',
@@ -78,7 +78,7 @@ app.get('/', (req, res) => {
       profile: '/api/profile/*',
       gallery: '/api/gallery/*'
     },
-    documentation: 'https://github.com/ashraful009/AggriGo'
+    documentation: 'https://github.com/ashraful009/SRIJON'
   });
 });
 
@@ -93,7 +93,7 @@ app.use('/api/gallery', galleryRoutes);
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     success: true,
-    message: 'AggriGo API is running',
+    message: 'SRIJON API is running',
     timestamp: new Date().toISOString()
   });
 });

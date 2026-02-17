@@ -52,7 +52,7 @@ const Navbar = () => {
 
               <div className="flex flex-col justify-center">
                 <span className="text-lg md:text-2xl font-extrabold tracking-tight text-slate-800 leading-none">
-                  Aggri<span className="text-blue-600">Go</span>
+                  SRI<span className="text-blue-600">JON</span>
                 </span>
                 <span className="hidden md:block text-[9px] font-bold text-slate-400 tracking-[0.2em] uppercase">
                   Growth Platform
