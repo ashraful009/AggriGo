@@ -277,7 +277,7 @@ const Step6Review = ({ onSubmit, onBack }) => {
                 disabled={!consents.accuracy || !signature}
                 className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white font-bold py-4 rounded-xl shadow-lg shadow-amber-500/25 transform hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2 text-lg"
               >
-                <FaPaperPlane /> {t('common.submitApplication') || "Submit Application"}
+                <FaPaperPlane /> {t('common.submit') || "Submit Application"}
               </button>
 
               <button

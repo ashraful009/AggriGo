@@ -38,7 +38,24 @@ const PRODUCT_CATEGORIES = [
       { id: 'home-textile', en: 'Home Textile', bn: 'হোম টেক্সটাইল' },
       { id: 'gift-utility', en: 'Gift & Utility Products', bn: 'গিফট ও ইউটিলিটি পণ্য' }
     ]
-  }
+  },
+  {
+  id: 'organic-agro',
+  en: 'Organic & Agro',
+  bn: 'অরগানিক ও অ্যাগ্রো',
+  subcategories: [
+    { 
+      id: 'deshiyo-organic-food', 
+      en: 'Local Organic Food', 
+      bn: 'দেশীয় অর্গানিক খাদ্য' 
+    },
+    { 
+      id: 'natural-products', 
+      en: 'Natural Products', 
+      bn: 'প্রাকৃতিক পণ্য' 
+    }
+  ]
+}
 ];
 
 const Step1BasicInfo = ({ onNext }) => {

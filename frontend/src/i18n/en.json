@@ -15,24 +15,44 @@
       "cta": "Register Now"
     },
     "features": {
-      "title": "Why Choose SRIJON?",
-      "easy": {
-        "title": "Easy Registration",
-        "desc": "Simple 6-step process to register your business"
-      },
-      "growth": {
-        "title": "Business Growth",
-        "desc": "Showcase your products and reach more customers"
-      },
-      "support": {
-        "title": "Support & Training",
-        "desc": "Access training and business support services"
-      },
-      "market": {
-        "title": "Market Access",
-        "desc": "Connect with local and international buyers"
-      }
-    },
+  "title": "Why SRIJON Stands Apart",
+  "craftsmen": {
+    "title": "A Platform for Local Artisans & Entrepreneurs",
+    "desc": "Empowering creators to showcase their talent to a wider audience"
+  },
+  "quality": {
+    "title": "Quality-Controlled, Design-Driven Collections",
+    "desc": "Curated products that combine craftsmanship and aesthetics"
+  },
+  "collection": {
+    "title": "Affordable to Premium Lifestyle Solutions",
+    "desc": "Offering options for every budget and style preference"
+  },
+  "experience": {
+    "title": "Seamless Omnichannel Experience",
+    "desc": "Enjoy our offerings both online and in-store effortlessly"
+  },
+  "productShowcase": {
+  "title": "Product Showcase",
+  "desc": "Present your products professionally."
+},
+"trainingSupport": {
+  "title": "Training & Support",
+  "desc": "Expert guidance and learning resources."
+},
+"businessNetworking": {
+  "title": "Business Networking",
+  "desc": "Build strong industry connections."
+},
+"globalReach": {
+  "title": "Global Reach",
+  "desc": "Expand beyond local markets."
+},
+"marketingExport": {
+  "title": "Marketing & Export",
+  "desc": "Strategic growth and export support."
+}
+},
     "cta": {
       "title": "Ready to take your business to the next level?",
       "subtitle": "Join SRIJON today and start your growth journey",
@@ -260,7 +280,7 @@
       "enterFullName": "Enter your full name",
       "yourSignature": "Your Signature",
       "clickToUploadSignature": "Click to upload signature",
-      "submitApplication": "Submit Application",
+      "submitApplication": "Submit",
       "reviewTitle": "Review Your Information",
       "marketBusiness": "Market & Business",
       "futurePlans": "Future Plans",
@@ -270,7 +290,7 @@
     "buttons": {
       "back": "Back",
       "next": "Save & Next",
-      "submit": "Submit",
+      "submitApplication": "Submit",
       "cancel": "Cancel",
       "save": "Save",
       "delete": "Delete",
@@ -345,7 +365,7 @@
     }
   },
   "footer": {
-    "description": "Empowering businesses to grow and showcase their products on a unified platform.",
+    "description": "Where Bangladesh Creates. The World Appreciates.",
     "quickLinks": "Quick Links",
     "connectWithUs": "Connect With Us",
     "allRightsReserved": "All rights reserved."
@@ -353,9 +373,9 @@
   "about": {
     "title": "About SRIJON",
     "hero": {
-      "cultivating": "Cultivating",
-      "growth": "Growth",
-      "subtitle": "The story behind SRIJON and our commitment to the future of farming."
+      "spread of": "Spread of",
+      "creativity": "Creativity",
+      "subtitle": "A trusted branding and market connectivity platform for new entrepreneurs and artisans."
     },
     "intro": {
       "part1": "SRIJON is a comprehensive platform designed to empower business owners by providing them with the tools and resources needed to",
@@ -438,7 +458,7 @@
     "amount": "Amount",
     "image": "Image",
     "change": "Change",
-    "submitApplication": "Submit",
+    "submit": "Submit",
     "view": "View",
     "uploading": "Uploading..."
   },
