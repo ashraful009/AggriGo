@@ -13,17 +13,14 @@ const generateToken = (id) => {
 const sendTokenResponse = (user, statusCode, res) => {
   const token = generateToken(user._id);
 
-  const options = {
-    expires: new Date(
-      Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000
-    ),
-    httpOnly: true,   // JS cannot read this cookie → XSS-safe
-    sameSite: 'lax'
-  };
+  const isProduction = process.env.NODE_ENV === 'production';
 
-  if (process.env.NODE_ENV === 'production') {
-    options.secure = true; // HTTPS-only in production
-  }
+  const options = {
+    httpOnly: true,   // JS cannot read this cookie → XSS-safe
+    secure: isProduction, // HTTPS-only in production
+    sameSite: isProduction ? 'none' : 'lax', // 'none' required for cross-origin cookies (Vercel)
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days in ms
+  };
 
   res
     .status(statusCode)
@@ -374,9 +371,13 @@ export const getMe = async (req, res) => {
 // @access  Private
 export const logout = async (req, res) => {
   try {
+    const isProduction = process.env.NODE_ENV === 'production';
+
     res.cookie('token', 'none', {
-      expires: new Date(Date.now() + 10 * 1000),
-      httpOnly: true
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
+      maxAge: 10 * 1000 // 10 seconds — effectively clears the cookie
     });
 
     res.status(200).json({
