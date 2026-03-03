@@ -408,10 +408,14 @@ const Step1BasicInfo = ({ onNext }) => {
           <div>
             <label className="block text-sm font-bold text-slate-600 mb-3">{t('form.step1.gender') || "Gender"} <span className="text-red-500">*</span></label>
             <div className="flex gap-4">
-              {t('form.step1.genderOptions').map(g => (
-                <label key={g} className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border cursor-pointer transition-all ${stepData.gender === g ? 'bg-blue-50 border-blue-500 text-blue-700 font-bold' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
-                  <input type="radio" name="gender" value={g} checked={stepData.gender === g} onChange={handleChange} className="hidden" />
-                  {g}
+              {[
+                { value: 'Male', label: (t('form.step1.genderOptions') || [])[0] || 'Male' },
+                { value: 'Female', label: (t('form.step1.genderOptions') || [])[1] || 'Female' },
+                { value: 'Other', label: (t('form.step1.genderOptions') || [])[2] || 'Other' }
+              ].map(g => (
+                <label key={g.value} className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border cursor-pointer transition-all ${stepData.gender === g.value ? 'bg-blue-50 border-blue-500 text-blue-700 font-bold' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
+                  <input type="radio" name="gender" value={g.value} checked={stepData.gender === g.value} onChange={handleChange} className="hidden" />
+                  {g.label}
                 </label>
               ))}
             </div>
@@ -420,10 +424,14 @@ const Step1BasicInfo = ({ onNext }) => {
           <div>
             <label className="block text-sm font-bold text-slate-600 mb-3">{t('form.step1.ownershipType') || "Ownership"} <span className="text-red-500">*</span></label>
             <div className="flex flex-wrap gap-3">
-              {t('form.step1.ownershipTypeOptions').map(type => (
-                <label key={type} className={`flex-1 min-w-[100px] flex items-center justify-center gap-2 px-3 py-3 rounded-xl border cursor-pointer transition-all text-sm ${stepData.ownershipType === type ? 'bg-amber-50 border-amber-500 text-amber-800 font-bold' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
-                  <input type="radio" name="ownershipType" value={type} checked={stepData.ownershipType === type} onChange={handleChange} className="hidden" />
-                  {type}
+              {[
+                { value: 'Single', label: (t('form.step1.ownershipTypeOptions') || [])[0] || 'Single' },
+                { value: 'Partnership', label: (t('form.step1.ownershipTypeOptions') || [])[1] || 'Partnership' },
+                { value: 'Ltd. Company', label: (t('form.step1.ownershipTypeOptions') || [])[2] || 'Ltd. Company' }
+              ].map(type => (
+                <label key={type.value} className={`flex-1 min-w-[100px] flex items-center justify-center gap-2 px-3 py-3 rounded-xl border cursor-pointer transition-all text-sm ${stepData.ownershipType === type.value ? 'bg-amber-50 border-amber-500 text-amber-800 font-bold' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
+                  <input type="radio" name="ownershipType" value={type.value} checked={stepData.ownershipType === type.value} onChange={handleChange} className="hidden" />
+                  {type.label}
                 </label>
               ))}
             </div>
