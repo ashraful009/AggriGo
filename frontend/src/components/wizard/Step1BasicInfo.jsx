@@ -267,29 +267,69 @@ const Step1BasicInfo = ({ onNext }) => {
                       {t('form.step1.noSubCategoriesAvailable') || "Please select a product type first"}
                     </span>
                   ) : selectedSubcategories.length > 0 ? (
-                    selectedSubcategories.map((subcat, index) => (
-                      <span
-                        key={index}
-                        className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-blue-100 text-blue-700 text-sm font-medium"
-                        onClick={(e) => e.stopPropagation()} // Prevent dropdown toggle
-                      >
-                        {subcat}
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            removeSubcategory(subcat);
-                          }}
-                          className="hover:bg-blue-200 rounded-full p-0.5 transition-colors"
-                          aria-label={`Remove ${subcat}`}
+
+                      selectedSubcategories.map((englishVal, index) => {
+
+                        const subcatDef = PRODUCT_CATEGORIES
+
+                          .flatMap(cat => cat.subcategories)
+
+                          .find(sc => sc.en === englishVal);
+
+                        const displayLabel = subcatDef
+
+                          ? (currentLanguage === 'bn' ? subcatDef.bn : subcatDef.en)
+
+                          : englishVal;
+
+                        return (
+
+                          <span
+
+                          key={index}
+
+                          className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-blue-100 text-blue-700 text-sm font-medium"
+
+                          onClick={(e) => e.stopPropagation()}
+
                         >
-                          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                          </svg>
-                        </button>
-                      </span>
-                    ))
+
+                          {displayLabel}
+
+                          <button
+
+                            type="button"
+
+                            onClick={(e) => {
+
+                              e.stopPropagation();
+
+                              removeSubcategory(englishVal);
+
+                            }}
+
+                            className="hover:bg-blue-200 rounded-full p-0.5 transition-colors"
+
+                            aria-label={`Remove ${englishVal}`}
+
+                          >
+
+                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+
+                              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+
+                            </svg>
+
+                          </button>
+
+                        </span>
+
+                      );
+
+                    })
+
                   ) : (
+
                     <span className="text-slate-400 text-sm">
                       {t('form.step1.selectSubCategories') || "Select Sub-Categories"}
                     </span>
@@ -331,8 +371,8 @@ const Step1BasicInfo = ({ onNext }) => {
                         {/* shrink-0: যাতে চেকবক্স চ্যাপ্টা না হয়ে যায় */}
                         <input
                           type="checkbox"
-                          checked={selectedSubcategories.includes(label)}
-                          onChange={() => handleSubcategoryToggle(label)}
+                          checked={selectedSubcategories.includes(subcat.en)}
+                          onChange={() => handleSubcategoryToggle(subcat.en)}
                           className="w-4 h-4 accent-blue-500 rounded cursor-pointer border-slate-300 ml-3 shrink-0"
                         />
                       </label>
