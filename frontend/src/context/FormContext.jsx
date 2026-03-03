@@ -3,6 +3,39 @@ import api from '../utils/api';
 import { INITIAL_FORM_STATE } from '../data/formConstants';
 import { validateStep } from '../utils/formSchemas';
 
+// Map any previously-stored translated enum value to its correct English equivalent.
+// Fixes existing drafts that were saved in Bengali before the frontend fix was deployed.
+const ENUM_NORMALIZE_MAP = {
+  // gender
+  'পুরুষ': 'Male', 'মহিলা': 'Female', 'অন্যান্য': 'Other',
+  // ownershipType
+  'একক': 'Single', 'অংশীদারিত্ব': 'Partnership', 'লিমিটেড কোম্পানি': 'Ltd. Company',
+  // rawMaterialSource
+  'স্থানীয়': 'Local', 'আমদানিকৃত': 'Imported',
+  // productionType
+  'হস্তনির্মিত': 'Handmade', 'আধা-স্বয়ংক্রিয়': 'Semi-automatic', 'স্বয়ংক্রিয়': 'Automatic',
+  // productionPlace
+  'গৃহ-ভিত্তিক': 'Home-based', 'কারখানা-ভিত্তিক': 'Factory-based',
+  // Yes/No fields
+  'হ্যাঁ': 'Yes', 'না': 'No'
+};
+
+const ENUM_FIELDS = [
+  'gender', 'ownershipType', 'rawMaterialSource', 'productionType',
+  'productionPlace', 'bulkDiscount', 'hasBankAccount', 'interestInOnlineExport'
+];
+
+const normalizeLoadedData = (data) => {
+  if (!data) return data;
+  const out = { ...data };
+  ENUM_FIELDS.forEach(field => {
+    if (out[field] && ENUM_NORMALIZE_MAP[out[field]]) {
+      out[field] = ENUM_NORMALIZE_MAP[out[field]];
+    }
+  });
+  return out;
+};
+
 const FormContext = createContext();
 
 export const useForm = () => {
@@ -52,7 +85,7 @@ export const FormProvider = ({ children }) => {
       if (response.data.success && response.data.data) {
         setFormData({
           ...INITIAL_FORM_STATE,
-          ...response.data.data,
+          ...normalizeLoadedData(response.data.data),
           businessDataId: response.data.data._id
         });
       } else {

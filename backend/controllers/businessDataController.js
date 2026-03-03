@@ -1,19 +1,45 @@
 import BusinessData from '../models/BusinessData.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Helper: sanitize enum fields (empty string → undefined)
+// Bengali → English enum value map
+// Covers every translated string a Bengali-language user might have stored
+// in a draft before the frontend value-binding fix was deployed.
 // ─────────────────────────────────────────────────────────────────────────────
-const sanitizeEnumFields = (data) => {
-  const enumFields = [
-    'gender', 'ownershipType', 'rawMaterialSource', 'productionType',
-    'productionPlace', 'bulkDiscount', 'hasBankAccount', 'interestInOnlineExport'
-  ];
-  const sanitized = { ...data };
-  enumFields.forEach(field => {
-    if (sanitized[field] === '') delete sanitized[field];
-  });
-  return sanitized;
+const ENUM_VALUE_MAP = {
+  // gender
+  'পুরুষ': 'Male', 'মহিলা': 'Female', 'অন্যান্য': 'Other',
+  // ownershipType
+  'একক': 'Single', 'অংশীদারিত্ব': 'Partnership', 'লিমিটেড কোম্পানি': 'Ltd. Company',
+  // rawMaterialSource
+  'স্থানীয়': 'Local', 'আমদানিকৃত': 'Imported',
+  // productionType
+  'হস্তনির্মিত': 'Handmade', 'আধা-স্বয়ংক্রিয়': 'Semi-automatic', 'স্বয়ংক্রিয়': 'Automatic',
+  // productionPlace
+  'গৃহ-ভিত্তিক': 'Home-based', 'কারখানা-ভিত্তিক': 'Factory-based',
+  // Yes/No fields (bulkDiscount, hasBankAccount, interestInOnlineExport)
+  'হ্যাঁ': 'Yes', 'না': 'No'
 };
+
+const ENUM_FIELDS = [
+  'gender', 'ownershipType', 'rawMaterialSource', 'productionType',
+  'productionPlace', 'bulkDiscount', 'hasBankAccount', 'interestInOnlineExport'
+];
+
+// Normalize + sanitize incoming enum fields:
+//   1. Map any translated value to its English equivalent
+//   2. Remove empty strings (Mongoose enum fields must be undefined, not '')
+const normalizeEnumFields = (data) => {
+  const out = { ...data };
+  ENUM_FIELDS.forEach(field => {
+    if (out[field] === '' || out[field] === null) {
+      delete out[field];
+    } else if (out[field] && ENUM_VALUE_MAP[out[field]]) {
+      out[field] = ENUM_VALUE_MAP[out[field]];
+    }
+  });
+  return out;
+};
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helper: calculate profile completion percentage + product showcase check
@@ -178,7 +204,7 @@ export const getBusinessData = async (req, res) => {
 // ─────────────────────────────────────────────────────────────────────────────
 export const createBusinessData = async (req, res) => {
   try {
-    const sanitizedData = sanitizeEnumFields(req.body);
+    const sanitizedData = normalizeEnumFields(req.body);
     let businessData = await BusinessData.findOne({ userId: req.user.id });
 
     if (businessData) {
@@ -229,7 +255,7 @@ export const updateBusinessData = async (req, res) => {
       return res.status(401).json({ success: false, message: 'Not authorized to update this business data' });
     }
 
-    const sanitizedData = sanitizeEnumFields(req.body);
+    const sanitizedData = normalizeEnumFields(req.body);
 
     businessData = await BusinessData.findByIdAndUpdate(
       req.params.id,
