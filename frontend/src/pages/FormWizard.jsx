@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from '../context/FormContext';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -20,19 +20,39 @@ import {
 } from '../utils/formValidation';
 
 const FormWizard = () => {
-  const { formData, saveDraft, submitFinal } = useForm();
-  const [currentStep, setCurrentStep] = useState(formData.currentStep || 1);
+  const { formData, saveDraft, submitFinal, loadExistingData } = useForm();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isEditMode = location.state?.editMode === true;
+
+  // Determine starting step:
+  //   - editMode (from Dashboard): always start at Step 1
+  //   - New user: start at 1
+  //   - Returning user mid-flow: restore saved step (clamped 1-6)
+  const savedStep = Math.min(Math.max(Number(formData.currentStep) || 1, 1), 6);
+  const [currentStep, setCurrentStep] = useState(isEditMode ? 1 : savedStep);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const navigate = useNavigate();
 
-  // Check if agreement is accepted, redirect if not
+  // Agreement guard:
+  //   - Skip if user already has saved data (businessDataId set = they agreed before)
+  //   - Skip if coming from Dashboard edit flow
+  //   - Redirect to /agreement only for brand-new users with no saved data
   useEffect(() => {
     const agreementAccepted = localStorage.getItem('agreementAccepted');
-    if (!agreementAccepted) {
+    const hasExistingData = Boolean(formData.businessDataId);
+    if (!agreementAccepted && !hasExistingData && !isEditMode) {
       navigate('/agreement');
     }
-  }, [navigate]);
+  }, [navigate, formData.businessDataId, isEditMode]);
+
+  // When entering edit mode from Dashboard, re-fetch the latest saved data
+  // to ensure FormContext is fully fresh (in case user just edited via another tab).
+  useEffect(() => {
+    if (isEditMode) {
+      loadExistingData();
+    }
+  }, [isEditMode]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const totalSteps = 6;
   const steps = [

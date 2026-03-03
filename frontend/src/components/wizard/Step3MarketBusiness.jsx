@@ -30,8 +30,12 @@ const COUNTRIES = [
   // ... (Assume full list is here)
 ];
 
+// Inline error helper
+const FieldError = ({ msg }) =>
+  msg ? <p className="mt-1 text-xs text-red-500 font-medium">{msg}</p> : null;
+
 const Step3MarketBusiness = ({ onNext, onBack }) => {
-  const { formData, updateFormData } = useForm();
+  const { formData, updateFormData, validateStep, isSaving, isUpdating } = useForm();
   const { t } = useLanguage();
 
   const [stepData, setStepData] = useState({
@@ -64,6 +68,7 @@ const Step3MarketBusiness = ({ onNext, onBack }) => {
   const [uploading, setUploading] = useState({});
   const [countrySearch, setCountrySearch] = useState('');
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
+  const [errors, setErrors] = useState({});
 
   // --- Handlers (Same logic, cleaner implementation) ---
 
@@ -134,6 +139,12 @@ const Step3MarketBusiness = ({ onNext, onBack }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const { success, errors: validationErrors } = validateStep(3, stepData);
+    if (!success) {
+      setErrors(validationErrors);
+      return;
+    }
+    setErrors({});
     updateFormData(stepData);
     onNext(stepData);
   };
@@ -278,10 +289,10 @@ const Step3MarketBusiness = ({ onNext, onBack }) => {
       {/* --- SECTION 2: BUSINESS STATS --- */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: t('form.step3.businessAge'), icon: <FaClock className="text-orange-500" />, name: 'businessAge', placeholder: t('common.years'), type: 'number' },
-          { label: t('form.step3.totalCustomers'), icon: <FaUsers className="text-blue-500" />, name: 'totalCustomers', placeholder: t('common.number'), type: 'number' },
-          { label: t('form.step3.regularCustomers'), icon: <FaUsers className="text-teal-500" />, name: 'regularCustomers', placeholder: t('common.number'), type: 'number' },
-          { label: t('form.step3.monthlySales'), icon: <FaMoneyBillWave className="text-emerald-500" />, name: 'monthlySales', placeholder: t('common.amount'), type: 'number' }
+          { label: t('form.step3.businessAge'), icon: <FaClock className="text-orange-500" />, name: 'businessAge', placeholder: t('form.step3.placeholders.businessAge'), type: 'number' },
+          { label: t('form.step3.totalCustomers'), icon: <FaUsers className="text-blue-500" />, name: 'totalCustomers', placeholder: t('form.step3.placeholders.totalCustomers'), type: 'number' },
+          { label: t('form.step3.regularCustomers'), icon: <FaUsers className="text-teal-500" />, name: 'regularCustomers', placeholder: t('form.step3.placeholders.regularCustomers'), type: 'number' },
+          { label: t('form.step3.monthlySales'), icon: <FaMoneyBillWave className="text-emerald-500" />, name: 'monthlySales', placeholder: t('form.step3.placeholders.monthlySales'), type: 'number' }
         ].map((field, idx) => (
           <div key={idx} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col">
             <div className="flex items-center gap-2 mb-2 text-sm font-bold text-gray-600">
@@ -293,8 +304,9 @@ const Step3MarketBusiness = ({ onNext, onBack }) => {
               value={stepData[field.name]}
               onChange={handleChange}
               placeholder={field.placeholder}
-              className="w-full font-bold text-lg text-gray-800 border-b-2 border-gray-100 focus:border-emerald-500 outline-none bg-transparent py-1 transition-colors"
+              className={`w-full font-bold text-lg text-gray-800 border-b-2 focus:border-emerald-500 outline-none bg-transparent py-1 transition-colors ${errors[field.name] ? 'border-red-400' : 'border-gray-100'}`}
             />
+            <FieldError msg={errors[field.name]} />
           </div>
         ))}
       </div>
@@ -407,11 +419,22 @@ const Step3MarketBusiness = ({ onNext, onBack }) => {
 
       {/* Navigation */}
       <div className="flex justify-between pt-4">
-        <button type="button" onClick={onBack} className="px-6 py-3 bg-white text-gray-700 font-bold rounded-xl border border-gray-200 hover:bg-gray-50 transition shadow-sm flex items-center gap-2">
+        <button type="button" onClick={onBack} disabled={isSaving} className="px-6 py-3 bg-white text-gray-700 font-bold rounded-xl border border-gray-200 hover:bg-gray-50 transition shadow-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
           <FaArrowLeft /> {t('form.buttons.back')}
         </button>
-        <button type="submit" className="px-8 py-3 bg-gradient-to-r from-emerald-600 to-lime-600 text-white font-bold rounded-xl hover:shadow-lg hover:shadow-emerald-500/30 transition transform hover:-translate-y-1 flex items-center gap-2">
-          {t('form.buttons.next')} <FaArrowRight />
+        <button
+          type="submit"
+          disabled={isSaving}
+          className="px-8 py-3 bg-gradient-to-r from-emerald-600 to-lime-600 text-white font-bold rounded-xl hover:shadow-lg hover:shadow-emerald-500/30 transition transform hover:-translate-y-1 flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
+        >
+          {isSaving ? (
+            <>
+              <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              {isUpdating ? 'Updating...' : 'Saving...'}
+            </>
+          ) : (
+            <>{t('form.buttons.next')} <FaArrowRight /></>
+          )}
         </button>
       </div>
     </form>

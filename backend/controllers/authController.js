@@ -9,7 +9,7 @@ const generateToken = (id) => {
   });
 };
 
-// Send token response
+// Send token response — JWT is sent ONLY via HttpOnly cookie (never in body)
 const sendTokenResponse = (user, statusCode, res) => {
   const token = generateToken(user._id);
 
@@ -17,12 +17,12 @@ const sendTokenResponse = (user, statusCode, res) => {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000
     ),
-    httpOnly: true,
+    httpOnly: true,   // JS cannot read this cookie → XSS-safe
     sameSite: 'lax'
   };
 
   if (process.env.NODE_ENV === 'production') {
-    options.secure = true;
+    options.secure = true; // HTTPS-only in production
   }
 
   res
@@ -30,11 +30,12 @@ const sendTokenResponse = (user, statusCode, res) => {
     .cookie('token', token, options)
     .json({
       success: true,
-      token,
+      // ✅ token intentionally NOT returned in body — cookie is the sole channel
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
+        role: user.role || 'user',
         profilePictures: user.profilePictures || []
       }
     });
@@ -355,6 +356,7 @@ export const getMe = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
+        role: user.role || 'user',
         profilePictures: user.profilePictures || []
       }
     });

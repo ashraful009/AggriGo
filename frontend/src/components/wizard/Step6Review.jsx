@@ -91,15 +91,15 @@ const Step6Review = ({ onSubmit, onBack }) => {
           {/* 1. Identity & Contact */}
           <ReviewSection title={t('form.step6.basicInfo') || "Basic Information"} icon={<FaUser />}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <ReadOnlyField label="Owner Name" value={formData.ownerName} />
-              <ReadOnlyField label="Brand Name" value={formData.brandName} />
-              <ReadOnlyField label="Gender" value={formData.gender} />
+              <ReadOnlyField label={t('form.step6.ownerName') || "Owner Name"} value={formData.ownerName} />
+              <ReadOnlyField label={t('form.step6.brandName') || "Brand Name"} value={formData.brandName} />
+              <ReadOnlyField label={t('form.step6.gender') || "Gender"} value={formData.gender} />
 
               <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-slate-100 mt-2">
-                <ContactField icon={<FaPhone />} label="Mobile" value={formData.mobileNumber} />
-                <ContactField icon={<FaEnvelope />} label="Email" value={formData.email} />
-                <ContactField icon={<FaMapMarkerAlt />} label="Location" value={`${formData.thana}, ${formData.district}`} fullWidth />
-                <ReadOnlyField label="Detailed Address" value={formData.detailedAddress} fullWidth />
+                <ContactField icon={<FaPhone />} label={t('form.step6.mobileNumber') || "Mobile Number"} value={formData.mobileNumber} />
+                <ContactField icon={<FaEnvelope />} label={t('form.step6.email') || "Email"} value={formData.email} />
+                <ContactField icon={<FaMapMarkerAlt />} label={t('form.step6.location') || "Location"} value={`${formData.thana}, ${formData.district}`} fullWidth />
+                <ReadOnlyField label={t('form.step6.detailedAddress') || "Detailed Address"} value={formData.detailedAddress} fullWidth />
               </div>
             </div>
           </ReviewSection>
@@ -107,12 +107,12 @@ const Step6Review = ({ onSubmit, onBack }) => {
           {/* 2. Product Info */}
           <ReviewSection title={t('form.step6.productDetails') || "Product Details"} icon={<FaBoxOpen />}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <ReadOnlyField label="Product Name" value={formData.productName} />
-              <ReadOnlyField label="Category" value={formData.productType} />
-              <ReadOnlyField label="Production Type" value={formData.productionType} />
-              <ReadOnlyField label="Production Place" value={formData.productionPlace} />
-              <ReadOnlyField label="Capacity" value={formData.productionCapacity} />
-              <ReadOnlyField label="Retail Price" value={formData.retailPrice ? `৳${formData.retailPrice}` : 'N/A'} />
+              <ReadOnlyField label={t('form.step6.productName') || "Product Name"} value={formData.productName} />
+              <ReadOnlyField label={t('form.step6.category') || "Category"} value={formData.productType} />
+              <ReadOnlyField label={t('form.step6.productionType') || "Production Type"} value={formData.productionType} />
+              <ReadOnlyField label={t('form.step6.productionPlace') || "Production Place"} value={formData.productionPlace} />
+              <ReadOnlyField label={t('form.step6.productionCapacity') || "Production Capacity"} value={formData.productionCapacity} />
+              <ReadOnlyField label={t('form.step6.wholesalePrice') || "Wholesale Price"} value={formData.wholesalePrice ? `৳${formData.wholesalePrice}` : 'N/A'} />
             </div>
           </ReviewSection>
 
@@ -121,7 +121,7 @@ const Step6Review = ({ onSubmit, onBack }) => {
             <div className="space-y-6">
               {/* Product Images */}
               <div>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">Product Showcase</p>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">{t('form.step6.productShowcase') || "Product Showcase"}</p>
                 {formData.productImages?.length > 0 ? (
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
                     {formData.productImages.slice(0, 3).map((img, idx) => (
@@ -129,28 +129,28 @@ const Step6Review = ({ onSubmit, onBack }) => {
                     ))}
                     {formData.productImages.length > 3 && (
                       <div className="flex items-center justify-center bg-slate-50 rounded-lg p-4 text-slate-500 text-sm font-medium">
-                        +{formData.productImages.length - 3} more
+                        +{formData.productImages.length - 3} {t('form.step6.more') || "more"}
                       </div>
                     )}
                   </div>
                 ) : (
-                  <MissingLabel text="No product images uploaded" />
+                  <MissingLabel text={t('form.step6.noProductImages') || "No product images uploaded"} />
                 )}
               </div>
 
               {/* Process Images */}
               <div>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">Process & Packaging</p>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">{t('form.step6.processAndPackaging') || "Process & Packaging"}</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   {formData.packagingImage ? (
-                    <ImagePreview src={formData.packagingImage} label="Packaging" />
+                    <ImagePreview src={formData.packagingImage} label={t('form.step6.packaging') || "Packaging"} />
                   ) : (
-                    <MissingLabel text="No packaging image" />
+                    <MissingLabel text={t('form.step6.noPackagingImage') || "No packaging image"} />
                   )}
                   {formData.productionProcessImage ? (
-                    <ImagePreview src={formData.productionProcessImage} label="Production Process" />
+                    <ImagePreview src={formData.productionProcessImage} label={t('form.step6.productionProcess') || "Production Process"} />
                   ) : (
-                    <MissingLabel text="No production image" />
+                    <MissingLabel text={t('form.step6.noProductionImage') || "No production image"} />
                   )}
                 </div>
               </div>
@@ -175,7 +175,7 @@ const Step6Review = ({ onSubmit, onBack }) => {
           <div className="bg-white rounded-2xl shadow-lg shadow-slate-200/50 border border-slate-200 overflow-hidden lg:sticky lg:top-28">
             <div className="bg-gradient-to-r from-blue-50 to-white px-6 py-5 border-b border-blue-100">
               <h3 className="font-bold text-blue-900 flex items-center gap-2 text-sm uppercase tracking-wide">
-                <FaCheckCircle /> Terms & Confirmation
+                <FaCheckCircle /> {t('form.step6.termsTitle') || "Terms & Confirmation"}
               </h3>
             </div>
 
@@ -191,7 +191,7 @@ const Step6Review = ({ onSubmit, onBack }) => {
                   onChange={(e) => setConsents(prev => ({ ...prev, accuracy: e.target.checked }))}
                 />
                 <span className="text-sm text-slate-700 leading-relaxed select-none font-medium">
-                  I hereby declare that the information provided is true and accurate. <span className="text-red-500">*</span>
+                  {t('form.step6.accuracyConsent') || "I hereby declare that the information provided is true and accurate."} <span className="text-red-500">*</span>
                 </span>
               </label>
 
@@ -206,7 +206,7 @@ const Step6Review = ({ onSubmit, onBack }) => {
                   onChange={(e) => setConsents(prev => ({ ...prev, marketing: e.target.checked }))}
                 />
                 <span className="text-sm text-slate-700 leading-relaxed select-none font-medium">
-                  I agree to receive marketing updates and offers from SRIJON.
+                  {t('form.step6.marketingConsent') || "I agree to receive marketing updates and offers from SRIJON."}
                 </span>
               </label>
             </div>
@@ -214,7 +214,7 @@ const Step6Review = ({ onSubmit, onBack }) => {
             {/* Signature Box */}
             <div className="border-t border-slate-100 p-6 bg-slate-50/50">
               <h3 className="font-bold text-slate-800 flex items-center gap-2 text-sm uppercase tracking-wide mb-4">
-                <FaPenNib className="text-slate-400" /> Digital Signature
+                <FaPenNib className="text-slate-400" /> {t('form.step6.digitalSignature') || "Digital Signature"}
               </h3>
 
               {/* Tabs */}
@@ -224,14 +224,14 @@ const Step6Review = ({ onSubmit, onBack }) => {
                   onClick={() => setSignMethod('type')}
                   className={`flex-1 py-2.5 text-xs font-bold uppercase rounded-lg transition-all ${signMethod === 'type' ? 'bg-white shadow-sm text-blue-700' : 'text-slate-500 hover:text-slate-700'}`}
                 >
-                  Type Name
+                  {t('form.step6.typeName') || "Type Name"}
                 </button>
                 <button
                   type="button"
                   onClick={() => setSignMethod('upload')}
                   className={`flex-1 py-2.5 text-xs font-bold uppercase rounded-lg transition-all ${signMethod === 'upload' ? 'bg-white shadow-sm text-blue-700' : 'text-slate-500 hover:text-slate-700'}`}
                 >
-                  Upload Image
+                  {t('form.step6.uploadImage') || "Upload Image"}
                 </button>
               </div>
 
@@ -243,14 +243,14 @@ const Step6Review = ({ onSubmit, onBack }) => {
                       value={signature.startsWith('http') ? '' : signature}
                       onChange={(e) => setSignature(e.target.value)}
                       className="w-full bg-transparent border-b-2 border-slate-200 focus:border-blue-500 outline-none py-2 text-3xl font-serif italic text-slate-800 placeholder-slate-300 text-center transition-colors"
-                      placeholder="Type name..."
+                      placeholder={t('form.step6.enterFullName') || "Type name..."}
                     />
                   </div>
                 ) : (
                     <div className="text-center w-full">
                       <label className="cursor-pointer flex flex-col items-center justify-center h-full py-4 w-full">
                         <FaCloudUploadAlt className="text-4xl text-slate-400 mb-2" />
-                        <span className="text-xs text-slate-500 font-bold uppercase tracking-wide">{uploading ? "Uploading..." : "Click to upload"}</span>
+                        <span className="text-xs text-slate-500 font-bold uppercase tracking-wide">{uploading ? "Uploading..." : t('form.step6.clickToUploadSignature') || "Click to upload"}</span>
                       <input type="file" accept="image/*" className="hidden" onChange={(e) => handleSignatureUpload(e.target.files[0])} />
                     </label>
                   </div>
@@ -260,7 +260,7 @@ const Step6Review = ({ onSubmit, onBack }) => {
               {/* Preview */}
               {signature && (
                 <div className="mt-5 text-center bg-white p-3 rounded-xl border border-slate-100 shadow-sm">
-                  <p className="text-[10px] text-slate-400 uppercase tracking-wider mb-2 font-bold">Signature Preview</p>
+                  <p className="text-[10px] text-slate-400 uppercase tracking-wider mb-2 font-bold">{t('form.step6.signaturePreview') || "Signature Preview"}</p>
                   {signature.startsWith('http') ? (
                     <img src={signature} alt="Sign" className="h-16 object-contain mx-auto" />
                   ) : (
@@ -285,7 +285,7 @@ const Step6Review = ({ onSubmit, onBack }) => {
                 onClick={onBack}
                 className="w-full bg-white text-slate-500 font-bold py-3.5 rounded-xl border-2 border-slate-100 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-700 transition-colors flex items-center justify-center gap-2"
               >
-                <FaArrowLeft className="text-sm" /> Back to Edit
+                <FaArrowLeft className="text-sm" /> {t('common.backToEdit') || "Back to Edit"}
               </button>
             </div>
           </div>
@@ -349,11 +349,11 @@ const ImagePreview = ({ src, label }) => (
   </div>
 );
 
-const MissingLabel = ({ text }) => (
+const MissingLabel = ({ text, caption = "Can be uploaded later from Dashboard" }) => (
   <div className="aspect-video bg-slate-50 rounded-xl border-2 border-dashed border-slate-200 flex items-center justify-center">
     <div className="text-center">
       <p className="text-slate-400 text-sm font-medium">{text}</p>
-      <p className="text-slate-300 text-xs mt-1">Can be uploaded later from Dashboard</p>
+      <p className="text-slate-300 text-xs mt-1">{caption}</p>
     </div>
   </div>
 );

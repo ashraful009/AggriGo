@@ -2,10 +2,33 @@ import { useState } from 'react';
 import { useForm } from '../../context/FormContext';
 import { useLanguage } from '../../context/LanguageContext';
 import api from '../../utils/api';
-import { FaCloudUploadAlt, FaTrash, FaImage, FaBoxOpen, FaIndustry, FaVideo, FaPlus, FaCheckCircle, FaArrowRight, FaArrowLeft } from 'react-icons/fa';
+import { FaCloudUploadAlt, FaTrash, FaImage, FaBoxOpen, FaIndustry, FaVideo, FaPlus, FaCheckCircle, FaArrowRight, FaArrowLeft, FaExclamationTriangle } from 'react-icons/fa';
+
+// -----------------------------------------------------------
+// File size limits
+const MAX_IMAGE_MB = 2;
+const MAX_VIDEO_MB = 10;
+const MAX_IMAGE_BYTES = MAX_IMAGE_MB * 1024 * 1024;
+const MAX_VIDEO_BYTES = MAX_VIDEO_MB * 1024 * 1024;
+
+/**
+ * Returns an error string if the file exceeds the limit, otherwise null.
+ * @param {File} file
+ * @param {'image'|'video'} type
+ */
+const validateFileSize = (file, type) => {
+  if (!file) return null;
+  const limit = type === 'video' ? MAX_VIDEO_BYTES : MAX_IMAGE_BYTES;
+  const limitMB = type === 'video' ? MAX_VIDEO_MB : MAX_IMAGE_MB;
+  if (file.size > limit) {
+    return `"${file.name}" is too large. Max ${limitMB}MB allowed for ${type}s.`;
+  }
+  return null;
+};
+// -----------------------------------------------------------
 
 const Step5MediaUpload = ({ onNext, onBack }) => {
-  const { formData, updateFormData } = useForm();
+  const { formData, updateFormData, isSaving, isUpdating } = useForm();
   const { t } = useLanguage();
 
   const [stepData, setStepData] = useState({
@@ -16,12 +39,24 @@ const Step5MediaUpload = ({ onNext, onBack }) => {
   });
 
   const [uploading, setUploading] = useState({});
+  const [uploadError, setUploadError] = useState('');
 
   // --- Handlers ---
 
   const handleMultipleImageUpload = async (e) => {
     const files = Array.from(e.target.files);
     if (files.length === 0) return;
+
+    // File size validation
+    for (const file of files) {
+      const err = validateFileSize(file, 'image');
+      if (err) {
+        setUploadError(err);
+        e.target.value = '';
+        return;
+      }
+    }
+    setUploadError('');
 
     setUploading(prev => ({ ...prev, productImages: true }));
     try {
@@ -50,6 +85,16 @@ const Step5MediaUpload = ({ onNext, onBack }) => {
 
   const handleSingleFileUpload = async (field, file) => {
     if (!file) return;
+
+    // File size validation
+    const fileType = field === 'video' ? 'video' : 'image';
+    const err = validateFileSize(file, fileType);
+    if (err) {
+      setUploadError(err);
+      return;
+    }
+    setUploadError('');
+
     setUploading(prev => ({ ...prev, [field]: true }));
     try {
       const formDataObj = new FormData();
@@ -102,11 +147,23 @@ const Step5MediaUpload = ({ onNext, onBack }) => {
         <h3 className="text-2xl font-bold text-slate-900">{t('form.step5.title') || "Media & Visuals"}</h3>
         <p className="text-slate-500 mt-2">{t('form.step5.subtitle') || "Showcase your products with high-quality images and video."}</p>
         <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-amber-50 text-amber-700 rounded-full text-sm font-medium border border-amber-200">
-          <span>✨ Optional Step</span>
+          <span>✨ {t('form.step5.optional')}</span>
           <span className="text-amber-500">|</span>
-          <span className="text-xs">You can add these later from dashboard</span>
+          <span className="text-xs">{t('form.step5.optionalText')}</span>
         </div>
       </div>
+
+      {/* File size error banner */}
+      {uploadError && (
+        <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700">
+          <FaExclamationTriangle className="mt-0.5 flex-shrink-0" />
+          <div>
+            <p className="font-bold text-sm">{t('form.step5.uploadBlocked')}</p>
+            <p className="text-xs mt-0.5">{uploadError}</p>
+          </div>
+          <button type="button" onClick={() => setUploadError('')} className="ml-auto text-red-400 hover:text-red-600">✕</button>
+        </div>
+      )}
 
       {/* --- SECTION 1: PRODUCT GALLERY --- */}
       <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
@@ -116,7 +173,7 @@ const Step5MediaUpload = ({ onNext, onBack }) => {
             {t('form.step5.productImagesTitle') || "Product Gallery"}
           </h4>
           <span className="text-xs bg-blue-50 text-blue-600 px-3 py-1 rounded-full font-bold uppercase tracking-wide">
-            {stepData.productImages.length} Uploaded
+            {stepData.productImages.length} {t('form.step5.uploaded')}
           </span>
         </div>
 
@@ -126,15 +183,15 @@ const Step5MediaUpload = ({ onNext, onBack }) => {
             {uploading.productImages ? (
               <div className="flex flex-col items-center animate-pulse">
                 <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin mb-2"></div>
-                <span className="text-xs text-blue-600 font-bold uppercase tracking-wide">Uploading...</span>
+                <span className="text-xs text-blue-600 font-bold uppercase tracking-wide">{t('form.step5.uploading')}</span>
               </div>
             ) : (
               <>
                 <div className="w-12 h-12 bg-white rounded-full shadow-sm border border-blue-100 flex items-center justify-center text-blue-500 mb-3 group-hover:scale-110 transition-transform duration-300">
                   <FaPlus />
                 </div>
-                <span className="text-sm font-bold text-blue-700 group-hover:text-blue-800 transition-colors">Add Image</span>
-                <span className="text-[10px] text-slate-400 mt-1 uppercase font-medium">JPG, PNG</span>
+                <span className="text-sm font-bold text-blue-700 group-hover:text-blue-800 transition-colors">{t('form.step5.addImage')}</span>
+                <span className="text-[10px] text-slate-400 mt-1 uppercase font-medium">{t('form.step5.jpgPng')}</span>
               </>
             )}
             <input type="file" multiple accept="image/*" onChange={handleMultipleImageUpload} className="hidden" />
@@ -151,7 +208,7 @@ const Step5MediaUpload = ({ onNext, onBack }) => {
                   type="button"
                   onClick={() => removeProductImage(index)}
                   className="bg-white text-red-500 p-2.5 rounded-full hover:bg-red-50 transition-colors shadow-lg transform hover:scale-110"
-                  title="Remove Image"
+                  title={t('form.step5.removeImage')}
                 >
                   <FaTrash size={14} />
                 </button>
@@ -171,8 +228,8 @@ const Step5MediaUpload = ({ onNext, onBack }) => {
 
         {/* Packaging Upload */}
         <SingleUploadCard
-          title={t('form.step5.packagingImage') || "Packaging"}
-          subtitle="Upload an image of your product packaging."
+          title={t('form.step5.packagingImage')  || "Packaging"}
+          subtitle={t('form.step5.packagingImageSubtitle') || "Upload an image of your product packaging."}
           icon={<FaBoxOpen />}
           image={stepData.packagingImage}
           loading={uploading.packagingImage}
@@ -184,7 +241,7 @@ const Step5MediaUpload = ({ onNext, onBack }) => {
         {/* Process Upload */}
         <SingleUploadCard
           title={t('form.step5.productionImage') || "Production Process"}
-          subtitle="Show how your product is made."
+          subtitle={t('form.step5.productionImageSubtitle') || "Show how your product is made."}
           icon={<FaIndustry />}
           image={stepData.productionProcessImage}
           loading={uploading.productionProcessImage}
@@ -199,7 +256,7 @@ const Step5MediaUpload = ({ onNext, onBack }) => {
         <h4 className="font-bold text-slate-700 flex items-center gap-2 mb-6 text-lg">
           <FaVideo className="text-rose-500" />
           {t('form.step5.videoTitle') || "Promotional Video"}
-          <span className="text-xs font-normal text-slate-400 ml-auto hidden sm:inline-block">MP4, WebM (Max 50MB)</span>
+          <span className="text-xs font-normal text-slate-400 ml-auto hidden sm:inline-block">{t('form.step5.videoNote') || "MP4, WebM (Max 50MB)"}</span>
         </h4>
 
         {!stepData.video ? (
@@ -207,7 +264,7 @@ const Step5MediaUpload = ({ onNext, onBack }) => {
             {uploading.video ? (
               <div className="flex flex-col items-center">
                 <div className="w-10 h-10 border-4 border-slate-200 border-t-rose-500 rounded-full animate-spin mb-3"></div>
-                <p className="text-rose-600 font-bold uppercase text-xs tracking-wide">Uploading Video...</p>
+                <p className="text-rose-600 font-bold uppercase text-xs tracking-wide">{t('form.step5.uploadingVideo') || "Uploading Video..."}</p>
               </div>
             ) : (
               <>
@@ -215,7 +272,7 @@ const Step5MediaUpload = ({ onNext, onBack }) => {
                   <FaCloudUploadAlt className="text-3xl text-slate-400 group-hover:text-rose-500 transition-colors" />
                 </div>
                 <p className="font-bold text-slate-600 group-hover:text-rose-600 transition-colors">{t('form.step5.uploadVideo') || "Click to upload video"}</p>
-                <p className="text-xs text-slate-400 mt-2">Drag and drop or browse files</p>
+                <p className="text-xs text-slate-400 mt-2">{t('form.step5.dragAndDrop') || "Drag and drop or browse files"}</p>
               </>
             )}
             <input type="file" accept="video/*" onChange={(e) => handleSingleFileUpload('video', e.target.files[0])} className="hidden" />
@@ -228,7 +285,7 @@ const Step5MediaUpload = ({ onNext, onBack }) => {
               onClick={() => setStepData(prev => ({ ...prev, video: '' }))}
               className="absolute top-4 right-4 bg-white/90 backdrop-blur text-red-600 px-3 py-1.5 rounded-lg text-xs font-bold shadow-lg opacity-0 group-hover:opacity-100 transition-all transform hover:scale-105"
             >
-              Remove Video
+              {t('form.step5.removeVideo') || "Remove Video"}
             </button>
           </div>
         )}
@@ -248,15 +305,24 @@ const Step5MediaUpload = ({ onNext, onBack }) => {
           <button
             type="button"
             onClick={handleSkip}
-            className="px-6 py-3 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition-colors"
+            disabled={isSaving}
+            className="px-6 py-3 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Skip Step
+            {t('form.buttons.skipStep') || "Skip Step"}
           </button>
           <button
             type="submit"
-            className="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
+            disabled={isSaving}
+            className="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
           >
-            {t('form.step5.saveAndReview') || "Save & Review"} <FaArrowRight className="text-sm" />
+            {isSaving ? (
+              <>
+                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                {isUpdating ? t('form.step5.updating') || 'Updating...' : t('form.step5.saving') || 'Saving...'}
+              </>
+            ) : (
+              <>{t('form.step5.saveAndReview') || "Save & Review"} <FaArrowRight className="text-sm" /></>
+            )}
           </button>
         </div>
       </div>
@@ -293,7 +359,7 @@ const SingleUploadCard = ({ title, subtitle, icon, image, loading, onUpload, t, 
             <img src={image} alt={title} className="w-full h-full object-contain p-2" />
             <div className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
               <label className="cursor-pointer bg-white text-slate-800 px-4 py-2 rounded-lg text-sm font-bold hover:bg-slate-100 transition shadow-lg transform hover:scale-105">
-                Change Image
+                {t('form.step5.changeImage') || "Change Image"}
                 <input type="file" accept="image/*" onChange={onUpload} className="hidden" />
               </label>
             </div>
@@ -307,8 +373,8 @@ const SingleUploadCard = ({ title, subtitle, icon, image, loading, onUpload, t, 
                 <div className="mb-3 transform group-hover:scale-110 transition-transform duration-300">
                   <FaCloudUploadAlt className={`text-3xl opacity-50 ${iconClass}`} />
                 </div>
-                <span className="text-sm font-bold text-slate-600 group-hover:text-slate-800 transition-colors">Upload Image</span>
-                <span className="text-[10px] text-slate-400 mt-1 font-medium uppercase tracking-wide">Click to browse</span>
+                <span className="text-sm font-bold text-slate-600 group-hover:text-slate-800 transition-colors">{t('form.step5.uploadImage') || "Upload Image"}</span>
+                <span className="text-[10px] text-slate-400 mt-1 font-medium uppercase tracking-wide">{t('form.step5.clickToBrowse') || "Click to browse"}</span>
               </>
             )}
             <input type="file" accept="image/*" onChange={onUpload} className="hidden" />

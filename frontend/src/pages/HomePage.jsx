@@ -2,7 +2,17 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import Navbar from '../components/Navbar';
+import ImageCard from '../components/ImageCard';
+
 import bannerImage from '../assets/banner/banner.png';
+import img1 from '../assets/productImage/image_1_top_left.jpg';
+import img2 from '../assets/productImage/image_2_top_right.jpg';
+import img3 from '../assets/productImage/image_3_bottom_left.jpg';
+import img4 from '../assets/productImage/image_4_bottom_right.jpg';
+import img5 from '../assets/productImage/product.2.jpeg';
+import img6 from '../assets/productImage/product.3.jpeg';
+import img7 from '../assets/productImage/product.4.jpeg';
+import img8 from '../assets/productImage/image8.jpg';
 import Footer from '../components/Footer';
 import {
   FaRocket, FaChartLine, FaHandshake, FaGlobe,
@@ -89,7 +99,35 @@ const HomePage = () => {
       />
 
     </div>
-  </div>
+        </div>
+        {/* --- IMAGE SHOWCASE SECTION --- */}
+        <section className="relative mt-16 z-10 px-4">
+          <div className="container mx-auto max-w-5xl">
+            <div className="bg-neutral-50 rounded-xl shadow-xl border-t border-stone-300 p-8">
+
+              <h2 className="text-2xl font-bold text-center  mb-8 text-[#8e4c09]">
+                Our Products
+              </h2>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+
+                {/* Row 1 */}
+                <ImageCard src={img1} alt="Product 1" />
+                <ImageCard src={img2} alt="Product 2" />
+                <ImageCard src={img3} alt="Product 3" />
+                <ImageCard src={img4} alt="Product 4" />
+
+                {/* Row 2 */}
+                <ImageCard src={img5} alt="Product 5" />
+                <ImageCard src={img6} alt="Product 6" />
+                <ImageCard src={img7} alt="Product 7" />
+                <ImageCard src={img8} alt="Product 8" />
+
+              </div>
+
+            </div>
+          </div>
+        </section>
 </section>
       {/* --- FEATURES SECTION --- */}
       <section className="py-24 bg-stone-50">

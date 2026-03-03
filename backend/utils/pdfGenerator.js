@@ -109,13 +109,11 @@ export const generateBusinessDataPDF = async (userId, businessData) => {
       addField('Raw Material Source', businessData?.rawMaterialSource);
       addField('Production Type', businessData?.productionType);
       addField('Production Place', businessData?.productionPlace);
-      addField('Cost Per Unit', businessData?.costPerUnit ? `৳${businessData.costPerUnit}` : undefined);
       addField('Wholesale Price', businessData?.wholesalePrice ? `৳${businessData.wholesalePrice}` : undefined);
-      addField('Retail Price', businessData?.retailPrice ? `৳${businessData.retailPrice}` : undefined);
       addField('Minimum Order Quantity (MOQ)', businessData?.moq);
       addField('Bulk Discount Available', businessData?.bulkDiscount);
       addField('Production Capacity', businessData?.productionCapacity);
-      addField('Machinery Used', businessData?.machineryUsed);
+
       addField('Male Workers', businessData?.maleWorkers !== undefined ? businessData.maleWorkers : undefined);
       addField('Female Workers', businessData?.femaleWorkers !== undefined ? businessData.femaleWorkers : undefined);
       doc.moveDown(0.5);

@@ -49,9 +49,7 @@ export const validateStep2 = (data) => {
   if (!data.productionPlace) errors.productionPlace = 'Production place is required';
   
   // Pricing
-  if (!data.costPerUnit || data.costPerUnit <= 0) errors.costPerUnit = 'Valid cost per unit is required';
   if (!data.wholesalePrice || data.wholesalePrice <= 0) errors.wholesalePrice = 'Valid wholesale price is required';
-  if (!data.retailPrice || data.retailPrice <= 0) errors.retailPrice = 'Valid retail price is required';
   if (!data.moq || data.moq <= 0) errors.moq = 'Minimum order quantity is required';
   if (!data.bulkDiscount) errors.bulkDiscount = 'Bulk discount option is required';
   

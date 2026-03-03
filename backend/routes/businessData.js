@@ -4,9 +4,11 @@ import {
   createBusinessData,
   updateBusinessData,
   deleteBusinessData,
-  downloadBusinessDataPDF
+  downloadBusinessDataPDF,
+  getBusinessStats,
+  getAllBusinessData
 } from '../controllers/businessDataController.js';
-import { protect } from '../middleware/auth.js';
+import { protect, isAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -18,6 +20,10 @@ router.route('/')
   .post(createBusinessData);
 
 router.get('/download-pdf', downloadBusinessDataPDF);
+
+// ── Admin-only routes (protect already applied via router.use) ───────────────
+router.get('/stats', isAdmin, getBusinessStats);
+router.get('/all', isAdmin, getAllBusinessData);
 
 router.route('/:id')
   .put(updateBusinessData)

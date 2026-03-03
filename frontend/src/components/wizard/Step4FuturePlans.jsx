@@ -17,8 +17,12 @@ import {
   FaCheckCircle
 } from 'react-icons/fa';
 
+// Inline error helper
+const FieldError = ({ msg }) =>
+  msg ? <p className="mt-1 text-xs text-red-500 font-medium">{msg}</p> : null;
+
 const Step4FuturePlans = ({ onNext, onBack }) => {
-  const { formData, updateFormData } = useForm();
+  const { formData, updateFormData, validateStep, isSaving, isUpdating } = useForm();
   const { t } = useLanguage();
 
   const [stepData, setStepData] = useState({
@@ -35,6 +39,8 @@ const Step4FuturePlans = ({ onNext, onBack }) => {
       training: false
     }
   });
+
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -56,6 +62,12 @@ const Step4FuturePlans = ({ onNext, onBack }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const { success, errors: validationErrors } = validateStep(4, stepData);
+    if (!success) {
+      setErrors(validationErrors);
+      return;
+    }
+    setErrors({});
     updateFormData(stepData);
     onNext(stepData);
   };
@@ -91,10 +103,11 @@ const Step4FuturePlans = ({ onNext, onBack }) => {
             name="futureGoals"
             value={stepData.futureGoals}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all resize-none bg-slate-50 focus:bg-white text-slate-700 placeholder-slate-400"
+            className={`w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all resize-none bg-slate-50 focus:bg-white text-slate-700 placeholder-slate-400 ${errors.futureGoals ? 'border-red-400' : 'border-slate-200'}`}
             rows="3"
             placeholder={t('form.step4.placeholders.goals') || "Describe your long-term vision..."}
           />
+          <FieldError msg={errors.futureGoals} />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -220,16 +233,25 @@ const Step4FuturePlans = ({ onNext, onBack }) => {
         <button
           type="button"
           onClick={onBack}
-          className="w-full sm:w-auto px-6 py-3 bg-white text-slate-600 font-bold rounded-xl border border-slate-200 hover:bg-slate-50 hover:text-slate-800 transition-colors flex items-center justify-center gap-2"
+          disabled={isSaving}
+          className="w-full sm:w-auto px-6 py-3 bg-white text-slate-600 font-bold rounded-xl border border-slate-200 hover:bg-slate-50 hover:text-slate-800 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <FaArrowLeft className="text-sm" /> {t('form.buttons.back') || "Back"}
         </button>
 
         <button
           type="submit"
-          className="w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
+          disabled={isSaving}
+          className="w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
         >
-          {t('form.buttons.next') || "Next Step"} <FaArrowRight className="text-sm" />
+          {isSaving ? (
+            <>
+              <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              {isUpdating ? 'Updating...' : 'Saving...'}
+            </>
+          ) : (
+            <>{t('form.buttons.next') || "Next Step"} <FaArrowRight className="text-sm" /></>
+          )}
         </button>
       </div>
     </form>

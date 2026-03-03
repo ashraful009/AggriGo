@@ -51,16 +51,14 @@ const businessDataSchema = new mongoose.Schema({
     type: String,
     enum: ['Home-based', 'Factory-based']
   },
-  costPerUnit: Number,
   wholesalePrice: Number,
-  retailPrice: Number,
   moq: Number,
   bulkDiscount: {
     type: String,
     enum: ['Yes', 'No']
   },
   productionCapacity: String,
-  machineryUsed: String,
+
   maleWorkers: Number,
   femaleWorkers: Number,
   
@@ -165,13 +163,31 @@ const businessDataSchema = new mongoose.Schema({
     default: 1,
     min: 1,
     max: 6
+  },
+  // Agreement email guard — set to true once the PDF has been e-mailed
+  // Successfully sent. Prevents duplicate sends on subsequent saves.
+  isAgreementSent: {
+    type: Boolean,
+    default: false
   }
 }, {
   timestamps: true
 });
 
-// Index for faster user queries
-businessDataSchema.index({ userId: 1 });
+// ─── Indexes ─────────────────────────────────────────────────────────────────
+// One user → one BusinessData document (enforces uniqueness + fast lookup)
+businessDataSchema.index({ userId: 1 }, { unique: true });
+
+// Admin: list all drafted / submitted businesses
+businessDataSchema.index({ submissionStatus: 1 });
+
+// Admin: browse/filter businesses by product category
+businessDataSchema.index({ productType: 1 });
+
+// Admin: filter submitted businesses by category (most common admin query)
+businessDataSchema.index({ productType: 1, submissionStatus: 1 });
+// ─────────────────────────────────────────────────────────────────────────────
+
 
 const BusinessData = mongoose.model('BusinessData', businessDataSchema);
 

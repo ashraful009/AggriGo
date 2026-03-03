@@ -4,6 +4,11 @@ import { useLanguage } from '../../context/LanguageContext';
 import bangladeshLocations from '../../data/bangladesh-locations.json';
 import { FaBoxOpen, FaUserTie, FaPhoneAlt, FaMapMarkerAlt, FaArrowRight, FaBuilding } from 'react-icons/fa';
 
+// Inline error helper
+const FieldError = ({ msg }) =>
+  msg ? <p className="mt-1 text-xs text-red-500 font-medium">{msg}</p> : null;
+
+
 // Product Categories with bilingual labels
 const PRODUCT_CATEGORIES = [
   {
@@ -59,8 +64,9 @@ const PRODUCT_CATEGORIES = [
 ];
 
 const Step1BasicInfo = ({ onNext }) => {
-  const { formData, updateFormData } = useForm();
+  const { formData, updateFormData, validateStep, isSaving, isUpdating } = useForm();
   const { t, currentLanguage } = useLanguage();
+  const [errors, setErrors] = useState({});
 
   const [stepData, setStepData] = useState({
     productType: formData.productType || '',
@@ -176,11 +182,20 @@ const Step1BasicInfo = ({ onNext }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Join selected subcategories as comma-separated string for backend compatibility
     const dataToSubmit = {
       ...stepData,
       category: selectedSubcategories.join(', ')
     };
+    // Zod validation
+    const { success, errors: validationErrors } = validateStep(1, dataToSubmit);
+    if (!success) {
+      setErrors(validationErrors);
+      // Scroll to first error
+      const firstErrorKey = Object.keys(validationErrors)[0];
+      document.querySelector(`[name="${firstErrorKey}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    setErrors({});
     updateFormData(dataToSubmit);
     onNext(dataToSubmit);
   };
@@ -340,20 +355,20 @@ const Step1BasicInfo = ({ onNext }) => {
               name="brandName"
               value={stepData.brandName}
               onChange={handleChange}
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-slate-50 focus:bg-white placeholder-slate-400"
-              placeholder="e.g. Green Harvest"
-              required
+              className={`w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-slate-50 focus:bg-white placeholder-slate-400 ${errors.brandName ? 'border-red-400' : 'border-slate-200'}`}
+              placeholder={t('form.step1.brandNamePlaceholder') || "e.g. Green Harvest"}
             />
+            <FieldError msg={errors.brandName} />
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-slate-600 mb-2">{t('form.step1.registeredName') || "Registered Name"} <span className="text-xs font-normal text-slate-400">(Optional)</span></label>
+            <label className="block text-sm font-bold text-slate-600 mb-2">{t('form.step1.registeredName') || "Registered Name"} <span className="text-xs font-normal text-slate-400">{t('form.step1.optional') || "(Optional)"}</span></label>
             <input
               name="registeredName"
               value={stepData.registeredName}
               onChange={handleChange}
               className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-slate-50 focus:bg-white placeholder-slate-400"
-              placeholder="Official Business Name"
+              placeholder={t('form.step1.registeredNamePlaceholder') || "Official Business Name"}
             />
           </div>
         </div>
@@ -373,9 +388,9 @@ const Step1BasicInfo = ({ onNext }) => {
               name="ownerName"
               value={stepData.ownerName}
               onChange={handleChange}
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-slate-50 focus:bg-white placeholder-slate-400"
-              required
+              className={`w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-slate-50 focus:bg-white placeholder-slate-400 ${errors.ownerName ? 'border-red-400' : 'border-slate-200'}`}
             />
+            <FieldError msg={errors.ownerName} />
           </div>
 
           <div>
@@ -385,15 +400,15 @@ const Step1BasicInfo = ({ onNext }) => {
               name="ownerAge"
               value={stepData.ownerAge}
               onChange={handleChange}
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-slate-50 focus:bg-white placeholder-slate-400"
-              required
+              className={`w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-slate-50 focus:bg-white placeholder-slate-400 ${errors.ownerAge ? 'border-red-400' : 'border-slate-200'}`}
             />
+            <FieldError msg={errors.ownerAge} />
           </div>
 
           <div>
             <label className="block text-sm font-bold text-slate-600 mb-3">{t('form.step1.gender') || "Gender"} <span className="text-red-500">*</span></label>
             <div className="flex gap-4">
-              {['Male', 'Female', 'Other'].map(g => (
+              {t('form.step1.genderOptions').map(g => (
                 <label key={g} className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border cursor-pointer transition-all ${stepData.gender === g ? 'bg-blue-50 border-blue-500 text-blue-700 font-bold' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
                   <input type="radio" name="gender" value={g} checked={stepData.gender === g} onChange={handleChange} className="hidden" />
                   {g}
@@ -405,7 +420,7 @@ const Step1BasicInfo = ({ onNext }) => {
           <div>
             <label className="block text-sm font-bold text-slate-600 mb-3">{t('form.step1.ownershipType') || "Ownership"} <span className="text-red-500">*</span></label>
             <div className="flex flex-wrap gap-3">
-              {['Single', 'Partnership', 'Ltd. Company'].map(type => (
+              {t('form.step1.ownershipTypeOptions').map(type => (
                 <label key={type} className={`flex-1 min-w-[100px] flex items-center justify-center gap-2 px-3 py-3 rounded-xl border cursor-pointer transition-all text-sm ${stepData.ownershipType === type ? 'bg-amber-50 border-amber-500 text-amber-800 font-bold' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
                   <input type="radio" name="ownershipType" value={type} checked={stepData.ownershipType === type} onChange={handleChange} className="hidden" />
                   {type}
@@ -445,10 +460,10 @@ const Step1BasicInfo = ({ onNext }) => {
                 name="mobileNumber"
                 value={stepData.mobileNumber}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-r-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-slate-50 focus:bg-white placeholder-slate-400 font-mono"
-                required
+                className={`w-full px-4 py-3 rounded-r-xl border focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-slate-50 focus:bg-white placeholder-slate-400 font-mono ${errors.mobileNumber ? 'border-red-400' : 'border-slate-200'}`}
               />
             </div>
+            <FieldError msg={errors.mobileNumber} />
           </div>
 
           <div>
@@ -458,9 +473,9 @@ const Step1BasicInfo = ({ onNext }) => {
               name="email"
               value={stepData.email}
               onChange={handleChange}
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-slate-50 focus:bg-white placeholder-slate-400"
-              required
+              className={`w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-slate-50 focus:bg-white placeholder-slate-400 ${errors.email ? 'border-red-400' : 'border-slate-200'}`}
             />
+            <FieldError msg={errors.email} />
           </div>
 
           <div className="md:col-span-2">
@@ -511,7 +526,7 @@ const Step1BasicInfo = ({ onNext }) => {
                 className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-slate-50 focus:bg-white appearance-none cursor-pointer"
                 required
               >
-                <option value="">Select Division</option>
+                <option value="">{t('form.step1.divisionPlaceholder') || "Select Division"}</option>
                 {bangladeshLocations.map(d => <option key={d.division}>{d.division}</option>)}
               </select>
               <div className="absolute top-1/2 right-4 transform -translate-y-1/2 pointer-events-none text-slate-400">▼</div>
@@ -529,7 +544,7 @@ const Step1BasicInfo = ({ onNext }) => {
                 required
                 disabled={!stepData.division}
               >
-                <option value="">Select District</option>
+                <option value="">{t('form.step1.districtPlaceholder') || "Select District"}</option>
                 {districts.map(d => <option key={d.name}>{d.name}</option>)}
               </select>
               <div className="absolute top-1/2 right-4 transform -translate-y-1/2 pointer-events-none text-slate-400">▼</div>
@@ -547,7 +562,7 @@ const Step1BasicInfo = ({ onNext }) => {
                 required
                 disabled={!stepData.district}
               >
-                <option value="">Select Thana</option>
+                <option value="">{t('form.step1.thanaPlaceholder') || "Select Thana"}</option>
                 {thanas.map(t => <option key={t}>{t}</option>)}
               </select>
               <div className="absolute top-1/2 right-4 transform -translate-y-1/2 pointer-events-none text-slate-400">▼</div>
@@ -558,7 +573,7 @@ const Step1BasicInfo = ({ onNext }) => {
             <label className="block text-sm font-bold text-slate-600 mb-2">{t('form.step1.postOffice') || "Post Office"}</label>
             <input
               name="postOffice"
-              placeholder="e.g. Sadar"
+              placeholder={t('form.step1.postOfficePlaceholder') || "e.g. Sadar"}
               value={stepData.postOffice}
               onChange={handleChange}
               className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-slate-50 focus:bg-white"
@@ -570,7 +585,7 @@ const Step1BasicInfo = ({ onNext }) => {
             <label className="block text-sm font-bold text-slate-600 mb-2">{t('form.step1.postCode') || "Post Code"}</label>
             <input
               name="postCode"
-              placeholder="e.g. 1200"
+              placeholder={t('form.step1.postCodePlaceholder') || "e.g. 1200"}
               value={stepData.postCode}
               onChange={handleChange}
               className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-slate-50 focus:bg-white font-mono"
@@ -585,7 +600,7 @@ const Step1BasicInfo = ({ onNext }) => {
               value={stepData.detailedAddress}
               onChange={handleChange}
               rows="3"
-              placeholder="House No, Road No, Village, etc."
+              placeholder={t('form.step1.detailedAddressPlaceholder') || "House No, Road No, Village, etc."}
               className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-slate-50 focus:bg-white resize-none"
               required
             />
@@ -597,9 +612,17 @@ const Step1BasicInfo = ({ onNext }) => {
       <div className="flex justify-end pt-8">
         <button
           type="submit"
-          className="px-10 py-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold hover:shadow-lg hover:shadow-blue-500/30 transform hover:-translate-y-0.5 transition-all flex items-center gap-2 text-lg"
+          disabled={isSaving}
+          className="px-10 py-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold hover:shadow-lg hover:shadow-blue-500/30 transform hover:-translate-y-0.5 transition-all flex items-center gap-2 text-lg disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
         >
-          {t('form.buttons.next') || "Next"} <FaArrowRight />
+          {isSaving ? (
+            <>
+              <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              {isUpdating ? 'Updating...' : 'Saving...'}
+            </>
+          ) : (
+            <>{t('form.buttons.next') || "Next"} <FaArrowRight /></>
+          )}
         </button>
       </div>
     </form>

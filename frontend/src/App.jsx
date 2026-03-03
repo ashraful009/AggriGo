@@ -3,6 +3,8 @@ import { AuthProvider } from './context/AuthContext';
 import { FormProvider } from './context/FormContext';
 import { LanguageProvider } from './context/LanguageContext';
 import PrivateRoute from './components/PrivateRoute';
+import AdminRoute from './components/AdminRoute';
+import AdminLayout from './components/layout/AdminLayout';
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -15,6 +17,9 @@ import ResetPasswordPage from './pages/ResetPasswordPage';
 import FormWizard from './pages/FormWizard';
 import Dashboard from './pages/Dashboard';
 import BusinessAgreement from './pages/BusinessAgreement';
+import AnalyticsDashboard from './pages/AnalyticsDashboard';
+import BusinessDirectory from './pages/BusinessDirectory';
+import BusinessDetail from './pages/BusinessDetail';
 
 function App() {
   return (
@@ -32,7 +37,7 @@ function App() {
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
 
-              {/* Private Routes */}
+              {/* Private User Routes */}
               <Route
                 path="/agreement"
                 element={
@@ -57,6 +62,28 @@ function App() {
                   </PrivateRoute>
                 }
               />
+
+              {/* ── Admin Panel (nested routes, share AdminLayout sidebar) ── */}
+              <Route
+                path="/manager"
+                element={
+                  <AdminRoute>
+                    <AdminLayout />
+                  </AdminRoute>
+                }
+              >
+                {/* /manager → redirect to /manager/analytics */}
+                <Route index element={<Navigate to="analytics" replace />} />
+
+                {/* /manager/analytics */}
+                <Route path="analytics" element={<AnalyticsDashboard />} />
+
+                {/* /manager/directory */}
+                <Route path="directory" element={<BusinessDirectory />} />
+
+                {/* /manager/directory/:id */}
+                <Route path="directory/:id" element={<BusinessDetail />} />
+              </Route>
 
               {/* Catch all - redirect to home */}
               <Route path="*" element={<Navigate to="/" replace />} />

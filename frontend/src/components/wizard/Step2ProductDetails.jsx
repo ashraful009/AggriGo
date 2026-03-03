@@ -20,8 +20,13 @@ import {
   FaCheck
 } from 'react-icons/fa';
 
+// Inline error helper
+const FieldError = ({ msg }) =>
+  msg ? <p className="mt-1 text-xs text-red-500 font-medium">{msg}</p> : null;
+
 const Step2ProductDetails = ({ onNext, onBack }) => {
-  const { formData, updateFormData } = useForm();
+  const { formData, updateFormData, validateStep, isSaving, isUpdating } = useForm();
+
   const { t } = useLanguage();
 
   const [stepData, setStepData] = useState({
@@ -30,16 +35,15 @@ const Step2ProductDetails = ({ onNext, onBack }) => {
     rawMaterialSource: formData.rawMaterialSource || 'Local',
     productionType: formData.productionType || 'Handmade',
     productionPlace: formData.productionPlace || 'Home-based',
-    costPerUnit: formData.costPerUnit || '',
     wholesalePrice: formData.wholesalePrice || '',
-    retailPrice: formData.retailPrice || '',
     moq: formData.moq || '',
     bulkDiscount: formData.bulkDiscount || 'No',
     productionCapacity: formData.productionCapacity || '',
-    machineryUsed: formData.machineryUsed || '',
     maleWorkers: formData.maleWorkers || '',
     femaleWorkers: formData.femaleWorkers || ''
   });
+
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -52,6 +56,12 @@ const Step2ProductDetails = ({ onNext, onBack }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const { success, errors: validationErrors } = validateStep(2, stepData);
+    if (!success) {
+      setErrors(validationErrors);
+      return;
+    }
+    setErrors({});
     updateFormData(stepData);
     onNext(stepData);
   };
@@ -83,9 +93,9 @@ const Step2ProductDetails = ({ onNext, onBack }) => {
               value={stepData.productName}
               onChange={handleChange}
               placeholder={t('form.step2.productNamePlaceholder') || "e.g. Organic Honey"}
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-slate-50 focus:bg-white placeholder-slate-400"
-              required
+              className={`w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-slate-50 focus:bg-white placeholder-slate-400 ${errors.productName ? 'border-red-400' : 'border-slate-200'}`}
             />
+            <FieldError msg={errors.productName} />
           </div>
 
           {/* Description */}
@@ -98,10 +108,10 @@ const Step2ProductDetails = ({ onNext, onBack }) => {
               value={stepData.shortDescription}
               onChange={handleChange}
               placeholder={t('form.step2.descriptionPlaceholder') || "Briefly describe your product features..."}
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all resize-none bg-slate-50 focus:bg-white placeholder-slate-400"
+              className={`w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all resize-none bg-slate-50 focus:bg-white placeholder-slate-400 ${errors.shortDescription ? 'border-red-400' : 'border-slate-200'}`}
               rows="3"
-              required
             />
+            <FieldError msg={errors.shortDescription} />
           </div>
         </div>
       </div>
@@ -116,9 +126,9 @@ const Step2ProductDetails = ({ onNext, onBack }) => {
           </h4>
           <div className="grid grid-cols-3 gap-3 flex-1">
             {[
-              { label: 'Handmade', value: 'Handmade', icon: <FaHandRock /> },
-              { label: 'Semi-Auto', value: 'Semi-automatic', icon: <FaCogs /> },
-              { label: 'Automatic', value: 'Automatic', icon: <FaRobot /> }
+              { label: t('form.step2.productionTypeOptions.handmade') || "Handmade", value: 'Handmade', icon: <FaHandRock /> },
+              { label: t('form.step2.productionTypeOptions.semiAutomatic') || "Semi-Auto", value: 'Semi-automatic', icon: <FaCogs /> },
+              { label: t('form.step2.productionTypeOptions.automatic') || "Automatic", value: 'Automatic', icon: <FaRobot /> }
             ].map((item) => (
               <div
                 key={item.value}
@@ -147,8 +157,8 @@ const Step2ProductDetails = ({ onNext, onBack }) => {
             <label className="text-sm font-bold text-slate-600 mb-4 block">{t('form.step2.rawMaterialSource') || "Raw Material Source"}</label>
             <div className="flex bg-slate-100 p-1.5 rounded-xl">
               {[
-                { label: 'Local', value: 'Local', icon: <FaHome /> },
-                { label: 'Imported', value: 'Imported', icon: <FaGlobe /> }
+                { label: t('form.step2.rawMaterialSourceOptions.local') || "Local", value: 'Local', icon: <FaHome /> },
+                { label: t('form.step2.rawMaterialSourceOptions.imported') || "Imported", value: 'Imported', icon: <FaGlobe /> }
               ].map(opt => (
                 <button
                   type="button"
@@ -169,8 +179,8 @@ const Step2ProductDetails = ({ onNext, onBack }) => {
             <label className="text-sm font-bold text-slate-600 mb-4 block">{t('form.step2.productionPlace') || "Production Place"}</label>
             <div className="flex bg-slate-100 p-1.5 rounded-xl">
               {[
-                { label: 'Home', value: 'Home-based', icon: <FaHome /> },
-                { label: 'Factory', value: 'Factory-based', icon: <FaIndustry /> }
+                { label: t('form.step2.productionPlaceOptions.home') || "Home", value: 'Home-based', icon: <FaHome /> },
+                { label: t('form.step2.productionPlaceOptions.factory') || "Factory", value: 'Factory-based', icon: <FaIndustry /> }
               ].map(opt => (
                 <button
                   type="button"
@@ -194,27 +204,14 @@ const Step2ProductDetails = ({ onNext, onBack }) => {
           <FaMoneyBillWave className="text-emerald-500" /> {t('form.step2.pricingTitle') || "Pricing Strategy"}
         </h4>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <PricingInput
-            label={t('form.step2.costPerUnit') || "Cost Per Unit"}
-            name="costPerUnit"
-            value={stepData.costPerUnit}
-            onChange={handleChange}
-            color="slate"
-          />
+        <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
           <PricingInput
             label={t('form.step2.wholesalePrice') || "Wholesale Price"}
             name="wholesalePrice"
             value={stepData.wholesalePrice}
             onChange={handleChange}
+            error={errors.wholesalePrice}
             color="blue"
-          />
-          <PricingInput
-            label={t('form.step2.retailPrice') || "Retail Price"}
-            name="retailPrice"
-            value={stepData.retailPrice}
-            onChange={handleChange}
-            color="amber"
           />
         </div>
 
@@ -261,7 +258,7 @@ const Step2ProductDetails = ({ onNext, onBack }) => {
         {/* Capacity & Machinery */}
         <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 flex flex-col h-full">
           <h4 className="font-bold text-slate-700 mb-6 flex items-center gap-2 text-lg">
-            <FaIndustry className="text-indigo-500" /> {t('form.step2.capacityMachinery') || "Capacity & Machinery"}
+            <FaIndustry className="text-indigo-500" /> {t('form.step2.productionCapacity') || "Production Capacity"}
           </h4>
           <div className="space-y-5 flex-1">
             <div>
@@ -273,17 +270,6 @@ const Step2ProductDetails = ({ onNext, onBack }) => {
                 onChange={handleChange}
                 placeholder={t('form.step2.capacityPlaceholder') || "e.g. 5000 Units"}
                 className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none bg-slate-50 transition-colors font-semibold text-slate-700"
-              />
-            </div>
-            <div>
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1 block">{t('form.step2.machineryUsed') || "Machinery List"}</label>
-              <textarea
-                name="machineryUsed"
-                value={stepData.machineryUsed}
-                onChange={handleChange}
-                placeholder={t('form.step2.machineryPlaceholder') || "List the machines you use..."}
-                rows="3"
-                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none bg-slate-50 text-sm resize-none"
               />
             </div>
           </div>
@@ -328,16 +314,25 @@ const Step2ProductDetails = ({ onNext, onBack }) => {
         <button
           type="button"
           onClick={onBack}
-          className="w-full sm:w-auto px-6 py-3 bg-white text-slate-600 font-bold rounded-xl border border-slate-200 hover:bg-slate-50 hover:text-slate-800 transition-colors flex items-center justify-center gap-2"
+          disabled={isSaving}
+          className="w-full sm:w-auto px-6 py-3 bg-white text-slate-600 font-bold rounded-xl border border-slate-200 hover:bg-slate-50 hover:text-slate-800 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <FaArrowLeft className="text-sm" /> {t('form.buttons.back') || "Back"}
         </button>
 
         <button
           type="submit"
-          className="w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
+          disabled={isSaving}
+          className="w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
         >
-          {t('form.buttons.next') || "Next Step"} <FaArrowRight className="text-sm" />
+          {isSaving ? (
+            <>
+              <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              {isUpdating ? 'Updating...' : 'Saving...'}
+            </>
+          ) : (
+            <>{t('form.buttons.next') || "Next Step"} <FaArrowRight className="text-sm" /></>
+          )}
         </button>
       </div>
     </form>

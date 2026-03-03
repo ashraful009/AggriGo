@@ -111,12 +111,17 @@
       "noSubCategoriesAvailable": "Please select a product type first",
       "subcategoriesSelected": "selected",
       "brandName": "Brand Name",
+      "brandNamePlaceholder": "e.g. Green Harvest",
       "registeredName": "Registered Name",
+      "registeredNamePlaceholder": "Official Business Name",
+      "optional": "(Optional)",
       "ownerInfo": "Owner Information",
       "ownerName": "Owner Name",
       "ownerAge": "Owner Age",
       "gender": "Gender",
+      "genderOptions": ["Male", "Female", "Other"],
       "ownershipType": "Ownership Type",
+      "ownershipTypeOptions": ["Single", "Partnership", "Ltd. Company"],
       "partnerName": "Partner Name",
       "contactInfo": "Contact Information",
       "mobileNumber": "Mobile Number",
@@ -125,11 +130,17 @@
       "whatsappNumber": "WhatsApp Number",
       "address": "Address",
       "division": "Division",
+      "divisionPlaceholder": "Select Division",
       "district": "District",
+      "districtPlaceholder": "Select District",
       "thana": "Thana",
+      "thanaPlaceholder": "Select Thana",
       "postOffice": "Post Office",
+      "postOfficePlaceholder": "e.g. Sadar",
       "postCode": "Post Code",
-      "detailedAddress": "Village, Road, House No"
+      "postCodePlaceholder": "e.g. 1200",
+      "detailedAddress": "Village, Road, House No",
+      "detailedAddressPlaceholder": "House No, Road No, Village, etc."
     },
     "step2": {
       "title": "Product Details",
@@ -140,8 +151,21 @@
       "shortDescription": "Short Description",
       "descriptionPlaceholder": "Write product features and characteristics...",
       "rawMaterialSource": "Raw Material Source",
+      "rawMaterialSourceOptions": {
+        "local": "Local",
+        "imported": "Imported"
+      },
       "productionType": "Production Type",
+      "productionTypeOptions": {
+        "handmade": "Handmade",
+        "semiAutomatic": "Semi-Auto",
+        "automatic": "Automatic"
+      },
       "productionPlace": "Production Place",
+      "productionPlaceOptions": {
+        "home": "Home",
+        "factory": "Factory"
+      },
       "pricingTitle": "Pricing List ",
       "costPerUnit": "Cost Per Unit",
       "wholesalePrice": "Wholesale Price",
@@ -151,8 +175,7 @@
       "capacityMachinery": "Capacity & Machinery",
       "productionCapacity": "Production Capacity (Monthly)",
       "capacityPlaceholder": "e.g.: 1000 pieces",
-      "machineryUsed": "Machinery Used",
-      "machineryPlaceholder": "Machine names...",
+
       "workforce": "Workforce",
       "maleWorkers": "Male Workers",
       "femaleWorkers": "Female Workers"
@@ -208,7 +231,11 @@
         "buyers": "Buyers",
         "bankName": "Bank Name",
         "branch": "Branch",
-        "accountNumber": "Account No"
+        "accountNumber": "Account No",
+        "businessAge": "e.g. 6",
+        "totalCustomers": "e.g. 50",
+        "regularCustomers": "e.g. 30",
+        "monthlySales": "e.g. 50000"
       }
     },
     "step4": {
@@ -261,7 +288,21 @@
       "selectImages": "Select Images",
       "selectImage": "Select Image",
       "selectVideo": "Select Video",
-      "remove": "Remove"
+      "remove": "Remove",
+      "optional": "Optional Step",
+      "optionalText": "You can add these later from dashboard",
+      "dragAndDrop": "Drag and drop or browse files",
+      "clickToBrowse": "Click to browse",
+      "changeImage": "Change Image",
+      "saving": "Saving...",
+      "updating": "Updating...",
+      "uploadBlocked": "Upload blocked",
+      "addImage": "Add Image",
+      "uploaded": "Uploaded",
+      "removeImage": "Remove Image",
+      "jpgPng": "JPG, PNG",
+      "packagingImageSubtitle": "Upload an image of your product packaging.",
+      "productionImageSubtitle": "Show how your product is made."
     },
     "step6": {
       "title": "Final Review",
@@ -285,7 +326,22 @@
       "marketBusiness": "Market & Business",
       "futurePlans": "Future Plans",
       "mediaUploads": "Media Uploads",
-      "consentTitle": "Consent & Declaration"
+      "consentTitle": "Consent & Declaration",
+      "ownerName": "Owner Name",
+      "gender": "Gender",
+      "brandName": "Brand Name",
+      "mobileNumber": "Mobile Number",
+      "email": "Email",
+      "location": "Location",
+      "detailedAddress": "Detailed Address",
+      "productName": "Product Name",
+      "category": "Category",
+      "productionType": "Production Type",
+      "productionPlace": "Production Place",
+      "productionCapacity": "Production Capacity",
+      "wholesalePrice": "Wholesale Price",
+      "signaturePreview": "Signature Preview",
+      "canBeUploadedLater": "Can be uploaded later from Dashboard"
     },
     "buttons": {
       "back": "Back",
@@ -295,20 +351,33 @@
       "save": "Save",
       "delete": "Delete",
       "download": "Download",
-      "close": "Close"
+      "close": "Close",
+      "skipStep": "Skip Step"
     }
   },
   "dashboard": {
+    "toast": {
+      "title": "Agreement Paper Not Yet Generated",
+      "message": "To receive your agreement paper, please complete at least",
+      "uploadPhotos": "upload all photos in the gallery",
+      "checkRedSections": "check the red highlighted sections below",
+      "and": "and",
+      "galleryImagesMissing": "Gallery images are missing"
+    },
+    "profileCompletion": "Profile Completion",
     "loading": "Loading your profile...",
     "welcome": "Welcome to SRIJON!",
     "noDataMessage": "You haven't submitted your business registration yet. Let's create your profile together.",
     "startWizard": "Start Registration Wizard",
-    "title": "Dashboard",
+    "title": "User Dashboard",
     "status": {
       "active": "Active",
       "draft": "Draft"
     },
     "welcomeUser": "Welcome, ",
+    "notProvided": "Not Provided",
+    "incomplete": "Incomplete",
+    "progressHint": "Complete at least 80% to unlock the Agreement PDF download.",
     "buttons": {
       "downloadPDF": "Download PDF",
       "editProfile": "Edit Profile",
@@ -324,7 +393,10 @@
     "sections": {
       "productProduction": "Product & Production",
       "visualGallery": "Visual Gallery",
-      "documents": "Documents"
+      "documents": "Documents",
+      "ownerInformation": "Owner Information",
+      "marketStatus": "Market & Business Status",
+      "mediaDocuments": "Photo Gallery & Documents"
     },
     "labels": {
       "productName": "Product Name",
@@ -333,11 +405,35 @@
       "productType": "Product Type",
       "retailPrice": "Retail Price",
       "productionType": "Production Type",
-      "capacity": "Capacity",
-      "place": "Place",
+      "capacity": "Production Capacity",
+      "place": "Production Place",
       "workforce": "Workforce",
       "male": "Male",
-      "female": "Female"
+      "female": "Female",
+      "wholesalePrice": "Wholesale Price",
+      "moq": "MOQ",
+      "bulkDiscount": "Bulk Discount",
+      "rawMaterial": "Raw Material Source",
+
+      "productDescription": "Product Description",
+      "ownerName": "Owner Name",
+      "gender": "Gender",
+      "age": "Age",
+      "ownershipType": "Ownership Type",
+      "partnerName": "Partner Name",
+      "mobile": "Mobile",
+      "email": "Email",
+      "whatsApp": "WhatsApp",
+      "division": "Division",
+      "district": "District",
+      "thana": "Thana",
+      "postCode": "Post Code",
+      "detailedAddress": "Detailed Address",
+      "regularCustomers": "Regular Customers",
+      "exportInterest": "Export Interest",
+      "bankAccount": "Bank Account",
+      "bankName": "Bank Name",
+      "accountNumber": "Account Number"
     },
     "gallery": {
       "productShowcase": "Product Showcase",
@@ -442,6 +538,55 @@
     "consentRequired": "You must certify that all information is correct",
     "signatureRequired": "Digital signature is required"
   },
+
+  "visualGallery": {
+    "title": "Visual Gallery",
+    "loading": "Loading...",
+    "uploading": "Uploading...",
+    "productShowcase": "Product Showcase",
+    "images": "images",
+    "addImages": "Add Images",
+    "max10": "Max 10",
+    "deleteImage": "Delete image",
+    "noProductImages": "No product images yet. Click \"Add Images\" to upload.",
+    "packagingImage": "Packaging Image",
+    "productionProcess": "Production Process",
+    "registrationDocuments": "Registration Documents",
+    "tradeLicense": "Trade License",
+    "tinCertificate": "TIN / BIN Certificate",
+    "bstiApproval": "BSTI Approval",
+    "exportLicense": "Export License",
+    "change": "Change",
+    "delete": "Delete",
+    "clickToUpload": "Click to upload",
+    "notUploaded": "Not uploaded",
+    "view": "View",
+    "replace": "Replace",
+    "upload": "Upload",
+    "jpgPngOrPdf": "JPG, PNG or PDF",
+    "item": "item",
+    "items": "items"
+  },
+
+  "profilePicture": {
+    "altText": "Profile",
+    "previewAlt": "Preview",
+    "changePicture": "Change Picture",
+    "uploadPicture": "Upload Picture",
+    "changePhoto": "Change Photo",
+    "uploadPhoto": "Upload Photo",
+    "remove": "Remove",
+    "previewTitle": "Preview Photo",
+    "previewHint": "Looks good? Click confirm to save this as your new profile picture.",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "invalidFileType": "Please select a valid image file (JPG, PNG, WEBP)",
+    "fileTooLarge": "Image size must be less than 5MB",
+    "uploadFailed": "Failed to upload profile picture",
+    "deleteFailed": "Failed to delete profile picture",
+    "confirmRemove": "Are you sure you want to remove your profile picture?"
+  },
+
   "common": {
     "loading": "Loading...",
     "error": "Error",
@@ -460,6 +605,7 @@
     "change": "Change",
     "submit": "Submit",
     "view": "View",
+    "backToEdit": "Back to Edit",
     "uploading": "Uploading..."
   },
   "agreement": {

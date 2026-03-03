@@ -1,6 +1,7 @@
 import cloudinary from '../config/cloudinary.js';
 import { Readable } from 'stream';
 import BusinessData from '../models/BusinessData.js';
+import { triggerAgreementEmailIfReady } from './businessDataController.js';
 
 // Helper function to upload buffer to Cloudinary
 const uploadToCloudinary = (buffer, folder) => {
@@ -98,6 +99,9 @@ export const uploadGalleryImages = async (req, res) => {
     businessData.productImages = [...(businessData.productImages || []), ...imageUrls];
     await businessData.save();
 
+    // Fire-and-forget agreement email check — uploading images may push over threshold
+    triggerAgreementEmailIfReady(businessData, req.user.id);
+
     res.status(200).json({
       success: true,
       message: `${imageUrls.length} image(s) uploaded successfully`,
@@ -146,6 +150,8 @@ export const deleteGalleryImage = async (req, res) => {
     businessData.productImages = businessData.productImages.filter(url => url !== imageUrl);
     await businessData.save();
 
+    // No agreement trigger needed on delete — removing images can't satisfy conditions
+
     res.status(200).json({
       success: true,
       message: 'Image removed from gallery successfully',
@@ -186,6 +192,9 @@ export const uploadPackagingImage = async (req, res) => {
 
     businessData.packagingImage = result.secure_url;
     await businessData.save();
+
+    // Fire-and-forget — packaging image contributes to completion score
+    triggerAgreementEmailIfReady(businessData, req.user.id);
 
     res.status(200).json({
       success: true,
@@ -257,6 +266,9 @@ export const uploadProductionImage = async (req, res) => {
 
     businessData.productionProcessImage = result.secure_url;
     await businessData.save();
+
+    // Fire-and-forget — production image contributes to completion score
+    triggerAgreementEmailIfReady(businessData, req.user.id);
 
     res.status(200).json({
       success: true,

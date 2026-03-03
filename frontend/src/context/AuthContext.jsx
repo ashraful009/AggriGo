@@ -16,39 +16,36 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Check if user is logged in on mount
+  // Check auth status on mount using the HttpOnly cookie
   useEffect(() => {
     checkAuth();
 
-    // Listen for custom auth events (e.g., when token is removed on 401)
+    // Listen for 401 events dispatched by the Axios response interceptor
     const handleAuthChange = () => {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setUser(null);
-        setIsAuthenticated(false);
-      }
+      // Cookie is gone / invalid — clear React state
+      setUser(null);
+      setIsAuthenticated(false);
     };
 
     window.addEventListener('auth-token-removed', handleAuthChange);
-    
+
     return () => {
       window.removeEventListener('auth-token-removed', handleAuthChange);
     };
   }, []);
 
+  // Verify session via the HttpOnly cookie — no localStorage needed
   const checkAuth = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (token) {
-        const response = await api.get('/auth/me');
-        if (response.data.success) {
-          setUser(response.data.user);
-          setIsAuthenticated(true);
-        }
+      // The browser automatically sends the HttpOnly cookie because
+      // withCredentials: true is set in api.js. No manual token required.
+      const response = await api.get('/auth/me');
+      if (response.data.success) {
+        setUser(response.data.user);
+        setIsAuthenticated(true);
       }
     } catch (error) {
-      console.error('Auth check failed:', error);
-      localStorage.removeItem('token');
+      // 401 = cookie absent or expired — user is not logged in
       setUser(null);
       setIsAuthenticated(false);
     } finally {
@@ -60,7 +57,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await api.post('/auth/login', { email, password });
       if (response.data.success) {
-        localStorage.setItem('token', response.data.token);
+        // ✅ No localStorage.setItem — the server already set the HttpOnly cookie
         setUser(response.data.user);
         setIsAuthenticated(true);
         // Notify FormContext to reload data for this user
@@ -79,11 +76,11 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await api.post('/auth/register', { name, email, password });
       if (response.data.success) {
-        // Don't set token or user - OTP verification required first
-        return { 
-          success: true, 
+        // Don't set token or user — OTP verification required first
+        return {
+          success: true,
           email: response.data.email,
-          message: response.data.message 
+          message: response.data.message
         };
       }
     } catch (error) {
@@ -96,17 +93,21 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await api.post('/auth/logout');
+      await api.post('/auth/logout'); // server clears the HttpOnly cookie
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
-      localStorage.removeItem('token');
+      // ✅ No localStorage.removeItem — the cookie was cleared server-side
       setUser(null);
       setIsAuthenticated(false);
-      // Dispatch events to notify other parts of the app
       window.dispatchEvent(new Event('auth-token-removed'));
       window.dispatchEvent(new Event('form-data-reset'));
     }
+  };
+
+  // Merge partial updates into the user object (e.g., after profile picture upload)
+  const updateUser = (partialUser) => {
+    setUser((prev) => prev ? { ...prev, ...partialUser } : prev);
   };
 
   const value = {
@@ -116,7 +117,8 @@ export const AuthProvider = ({ children }) => {
     login,
     register,
     logout,
-    checkAuth
+    checkAuth,
+    updateUser
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

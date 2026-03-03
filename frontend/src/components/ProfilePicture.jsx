@@ -1,8 +1,12 @@
 import { useState, useRef } from 'react';
 import { FaCamera, FaTrash, FaUser, FaTimes, FaCheck } from 'react-icons/fa';
 import api from '../utils/api';
+import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
 
 const ProfilePicture = ({ user, onUpdate }) => {
+  const { t } = useLanguage();
+  const { updateUser } = useAuth();
   const [currentPicture, setCurrentPicture] = useState(
     user?.profilePictures?.length > 0
       ? user.profilePictures[user.profilePictures.length - 1].url
@@ -20,12 +24,12 @@ const ProfilePicture = ({ user, onUpdate }) => {
     const maxSize = 5 * 1024 * 1024; // 5MB
 
     if (!allowedTypes.includes(file.type)) {
-      setError('Please select a valid image file (JPG, PNG, WEBP)');
+      setError(t('profilePicture.invalidFileType'));
       return false;
     }
 
     if (file.size > maxSize) {
-      setError('Image size must be less than 5MB');
+      setError(t('profilePicture.fileTooLarge'));
       return false;
     }
 
@@ -71,16 +75,26 @@ const ProfilePicture = ({ user, onUpdate }) => {
       });
 
       if (response.data.success) {
-        setCurrentPicture(response.data.profilePicture.url);
+        const newUrl = response.data.profilePicture.url;
+        const newPublicId = response.data.profilePicture.publicId;
+        setCurrentPicture(newUrl);
         setShowPreview(false);
         setPreviewImage(null);
+
+        // Sync global AuthContext so Navbar/Dropdown avatar updates immediately
+        updateUser({
+          profilePictures: [
+            ...(user?.profilePictures || []),
+            { url: newUrl, publicId: newPublicId }
+          ]
+        });
 
         // Notify parent component to refresh user data
         if (onUpdate) onUpdate();
       }
     } catch (error) {
       console.error('Upload error:', error);
-      setError(error.response?.data?.message || 'Failed to upload profile picture');
+      setError(error.response?.data?.message || t('profilePicture.uploadFailed'));
     } finally {
       setLoading(false);
       if (fileInputRef.current) {
@@ -93,7 +107,7 @@ const ProfilePicture = ({ user, onUpdate }) => {
   const handleDelete = async () => {
     if (!currentPicture) return;
 
-    if (!window.confirm('Are you sure you want to remove your profile picture?')) {
+    if (!window.confirm(t('profilePicture.confirmRemove'))) {
       return;
     }
 
@@ -104,17 +118,23 @@ const ProfilePicture = ({ user, onUpdate }) => {
       const response = await api.delete('/profile/picture');
 
       if (response.data.success) {
-        setCurrentPicture(
-          response.data.profilePicture
-            ? response.data.profilePicture.url
-            : null
-        );
+        const remainingUrl = response.data.profilePicture
+          ? response.data.profilePicture.url
+          : null;
+        setCurrentPicture(remainingUrl);
+
+        // Sync global AuthContext so Navbar/Dropdown avatar updates immediately
+        updateUser({
+          profilePictures: remainingUrl
+            ? [{ url: remainingUrl }]
+            : []
+        });
 
         if (onUpdate) onUpdate();
       }
     } catch (error) {
       console.error('Delete error:', error);
-      setError(error.response?.data?.message || 'Failed to delete profile picture');
+      setError(error.response?.data?.message || t('profilePicture.deleteFailed'));
     } finally {
       setLoading(false);
     }
@@ -138,7 +158,7 @@ const ProfilePicture = ({ user, onUpdate }) => {
           {currentPicture ? (
             <img
               src={currentPicture}
-              alt="Profile"
+              alt={t('profilePicture.altText')}
               className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-300"
             />
           ) : (
@@ -152,7 +172,7 @@ const ProfilePicture = ({ user, onUpdate }) => {
             onClick={() => fileInputRef.current?.click()}
             disabled={loading}
             className="text-white hover:text-blue-200 transition-colors transform hover:scale-110"
-            title={currentPicture ? "Change Picture" : "Upload Picture"}
+            title={currentPicture ? t('profilePicture.changePicture') : t('profilePicture.uploadPicture')}
           >
             <FaCamera size={24} />
           </button>
@@ -181,7 +201,7 @@ const ProfilePicture = ({ user, onUpdate }) => {
           disabled={loading}
           className="text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors flex items-center gap-1.5 py-1"
         >
-          <FaCamera /> {currentPicture ? 'Change Photo' : 'Upload Photo'}
+          <FaCamera /> {currentPicture ? t('profilePicture.changePhoto') : t('profilePicture.uploadPhoto')}
         </button>
 
         {currentPicture && (
@@ -190,7 +210,7 @@ const ProfilePicture = ({ user, onUpdate }) => {
             disabled={loading}
             className="text-xs font-medium text-red-500 hover:text-red-700 transition-colors flex items-center gap-1.5 py-1"
           >
-            <FaTrash size={10} /> Remove
+            <FaTrash size={10} /> {t('profilePicture.remove')}
           </button>
         )}
       </div>
@@ -214,13 +234,13 @@ const ProfilePicture = ({ user, onUpdate }) => {
               <FaTimes size={16} />
             </button>
 
-            <h3 className="text-lg font-bold text-slate-800 mb-6 text-center">Preview Photo</h3>
+            <h3 className="text-lg font-bold text-slate-800 mb-6 text-center">{t('profilePicture.previewTitle')}</h3>
 
             <div className="mb-6 relative">
               <div className="w-40 h-40 mx-auto bg-slate-100 rounded-full overflow-hidden border-4 border-white shadow-lg ring-1 ring-slate-200">
                 <img
                   src={previewImage.url}
-                  alt="Preview"
+                  alt={t('profilePicture.previewAlt')}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -231,7 +251,7 @@ const ProfilePicture = ({ user, onUpdate }) => {
             </div>
 
             <p className="text-xs text-slate-500 text-center mb-6 px-4">
-              Looks good? Click confirm to save this as your new profile picture.
+              {t('profilePicture.previewHint')}
             </p>
 
             <div className="grid grid-cols-2 gap-3">
@@ -240,7 +260,7 @@ const ProfilePicture = ({ user, onUpdate }) => {
                 disabled={loading}
                 className="px-4 py-2.5 border border-slate-200 text-slate-600 rounded-xl hover:bg-slate-50 transition-colors font-bold text-sm disabled:opacity-50"
               >
-                Cancel
+                {t('profilePicture.cancel')}
               </button>
               <button
                 onClick={handleUpload}
@@ -249,7 +269,7 @@ const ProfilePicture = ({ user, onUpdate }) => {
               >
                 {loading ? (
                   <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                ) : 'Confirm'}
+                ) : t('profilePicture.confirm')}
               </button>
             </div>
           </div>
