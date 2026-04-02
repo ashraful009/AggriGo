@@ -16,17 +16,19 @@ const VerifyOTPPage = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const { login } = useAuth();
+  const { login, checkAuth } = useAuth();
 
-  // Get email from location state
+  // Get email and redirect from location state
   const email = location.state?.email;
+  const redirect = location.state?.redirect;
 
   // Redirect if no email provided
   useEffect(() => {
     if (!email) {
-      navigate('/register');
+      const target = redirect ? `/register?redirect=${encodeURIComponent(redirect)}` : '/register';
+      navigate(target);
     }
-  }, [email, navigate]);
+  }, [email, navigate, redirect]);
 
   // Cooldown timer for resend button
   useEffect(() => {
@@ -66,11 +68,13 @@ const VerifyOTPPage = () => {
         if (data.token) {
           localStorage.setItem('token', data.token);
           localStorage.setItem('user', JSON.stringify(data.user));
+          // Refresh auth state in context
+          await checkAuth();
         }
 
-        // Redirect to wizard after 1.5 seconds
+        // Redirect to target or homepage after 1.5 seconds
         setTimeout(() => {
-          navigate('/wizard');
+          navigate(redirect || '/');
         }, 1500);
       } else {
         setError(data.message || 'Invalid OTP. Please try again.');

@@ -1,26 +1,69 @@
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { NavLink, Outlet } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 import Navbar from '../Navbar';
 import {
   FaChartBar,
   FaBuilding,
   FaShieldAlt,
   FaChevronRight,
+  FaShoppingCart,
+  FaStar,
+  FaBoxOpen,
+  FaWarehouse,
+  FaFileSignature,
+  FaCheckDouble,
 } from 'react-icons/fa';
 
 // ─── Sidebar nav item definition ─────────────────────────────────────────────
-const NAV_ITEMS = [
+const generateNavItems = (t) => [
   {
     to: '/manager/analytics',
     icon: <FaChartBar />,
-    label: 'Analytics Overview',
-    description: 'Stats & charts',
+    label: t('admin.nav.analytics'),
+    description: t('admin.nav.analyticsDesc'),
   },
   {
     to: '/manager/directory',
     icon: <FaBuilding />,
-    label: 'Business Directory',
-    description: 'All registrations',
+    label: t('admin.nav.directory'),
+    description: t('admin.nav.directoryDesc'),
+  },
+  {
+    to: '/manager/products',
+    icon: <FaBoxOpen />,
+    label: t('admin.nav.pending'),
+    description: t('admin.nav.pendingDesc'),
+  },
+  {
+    to: '/manager/inventory',
+    icon: <FaWarehouse />,
+    label: t('admin.nav.inventory'),
+    description: t('admin.nav.inventoryDesc'),
+  },
+  {
+    to: '/manager/directory?filter=agreements',
+    icon: <FaFileSignature />,
+    label: t('admin.nav.agreements'),
+    description: t('admin.nav.agreementsDesc'),
+  },
+  {
+    to: '/manager/directory?filter=completed',
+    icon: <FaCheckDouble />,
+    label: t('admin.nav.completed'),
+    description: t('admin.nav.completedDesc'),
+  },
+  {
+    to: '/manager/orders',
+    icon: <FaShoppingCart />,
+    label: t('admin.nav.orders'),
+    description: t('admin.nav.ordersDesc'),
+  },
+  {
+    to: '/manager/reviews',
+    icon: <FaStar />,
+    label: t('admin.nav.reviews'),
+    description: t('admin.nav.reviewsDesc'),
   },
 ];
 
@@ -41,6 +84,8 @@ const NAV_ITEMS = [
 // ─────────────────────────────────────────────────────────────────────────────
 const AdminLayout = () => {
   const { user } = useAuth();
+  const { t } = useLanguage();
+  const NAV_ITEMS = generateNavItems(t);
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 font-sans">
@@ -49,24 +94,25 @@ const AdminLayout = () => {
       <div className="flex flex-1 overflow-hidden">
 
         {/* ── SIDEBAR ──────────────────────────────────────────────────────── */}
-        <aside className="hidden md:flex flex-col w-64 flex-shrink-0 bg-emerald-950 min-h-full sticky top-0 self-start overflow-y-auto"
+        <aside className="hidden md:flex flex-col w-64 flex-shrink-0 bg-[#0f172a] min-h-full sticky top-0 self-start overflow-y-auto"
                style={{ height: 'calc(100vh - 64px)', top: 64 }}>
 
           {/* Sidebar brand badge */}
-          <div className="px-5 pt-6 pb-5 border-b border-white/10">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 bg-lime-400 rounded-lg flex items-center justify-center">
-                <FaShieldAlt className="text-emerald-900 text-sm" />
+          <div className="px-5 pt-6 pb-5 border-b border-white/5 relative overflow-hidden group">
+            <div className="absolute -right-4 -top-4 text-4xl opacity-10 group-hover:opacity-30 transition-opacity duration-500 transform group-hover:rotate-12 group-hover:scale-125">🛡️</div>
+            <div className="flex items-center gap-2.5 relative z-10">
+              <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20 transform group-hover:rotate-12 transition-transform">
+                <FaShieldAlt className="text-white text-sm" />
               </div>
               <div>
-                <p className="text-white font-bold text-sm leading-tight">Admin Panel</p>
-                <p className="text-emerald-400/70 text-[10px] uppercase tracking-widest">Manager View</p>
+                <p className="text-white font-bold text-sm leading-tight">{t('admin.system.title')}</p>
+                <p className="text-blue-400/80 text-[10px] uppercase tracking-widest font-bold">{t('admin.system.controlCenter')}</p>
               </div>
             </div>
 
             {/* Signed-in user */}
-            <div className="mt-4 bg-white/5 rounded-xl px-3 py-2.5">
-              <p className="text-xs text-emerald-300/60">Signed in as</p>
+            <div className="mt-4 bg-white/5 rounded-xl px-3 py-2.5 border border-white/5">
+              <p className="text-xs text-blue-300/50">{t('admin.system.authorizedUser')}</p>
               <p className="text-sm font-semibold text-white truncate">{user?.name}</p>
             </div>
           </div>
@@ -78,26 +124,26 @@ const AdminLayout = () => {
                 key={to}
                 to={to}
                 className={({ isActive }) =>
-                  `group flex items-center gap-3 rounded-xl px-3 py-3 transition-all duration-150 ${
+                  `group flex items-center gap-3 rounded-xl px-3 py-3 transition-all duration-200 ${
                     isActive
-                      ? 'bg-lime-400/15 text-lime-300 border border-lime-400/20'
-                      : 'text-emerald-300/70 hover:bg-white/5 hover:text-white border border-transparent'
+                      ? 'bg-blue-600/10 text-blue-400 border border-blue-500/20 shadow-sm'
+                      : 'text-slate-400 hover:bg-white/5 hover:text-white border border-transparent'
                   }`
                 }
               >
                 {({ isActive }) => (
                   <>
-                    <span className={`text-base flex-shrink-0 ${isActive ? 'text-lime-400' : 'text-emerald-500/70 group-hover:text-emerald-300'}`}>
+                    <span className={`text-base flex-shrink-0 ${isActive ? 'text-blue-400' : 'text-slate-500 group-hover:text-blue-300'}`}>
                       {icon}
                     </span>
                     <div className="flex-1 min-w-0">
-                      <p className={`text-sm font-semibold leading-tight ${isActive ? 'text-lime-300' : ''}`}>
+                      <p className={`text-sm font-bold leading-tight ${isActive ? 'text-blue-400' : ''}`}>
                         {label}
                       </p>
-                      <p className="text-[10px] text-emerald-500/50 mt-0.5">{description}</p>
+                      <p className="text-[10px] text-slate-500 mt-0.5">{description}</p>
                     </div>
                     {isActive && (
-                      <FaChevronRight className="text-lime-400/60 text-xs flex-shrink-0" />
+                      <div className="w-1 h-4 bg-blue-500 rounded-full flex-shrink-0" />
                     )}
                   </>
                 )}
@@ -106,23 +152,23 @@ const AdminLayout = () => {
           </nav>
 
           {/* Sidebar Footer */}
-          <div className="px-5 py-4 border-t border-white/10">
-            <p className="text-[10px] text-emerald-600/50 uppercase tracking-widest">AggriGo</p>
+          <div className="px-5 py-4 border-t border-white/5">
+            <p className="text-[10px] text-slate-600 uppercase tracking-widest font-bold">{t('admin.system.portal')}</p>
           </div>
         </aside>
 
         {/* ── MOBILE SIDEBAR (horizontal strip) ───────────────────────────── */}
-        <div className="md:hidden w-full flex items-center gap-1 px-3 py-2 bg-emerald-950 border-b border-white/10">
-          <FaShieldAlt className="text-lime-400 mr-2 flex-shrink-0" />
+        <div className="md:hidden w-full flex items-center gap-1 px-3 py-2 bg-[#0f172a] border-b border-white/10 overflow-x-auto no-scrollbar">
+          <FaShieldAlt className="text-blue-400 mr-2 flex-shrink-0" />
           {NAV_ITEMS.map(({ to, icon, label }) => (
             <NavLink
               key={to}
               to={to}
               className={({ isActive }) =>
-                `flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg transition-all ${
+                `flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg transition-all flex-shrink-0 ${
                   isActive
-                    ? 'bg-lime-400/20 text-lime-300 border border-lime-400/30'
-                    : 'text-emerald-400/60 hover:text-white'
+                    ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
+                    : 'text-slate-400 hover:text-white'
                 }`
               }
             >

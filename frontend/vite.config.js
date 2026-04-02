@@ -12,6 +12,13 @@ export default defineConfig({
   // Prevent Vite from watching unrelated folders (e.g., backend or data)
   // which can cause the dev server to reload the page when those files change.
   server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        secure: false,
+      }
+    },
     watch: {
       ignored: ['**/backend/**', '**/backend/data/**', '**/data/**']
     }

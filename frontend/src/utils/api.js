@@ -8,10 +8,14 @@ const api = axios.create({
   }
 });
 
-// ✅ No request interceptor needed — the browser sends the HttpOnly cookie
-// automatically because withCredentials: true. Reading the token from
-// localStorage and injecting it as a Bearer header was the XSS vulnerability.
-
+// Inject Authorization Bearer token from localStorage for all requests as requested
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 // Response interceptor — handle global 401 (session expired / cookie invalid)
 api.interceptors.response.use(
   (response) => response,

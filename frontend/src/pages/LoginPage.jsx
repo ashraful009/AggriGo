@@ -6,7 +6,13 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { FaEnvelope, FaLock, FaArrowRight, FaChartLine, FaUserShield, FaLightbulb } from 'react-icons/fa';
 
-const LoginPage = () => {
+
+import { useSearchParams } from 'react-router-dom';
+
+function LoginPage() {
+  const [params] = useSearchParams();
+  const redirect = params.get('redirect');
+
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -33,7 +39,20 @@ const LoginPage = () => {
     const result = await login(formData.email, formData.password);
 
     if (result.success) {
-      navigate('/dashboard');
+      if (redirect) {
+        navigate(redirect);
+        return;
+      }
+      const role = result.user?.role;
+
+      // Priority: admin > seller > customer
+      if (role === 'admin') {
+        navigate('/manager/analytics');
+      } else if (role === 'seller') {
+        navigate('/seller/dashboard');
+      } else {
+        navigate('/');
+      }
     } else {
       setError(result.message);
     }
@@ -75,9 +94,11 @@ const LoginPage = () => {
                 </span>
               </h2>
 
-              <p className="text-slate-400 text-lg leading-relaxed">
-                Log in to access your business analytics, manage orders, and connect with your network.
-              </p>
+              <div>
+      <h3 className="text-2xl font-semibold text-white mb-4">{t('auth.login.ourMission')}</h3>
+      <p className="text-slate-400 text-lg leading-relaxed">{t('auth.login.missionStatement')}</p>
+      <p className="text-slate-400 text-lg leading-relaxed mt-4">{t('auth.login.missionDetails')}</p>
+    </div>
             </div>
 
             {/* Decorative "Dashboard Preview" Element */}
@@ -143,8 +164,7 @@ const LoginPage = () => {
                       value={formData.email}
                       onChange={handleChange}
                       placeholder="name@company.com"
-                      className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200"
-                    />
+                      className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200" />
                   </div>
                 </div>
 
@@ -173,8 +193,7 @@ const LoginPage = () => {
                       value={formData.password}
                       onChange={handleChange}
                       placeholder="••••••••"
-                      className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200"
-                    />
+                      className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200" />
                   </div>
                 </div>
 
@@ -196,7 +215,7 @@ const LoginPage = () => {
                     to="/register"
                     className="text-blue-600 hover:text-blue-700 font-bold hover:underline"
                   >
-                    {t('auth.login.registerLink')}
+                    {t('auth.login.registerLink') === 'Registration' || t('auth.login.registerLink').toLowerCase().includes('regist') ? 'Sign In' : t('auth.login.registerLink')}
                   </Link>
                 </p>
               </div>
@@ -208,6 +227,6 @@ const LoginPage = () => {
       <Footer />
     </div>
   );
-};
+}
 
 export default LoginPage;

@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../utils/api';
 import {
   FaUsers,
   FaFileSignature,
   FaCheckDouble,
   FaChartBar,
+  FaBoxOpen,
 } from 'react-icons/fa';
 import {
   PieChart,
@@ -21,8 +23,8 @@ import {
 } from 'recharts';
 
 // ─── Color palettes ───────────────────────────────────────────────────────────
-const PIE_COLORS = ['#10b981', '#f59e0b'];   // emerald-500, amber-400
-const BAR_COLOR  = '#34d399';                // emerald-400
+const PIE_COLORS = ['#3b82f6', '#6366f1'];   // blue-500, indigo-500
+const BAR_COLOR  = '#2563eb';                // blue-600
 
 // ─── Custom Tooltip for Pie ───────────────────────────────────────────────────
 const PieTooltip = ({ active, payload }) => {
@@ -53,36 +55,44 @@ const Skeleton = ({ className = '' }) => (
 );
 
 // ─── Summary Card ─────────────────────────────────────────────────────────────
-const SummaryCard = ({ label, value, icon, gradient, loading }) => (
-  <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center gap-5">
-    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-2xl text-white flex-shrink-0 ${gradient}`}>
-      {icon}
+const SummaryCard = ({ label, value, icon, gradient, loading, to }) => {
+  const content = (
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center gap-5 h-full transition-all hover:shadow-md hover:-translate-y-1">
+      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-2xl text-white flex-shrink-0 ${gradient}`}>
+        {icon}
+      </div>
+      <div>
+        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">{label}</p>
+        {loading
+          ? <Skeleton className="h-7 w-16" />
+          : <p className="text-3xl font-extrabold text-gray-800">{value ?? 0}</p>
+        }
+      </div>
     </div>
-    <div>
-      <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">{label}</p>
-      {loading
-        ? <Skeleton className="h-7 w-16" />
-        : <p className="text-3xl font-extrabold text-gray-800">{value ?? 0}</p>
-      }
-    </div>
-  </div>
-);
+  );
+  return to ? <Link to={to} className="block">{content}</Link> : content;
+};
 
 // ─── Main Component ───────────────────────────────────────────────────────────
-const AnalyticsDashboard = () => {
+const AdminDashboard = () => {
   const [stats, setStats]     = useState(null);
+  const [users, setUsers]     = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError]     = useState(null);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await api.get('/business/stats');
+        const res = await api.get('/admin/analytics');
         if (res.data.success) {
           setStats(res.data.data);
         } else {
           setError('Failed to load analytics data.');
         }
+
+        api.get('/admin/users')
+          .then(res => setUsers(res.data))
+          .catch(err => console.error(err));
       } catch (err) {
         console.error('Analytics fetch error:', err);
         setError('Could not connect to the server. Please try again.');
@@ -92,6 +102,31 @@ const AnalyticsDashboard = () => {
     };
     fetchStats();
   }, []);
+
+  // ── Handlers ───────────────────────────────────────────────────────────────
+  const handleApproveUser = async (id) => {
+    try {
+      const res = await api.patch(`/seller/${id}/approve`);
+      if (res.data.success) {
+        setUsers((prev) => prev.map(u => u._id === id ? { ...u, sellerStatus: 'approved' } : u));
+      }
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || 'Failed to approve seller');
+    }
+  };
+
+  const handleRejectUser = async (id) => {
+    try {
+      const res = await api.patch(`/seller/${id}/reject`, { reason: 'Application does not meet requirements' });
+      if (res.data.success) {
+        setUsers((prev) => prev.map(u => u._id === id ? { ...u, sellerStatus: 'rejected' } : u));
+      }
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || 'Failed to reject seller');
+    }
+  };
 
   // ── Derived chart data ─────────────────────────────────────────────────────
   const pieData = stats ? [
@@ -106,18 +141,26 @@ const AnalyticsDashboard = () => {
     <div className="bg-gray-50 min-h-full font-sans">
 
       {/* ── PAGE HEADER ─────────────────────────────────────────────────── */}
-      <div className="bg-emerald-900 pb-32 pt-10 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-lime-500/20 rounded-full blur-3xl -mr-20 -mt-20" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-teal-500/20 rounded-full blur-3xl -ml-10" />
+      <div className="bg-[#0f172a] pb-32 pt-10 relative overflow-hidden group">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl -mr-20 -mt-20 animate-pulse" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl -ml-10" />
+        
+        {/* Floating Stickers */}
+        <div className="absolute top-10 right-20 text-4xl transform hover:scale-150 hover:rotate-12 transition-all cursor-default select-none hidden md:block">📊</div>
+        <div className="absolute bottom-10 right-40 text-4xl transform hover:scale-150 hover:-rotate-12 transition-all cursor-default select-none hidden md:block opacity-40">📈</div>
+        <div className="absolute top-20 left-10 text-3xl transform hover:scale-150 rotate-12 transition-all cursor-default select-none hidden md:block opacity-30">⚙️</div>
+
         <div className="container mx-auto px-6 relative z-10">
           <div className="flex items-center gap-3 mb-1">
-            <FaChartBar className="text-lime-400 text-xl" />
-            <h1 className="text-2xl md:text-3xl font-bold text-white">Analytics Overview</h1>
-            <span className="bg-lime-500/20 text-lime-300 border border-lime-400/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
-              Live
+            <div className="w-10 h-10 bg-blue-600/20 rounded-xl flex items-center justify-center border border-blue-400/20">
+              <FaChartBar className="text-blue-400 text-xl" />
+            </div>
+            <h1 className="text-2xl md:text-3xl font-bold text-white">System Analytics 🛡️</h1>
+            <span className="bg-blue-500/20 text-blue-300 border border-blue-400/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
+              Live Feed ⚡
             </span>
           </div>
-          <p className="text-emerald-100/60 text-sm">Real-time overview of all registered business profiles</p>
+          <p className="text-slate-400 text-sm font-medium">Real-time overview of your marketplace ecosystem</p>
         </div>
       </div>
 
@@ -133,27 +176,38 @@ const AnalyticsDashboard = () => {
         )}
 
         {/* ── TOP ROW: 3 Summary Cards ───────────────────────────────────── */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
           <SummaryCard
             loading={loading}
-            label="Total Registrations"
+            label="Total Registrations 👤"
             value={stats?.totalRegistrations}
             icon={<FaUsers />}
-            gradient="bg-gradient-to-br from-emerald-500 to-teal-600"
+            gradient="bg-gradient-to-br from-blue-600 to-indigo-700"
+            to="/manager/directory"
           />
           <SummaryCard
             loading={loading}
-            label="Agreements Sent"
+            label="Agreements Sent ✍️"
             value={stats?.agreementTracking.sent}
             icon={<FaFileSignature />}
-            gradient="bg-gradient-to-br from-violet-500 to-purple-700"
+            gradient="bg-gradient-to-br from-[#1B2B4B] to-[#2563eb]"
+            to="/manager/directory?filter=agreements"
           />
           <SummaryCard
             loading={loading}
-            label="Fully Completed (≥80%)"
+            label="Fully Completed ✅"
             value={stats?.completionStats.completed}
             icon={<FaCheckDouble />}
-            gradient="bg-gradient-to-br from-lime-500 to-green-600"
+            gradient="bg-gradient-to-br from-sky-500 to-blue-600"
+            to="/manager/directory?filter=completed"
+          />
+          <SummaryCard
+            loading={loading}
+            label="Pending Products 📦"
+            value={stats?.pendingProductCount}
+            icon={<FaBoxOpen />}
+            gradient="bg-gradient-to-br from-slate-700 to-slate-900"
+            to="/manager/products"
           />
         </div>
 
@@ -179,17 +233,17 @@ const AnalyticsDashboard = () => {
                 {/* Donut totals */}
                 <div className="flex justify-around mb-4 text-center">
                   <div>
-                    <p className="text-2xl font-extrabold text-emerald-600">
+                    <p className="text-2xl font-extrabold text-blue-600">
                       {stats?.completionStats?.completed}
                     </p>
-                    <p className="text-xs text-gray-400 font-medium">Completed</p>
+                    <p className="text-xs text-slate-400 font-bold">Completed ✨</p>
                   </div>
                   <div className="w-px bg-gray-100" />
                   <div>
-                    <p className="text-2xl font-extrabold text-amber-500">
+                    <p className="text-2xl font-extrabold text-slate-400">
                       {stats?.completionStats?.incomplete}
                     </p>
-                    <p className="text-xs text-gray-400 font-medium">Incomplete</p>
+                    <p className="text-xs text-slate-400 font-bold">Pending ⏳</p>
                   </div>
                 </div>
 
@@ -289,7 +343,7 @@ const AnalyticsDashboard = () => {
                     {/* Progress bar */}
                     <div className="hidden md:block w-48 h-2 bg-gray-100 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-emerald-400 rounded-full transition-all duration-700"
+                        className="h-full bg-blue-500 rounded-full transition-all duration-700 shadow-[0_0_8px_rgba(59,130,246,0.4)]"
                         style={{ width: `${pct}%` }}
                       />
                     </div>
@@ -304,6 +358,81 @@ const AnalyticsDashboard = () => {
           </div>
         )}
 
+        {/* ── REGISTERED USERS LIST ── */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mt-8 overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/60 flex items-center justify-between">
+            <h2 className="font-bold text-gray-700 text-sm uppercase tracking-wider">Registered Users</h2>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left text-gray-600">
+              <thead className="bg-gray-50 border-b border-gray-100 uppercase text-xs font-semibold text-gray-500">
+                <tr>
+                  <th className="px-6 py-3.5">Name</th>
+                  <th className="px-6 py-3.5">Email</th>
+                  <th className="px-6 py-3.5 text-center">Status</th>
+                  <th className="px-6 py-3.5 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {users.map(user => (
+                  <tr key={user._id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4">
+                      <Link to={`/manager/directory/${user._id}`} className="font-semibold text-[#2563eb] hover:text-blue-800 flex items-center gap-1.5 transition-colors group">
+                        {user.name}
+                        <svg className="w-3.5 h-3.5 opacity-50 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                      </Link>
+                    </td>
+                    <td className="px-6 py-4">{user.email}</td>
+                    <td className="px-6 py-4 text-center">
+                      {user.sellerStatus === 'approved' ? (
+                        <span className="bg-green-100 text-green-700 font-bold px-2.5 py-1 rounded-full text-[10px] tracking-wide uppercase">
+                          Verified
+                        </span>
+                      ) : user.sellerStatus === 'pending' ? (
+                        <span className="bg-amber-100 text-amber-700 font-bold px-2.5 py-1 rounded-full text-[10px] tracking-wide uppercase">
+                          Pending Seller
+                        </span>
+                      ) : user.sellerStatus === 'rejected' ? (
+                        <span className="bg-red-100 text-red-700 font-bold px-2.5 py-1 rounded-full text-[10px] tracking-wide uppercase">
+                          Rejected
+                        </span>
+                      ) : (
+                        <span className="bg-blue-100 text-blue-700 font-bold px-2.5 py-1 rounded-full text-[10px] tracking-wide uppercase">
+                          Customer
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      {user.sellerStatus === 'approved' ? (
+                        <span className="bg-blue-600 text-white font-bold px-2.5 py-1 rounded-full text-[10px] tracking-wide uppercase shadow-sm">
+                          Verified 🏅
+                        </span>
+                      ) : user.sellerStatus === 'pending' ? (
+                        <div className="flex justify-end gap-2">
+                          <button
+                            onClick={() => handleApproveUser(user._id)}
+                            className="bg-green-50 hover:bg-green-100 text-green-700 text-xs font-bold py-1.5 px-3 rounded-lg transition-colors"
+                          >
+                            Approve
+                          </button>
+                          <button
+                            onClick={() => handleRejectUser(user._id)}
+                            className="bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold py-1.5 px-3 rounded-lg transition-colors"
+                          >
+                            Reject
+                          </button>
+                        </div>
+                      ) : (
+                        <span className="text-gray-400 text-xs font-bold uppercase">—</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
       </div>
     </div>
   );
@@ -317,4 +446,4 @@ const EmptyState = ({ label }) => (
   </div>
 );
 
-export default AnalyticsDashboard;
+export default AdminDashboard;

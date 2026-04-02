@@ -4,6 +4,7 @@ import api from '../utils/api';
 import {
   FaArrowLeft,
   FaCheckCircle,
+  FaTimesCircle,
   FaClock,
   FaUser,
   FaBoxOpen,
@@ -16,6 +17,8 @@ import {
   FaFilePdf,
   FaExternalLinkAlt,
   FaImage,
+  FaShieldAlt,
+  FaBan,
 } from 'react-icons/fa';
 
 // ─── Utility sub-components ───────────────────────────────────────────────────
@@ -68,21 +71,37 @@ const CompletionRing = ({ pct }) => {
 const BusinessDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [data, setData]     = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError]   = useState(null);
+  const [data, setData]         = useState(null);
+  const [loading, setLoading]   = useState(true);
+  const [error, setError]       = useState(null);
+  const [sellerStatus, setSellerStatus] = useState(null); // 'pending' | 'approved' | 'rejected' | null
+  const [actionLoading, setActionLoading] = useState(false);
+  const [actionMsg, setActionMsg] = useState(null); // { type: 'success'|'error', text }
+  const [rejectReason, setRejectReason] = useState('');
+  const [showRejectBox, setShowRejectBox] = useState(false);
 
   useEffect(() => {
-    const fetch = async () => {
+    const fetchData = async () => {
       setLoading(true);
       try {
-        // Fetch from the /all endpoint filtered to this doc via the list,
-        // then match the specific ID. (No dedicated single-doc endpoint.)
+        // Fetch business profile
         const res = await api.get('/business/all');
         if (res.data.success) {
-          const found = res.data.data.find(d => d._id === id);
-          if (found) setData(found);
-          else setError('Profile not found.');
+          const found = res.data.data.find(d => d._id === id || d.userId?._id === id || d.userId === id);
+          if (found) {
+            setData(found);
+            // Fetch user seller status
+            try {
+              const usersRes = await api.get('/admin/users');
+              const userId = found.userId?._id || found.userId;
+              const userRecord = usersRes.data.find(u => u._id === userId || u._id === id);
+              if (userRecord) setSellerStatus(userRecord.sellerStatus);
+            } catch (_) {
+              // silently ignore — status just won't show action panel
+            }
+          } else {
+            setError('Profile not found.');
+          }
         } else {
           setError('Failed to load profile data.');
         }
@@ -93,8 +112,50 @@ const BusinessDetail = () => {
         setLoading(false);
       }
     };
-    fetch();
+    fetchData();
   }, [id]);
+
+  const getUserId = () => data?.userId?._id || data?.userId || id;
+
+  const handleApprove = async () => {
+    if (!window.confirm('Are you sure you want to APPROVE this seller?')) return;
+    setActionLoading(true);
+    setActionMsg(null);
+    try {
+      const res = await api.patch(`/seller/${getUserId()}/approve`);
+      if (res.data.success) {
+        setSellerStatus('approved');
+        setActionMsg({ type: 'success', text: '✅ Seller has been approved successfully!' });
+      }
+    } catch (err) {
+      setActionMsg({ type: 'error', text: err.response?.data?.message || 'Failed to approve seller.' });
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleReject = async () => {
+    if (!rejectReason.trim()) {
+      setActionMsg({ type: 'error', text: 'Please provide a reason for rejection.' });
+      return;
+    }
+    if (!window.confirm('Are you sure you want to REJECT this seller?')) return;
+    setActionLoading(true);
+    setActionMsg(null);
+    try {
+      const res = await api.patch(`/seller/${getUserId()}/reject`, { reason: rejectReason });
+      if (res.data.success) {
+        setSellerStatus('rejected');
+        setShowRejectBox(false);
+        setRejectReason('');
+        setActionMsg({ type: 'success', text: '❌ Seller application has been rejected.' });
+      }
+    } catch (err) {
+      setActionMsg({ type: 'error', text: err.response?.data?.message || 'Failed to reject seller.' });
+    } finally {
+      setActionLoading(false);
+    }
+  };
 
   // ---------------------------------------------------------------------------
   return (
@@ -141,6 +202,7 @@ const BusinessDetail = () => {
 
         {/* Data */}
         {!loading && data && (
+          <>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
             {/* Left col: identity + completion */}
@@ -406,7 +468,151 @@ const BusinessDetail = () => {
               )}
 
             </div>
-          </div>
+
+          </div>  {/* end grid */}
+
+            {/* ── ADMIN APPROVAL PANEL ─────────────────────────────── */}
+            {sellerStatus && (
+              <div className={`mt-6 rounded-2xl border-2 overflow-hidden shadow-lg ${
+                sellerStatus === 'pending'  ? 'border-amber-300  bg-amber-50'   :
+                sellerStatus === 'approved' ? 'border-emerald-300 bg-emerald-50' :
+                                              'border-red-300    bg-red-50'
+              }`}>
+                {/* Panel Header */}
+                <div className={`px-6 py-4 flex items-center gap-3 border-b ${
+                  sellerStatus === 'pending'  ? 'border-amber-200  bg-amber-100/60'   :
+                  sellerStatus === 'approved' ? 'border-emerald-200 bg-emerald-100/60' :
+                                                'border-red-200    bg-red-100/60'
+                }`}>
+                  {sellerStatus === 'approved' ? (
+                    <FaShieldAlt className="text-xl text-emerald-600" />
+                  ) : sellerStatus === 'rejected' ? (
+                    <FaBan className="text-xl text-red-500" />
+                  ) : (
+                    <FaClock className="text-xl text-amber-500" />
+                  )}
+                  <h3 className="font-bold text-gray-700 text-sm uppercase tracking-wide">
+                    Admin Action — Seller Application
+                  </h3>
+                  <span className={`ml-auto text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 rounded-full ${
+                    sellerStatus === 'pending'  ? 'bg-amber-200  text-amber-800'   :
+                    sellerStatus === 'approved' ? 'bg-emerald-200 text-emerald-800' :
+                                                  'bg-red-200    text-red-800'
+                  }`}>
+                    {sellerStatus}
+                  </span>
+                </div>
+
+                <div className="p-6 space-y-4">
+                  {/* Action feedback message */}
+                  {actionMsg && (
+                    <div className={`flex items-center gap-2 text-sm font-semibold px-4 py-3 rounded-xl ${
+                      actionMsg.type === 'success'
+                        ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                        : 'bg-red-100 text-red-700 border border-red-200'
+                    }`}>
+                      {actionMsg.text}
+                    </div>
+                  )}
+
+                  {sellerStatus === 'pending' && (
+                    <>
+                      <p className="text-sm text-gray-600">
+                        Review the seller's business profile above, then take an action.
+                      </p>
+
+                      {/* Approve / Open Reject Box */}
+                      {!showRejectBox && (
+                        <div className="flex flex-col sm:flex-row gap-3">
+                          <button
+                            id="btn-approve-seller"
+                            onClick={handleApprove}
+                            disabled={actionLoading}
+                            className="flex-1 flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-200 shadow-md hover:shadow-emerald-200 disabled:opacity-60 disabled:cursor-not-allowed"
+                          >
+                            {actionLoading ? (
+                              <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                            ) : (
+                              <FaCheckCircle />
+                            )}
+                            Approve Seller
+                          </button>
+                          <button
+                            id="btn-open-reject"
+                            onClick={() => { setShowRejectBox(true); setActionMsg(null); }}
+                            disabled={actionLoading}
+                            className="flex-1 flex items-center justify-center gap-2 bg-white hover:bg-red-50 text-red-600 border-2 border-red-300 font-bold py-3 px-6 rounded-xl transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+                          >
+                            <FaTimesCircle />
+                            Reject Application
+                          </button>
+                        </div>
+                      )}
+
+                      {/* Reject Reason Box */}
+                      {showRejectBox && (
+                        <div className="space-y-3 animate-fade-in">
+                          <label className="block text-sm font-bold text-gray-700">
+                            Rejection Reason <span className="text-red-500">*</span>
+                          </label>
+                          <textarea
+                            id="reject-reason-input"
+                            value={rejectReason}
+                            onChange={e => setRejectReason(e.target.value)}
+                            placeholder="Please provide a clear reason for rejection…"
+                            rows={3}
+                            className="w-full border-2 border-red-200 focus:border-red-400 focus:ring-2 focus:ring-red-100 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none transition-all resize-none"
+                          />
+                          <div className="flex gap-3">
+                            <button
+                              id="btn-confirm-reject"
+                              onClick={handleReject}
+                              disabled={actionLoading}
+                              className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 px-6 rounded-xl transition-all duration-200 shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
+                            >
+                              {actionLoading ? (
+                                <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                              ) : (
+                                <FaBan />
+                              )}
+                              Confirm Rejection
+                            </button>
+                            <button
+                              onClick={() => { setShowRejectBox(false); setRejectReason(''); setActionMsg(null); }}
+                              className="text-gray-500 hover:text-gray-700 font-semibold text-sm px-4 py-2.5 rounded-xl hover:bg-gray-100 transition-colors"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  )}
+
+                  {sellerStatus === 'approved' && (
+                    <div className="flex items-center gap-3 text-emerald-700">
+                      <FaCheckCircle className="text-2xl text-emerald-500" />
+                      <div>
+                        <p className="font-bold text-sm">This seller is already approved.</p>
+                        <p className="text-xs text-emerald-600/80 mt-0.5">They can now upload and sell products on AggriGo.</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {sellerStatus === 'rejected' && (
+                    <div className="flex items-center gap-3 text-red-700">
+                      <FaBan className="text-2xl text-red-400" />
+                      <div>
+                        <p className="font-bold text-sm">This seller application was rejected.</p>
+                        <p className="text-xs text-red-600/80 mt-0.5">The seller cannot upload products unless re-approved.</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+          </>
         )}
       </div>
     </div>

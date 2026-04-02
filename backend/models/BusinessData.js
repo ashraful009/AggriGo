@@ -37,8 +37,15 @@ const businessDataSchema = new mongoose.Schema({
   detailedAddress: String,
   
   // Step 2: Product Details & Production
-  productName: String,
-  shortDescription: String,
+  products: [
+  {
+    category: String,
+    subCategory: String,
+    productName: String
+  }
+],
+
+shortDescription: String,
   rawMaterialSource: {
     type: String,
     enum: ['Local', 'Imported']
@@ -103,9 +110,10 @@ const businessDataSchema = new mongoose.Schema({
     enum: ['Yes', 'No']
   },
   bankName: String,
-  bankBranch: String,
-  accountHolder: String,
-  accountNumber: String,
+bankBranch: String,
+accountHolder: String,
+accountNumber: String,
+routingNumber: String,
   
   // Mobile Banking
   mobileBanking: {
@@ -177,6 +185,7 @@ const businessDataSchema = new mongoose.Schema({
 // ─── Indexes ─────────────────────────────────────────────────────────────────
 // One user → one BusinessData document (enforces uniqueness + fast lookup)
 businessDataSchema.index({ userId: 1 }, { unique: true });
+businessDataSchema.index({ "products.category": 1 });
 
 // Admin: list all drafted / submitted businesses
 businessDataSchema.index({ submissionStatus: 1 });

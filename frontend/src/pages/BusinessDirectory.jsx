@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../utils/api';
 import {
   FaSearch,
@@ -38,13 +38,15 @@ const useDebounce = (value, delay = 350) => {
 // Inline mini progress bar for the Completion % column
 const CompletionBar = ({ pct }) => {
   const color =
-    pct >= 80 ? 'bg-emerald-500' :
-    pct >= 50 ? 'bg-amber-400'  :
-                'bg-red-400';
+    pct >= 80 ? 'bg-blue-600' :
+    pct >= 50 ? 'bg-indigo-400'  :
+    pct >= 30 ? 'bg-sky-400' :
+                'bg-slate-400';
   const textColor =
-    pct >= 80 ? 'text-emerald-700' :
-    pct >= 50 ? 'text-amber-600'   :
-                'text-red-600';
+    pct >= 80 ? 'text-blue-700' :
+    pct >= 50 ? 'text-indigo-600'   :
+    pct >= 30 ? 'text-sky-600' :
+                'text-slate-600';
   return (
     <div className="flex items-center gap-2 min-w-[100px]">
       <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
@@ -61,14 +63,14 @@ const CompletionBar = ({ pct }) => {
 // Agreement sent/pending badge
 const AgreementBadge = ({ sent }) =>
   sent ? (
-    <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200
-                     text-xs font-bold px-2.5 py-1 rounded-full">
-      <FaCheckCircle className="text-emerald-500" /> Sent
+    <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-700 border border-blue-200
+                     text-xs font-bold px-2.5 py-1 rounded-full shadow-sm">
+      <FaCheckCircle className="text-blue-500" /> Sent ✍️
     </span>
   ) : (
-    <span className="inline-flex items-center gap-1 bg-gray-50 text-gray-500 border border-gray-200
+    <span className="inline-flex items-center gap-1 bg-slate-50 text-slate-500 border border-slate-200
                      text-xs font-bold px-2.5 py-1 rounded-full">
-      <FaClock className="text-gray-400" /> Pending
+      <FaClock className="text-slate-400" /> Pending ⏳
     </span>
   );
 
@@ -89,7 +91,7 @@ const FilterSelect = ({ value, onChange, children }) => (
     value={value}
     onChange={onChange}
     className="text-sm border border-gray-200 bg-white text-gray-700 rounded-lg px-3 py-2
-               focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400
+               focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400
                transition-all cursor-pointer"
   >
     {children}
@@ -110,8 +112,16 @@ const BusinessDirectory = () => {
   const [division, setDivision]         = useState('all');
   const [productType, setProductType]   = useState('all');
   const [status, setStatus]             = useState('all');
-
+  const [searchParams] = useSearchParams();
   const debouncedSearch = useDebounce(searchInput, 350);
+
+  // Sync filters with URL if present
+  useEffect(() => {
+    const f = searchParams.get('filter');
+    if (f === 'completed') setStatus('completed');
+    if (f === 'incomplete') setStatus('incomplete');
+    if (f === 'agreements') setStatus('agreements');
+  }, [searchParams]);
 
   // ── Fetch ─────────────────────────────────────────────────────────────────
   const fetchData = useCallback(async () => {
@@ -122,7 +132,10 @@ const BusinessDirectory = () => {
       if (debouncedSearch) params.search   = debouncedSearch;
       if (division !== 'all')   params.division = division;
       if (productType !== 'all') params.type    = productType;
-      if (status !== 'all')     params.status   = status;
+      
+      if (status === 'completed')   params.status = 'completed';
+      if (status === 'incomplete')  params.status = 'incomplete';
+      if (status === 'agreements')  params.isAgreementSent = true;
 
       const res = await api.get('/business/all', { params });
       if (res.data.success) {
@@ -155,24 +168,31 @@ const BusinessDirectory = () => {
     <div className="bg-gray-50 min-h-full font-sans">
 
       {/* ── PAGE HEADER ─────────────────────────────────────────────────── */}
-      <div className="bg-emerald-900 pb-32 pt-10 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-lime-500/20 rounded-full blur-3xl -mr-20 -mt-20" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-teal-500/20 rounded-full blur-3xl -ml-10" />
+      <div className="bg-[#0f172a] pb-32 pt-10 relative overflow-hidden group">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl -mr-20 -mt-20 animate-pulse" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl -ml-10" />
+        
+        {/* Floating stickers */}
+        <div className="absolute top-10 left-20 text-4xl animate-bounce hidden md:block">🏢</div>
+        <div className="absolute top-20 right-40 text-4xl hover:scale-125 transition-transform rotate-12 hidden md:block">📂</div>
+
         <div className="container mx-auto px-6 relative z-10">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
             <div>
               <div className="flex items-center gap-3 mb-1">
-                <FaBuilding className="text-lime-400 text-xl" />
-                <h1 className="text-2xl md:text-3xl font-bold text-white">Business Directory</h1>
-                <span className="bg-lime-500/20 text-lime-300 border border-lime-400/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
-                  Manager View
+                <div className="w-10 h-10 bg-blue-600/20 rounded-xl flex items-center justify-center border border-blue-400/20">
+                    <FaBuilding className="text-blue-400 text-xl" />
+                </div>
+                <h1 className="text-2xl md:text-3xl font-bold text-white">Business Directory 📋</h1>
+                <span className="bg-blue-500/20 text-blue-300 border border-blue-400/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
+                  Admin View 🔒
                 </span>
               </div>
-              <p className="text-emerald-100/60 text-sm">Browse, search, and filter all registered entrepreneur profiles</p>
+              <p className="text-slate-400 text-sm font-medium">Browse and manage all registered platform profiles</p>
             </div>
             <div className="flex items-baseline gap-2 text-white">
-              <span className="text-4xl font-extrabold tabular-nums">{loading ? '—' : rows.length}</span>
-              <span className="text-emerald-200/70 text-sm">profiles shown</span>
+              <span className="text-4xl font-extrabold tabular-nums text-blue-400">{loading ? '—' : rows.length}</span>
+              <span className="text-slate-500 text-sm font-bold uppercase tracking-wider">Total profiles</span>
             </div>
           </div>
         </div>
@@ -194,7 +214,7 @@ const BusinessDirectory = () => {
                 value={searchInput}
                 onChange={e => setSearchInput(e.target.value)}
                 className="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-200 rounded-lg
-                           focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400
+                           focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400
                            placeholder:text-gray-400 transition-all"
               />
               {searchInput && (
@@ -222,9 +242,10 @@ const BusinessDirectory = () => {
               </FilterSelect>
 
               <FilterSelect value={status} onChange={e => setStatus(e.target.value)}>
-                <option value="all">All Statuses</option>
+                <option value="all">Check Status</option>
                 <option value="completed">Completed (≥80%)</option>
                 <option value="incomplete">Incomplete (&lt;80%)</option>
+                <option value="agreements">Agreement Sent</option>
               </FilterSelect>
 
               {hasFilters && (
@@ -307,7 +328,7 @@ const BusinessDirectory = () => {
                   <tr
                     key={row._id}
                     onClick={() => navigate(`/manager/directory/${row._id}`)}
-                    className="group cursor-pointer hover:bg-emerald-50/60 transition-colors duration-150"
+                    className="group cursor-pointer hover:bg-blue-50 transition-colors duration-150"
                   >
                     {/* Row number */}
                     <td className="px-5 py-4 text-xs text-gray-300 font-bold tabular-nums">
@@ -333,8 +354,8 @@ const BusinessDirectory = () => {
                         {row.brandName || '—'}
                       </p>
                       {row.productType && (
-                        <span className="inline-block mt-1 text-[10px] font-bold text-emerald-700
-                                         bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-full">
+                        <span className="inline-block mt-1 text-[10px] font-bold text-blue-700
+                                         bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-full">
                           {row.productType}
                         </span>
                       )}
@@ -357,7 +378,7 @@ const BusinessDirectory = () => {
 
                     {/* Chevron */}
                     <td className="px-4 py-4">
-                      <FaChevronRight className="text-gray-200 group-hover:text-emerald-400 transition-colors text-sm" />
+                      <FaChevronRight className="text-gray-200 group-hover:text-blue-500 transition-colors text-sm" />
                     </td>
                   </tr>
                 ))}

@@ -1,17 +1,29 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 import User from '../models/User.js';
 
-// Generate JWT Token
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE
-  });
+// Generate JWT Token with full role payload
+const generateToken = (user) => {
+  return jwt.sign(
+    {
+      id: user._id,
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role && ['admin', 'seller', 'customer'].includes(user.role) ? user.role : (user.roles?.includes('admin') ? 'admin' : (user.roles?.includes('seller') && user.sellerStatus === 'approved' ? 'seller' : 'customer')),
+      roles: user.roles || ['buyer'],
+      sellerStatus: user.sellerStatus || 'none',
+      isVerified: user.isVerified || false
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRE }
+  );
 };
 
 // Send token response — JWT is sent ONLY via HttpOnly cookie (never in body)
 const sendTokenResponse = (user, statusCode, res) => {
-  const token = generateToken(user._id);
+  const token = generateToken(user);
 
   const isProduction = process.env.NODE_ENV === 'production';
 
@@ -27,13 +39,16 @@ const sendTokenResponse = (user, statusCode, res) => {
     .cookie('token', token, options)
     .json({
       success: true,
-      // ✅ token intentionally NOT returned in body — cookie is the sole channel
+      token,
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role || 'user',
-        profilePictures: user.profilePictures || []
+        role: user.role && ['admin', 'seller', 'customer'].includes(user.role) ? user.role : (user.roles?.includes('admin') ? 'admin' : (user.roles?.includes('seller') && user.sellerStatus === 'approved' ? 'seller' : 'customer')),
+        roles: user.roles || ['buyer'],
+        sellerStatus: user.sellerStatus || 'none',
+        profilePicture: user.profilePicture || '',
+        isVerified: user.isVerified || false
       }
     });
 };
@@ -347,15 +362,25 @@ export const getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
 
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
     res.status(200).json({
       success: true,
       user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role || 'user',
-        profilePictures: user.profilePictures || []
-      }
+  id: user._id,
+  name: user.name,
+  email: user.email,
+  role: user.role && ['admin', 'seller', 'customer'].includes(user.role) ? user.role : (user.roles?.includes('admin') ? 'admin' : (user.roles?.includes('seller') && user.sellerStatus === 'approved' ? 'seller' : 'customer')),
+  roles: user.roles || ['buyer'],
+  sellerStatus: user.sellerStatus || 'none',
+  profilePicture: user.profilePicture || '',
+  isVerified: user.isVerified || false
+}
     });
   } catch (error) {
     console.error('Get me error:', error);
@@ -488,22 +513,14 @@ export const resetPassword = async (req, res) => {
       });
     }
 
-    // Find users with non-expired reset tokens
-    const users = await User.find({
-      resetPasswordExpire: { $gt: Date.now() }
-    }).select('+resetPasswordToken');
+    // Hash token to match DB storage
+    const resetPasswordToken = crypto.createHash('sha256').update(token).digest('hex');
 
-    // Find the user with matching token
-    let user = null;
-    for (const u of users) {
-      if (u.resetPasswordToken) {
-        const isMatch = await bcrypt.compare(token, u.resetPasswordToken);
-        if (isMatch) {
-          user = u;
-          break;
-        }
-      }
-    }
+    // Find the user with matching token that hasn't expired
+    const user = await User.findOne({
+      resetPasswordToken,
+      resetPasswordExpire: { $gt: Date.now() }
+    });
 
     if (!user) {
       return res.status(400).json({

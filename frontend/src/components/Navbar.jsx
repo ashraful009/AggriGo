@@ -2,48 +2,47 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import {
-  FaSeedling,
-  FaUserCircle,
-  FaBars,
-  FaTimes,
-  FaRocket,
-  FaChartPie,
-  FaGlobe,
-  FaSignOutAlt,
-  FaChevronDown,
-  FaTachometerAlt,
+  FaSeedling, FaUserCircle, FaBars, FaTimes, FaRocket,
+  FaGlobe, FaSignOutAlt, FaChevronDown,
+  FaStore, FaFileContract, FaShieldAlt, FaShoppingBag,
+  FaShoppingCart, FaTachometerAlt
 } from 'react-icons/fa';
 import { useState, useEffect, useRef } from 'react';
 
 const Navbar = () => {
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user, logout, hasRole } = useAuth();
   const { currentLanguage, setLanguage, t } = useLanguage();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const location = useLocation();
-  const navigate = useNavigate();
+  const [isDropdownOpen, setIsDropdownOpen]     = useState(false);
+  const [isScrolled, setIsScrolled]             = useState(false);
+  const location  = useLocation();
+  const navigate  = useNavigate();
   const dropdownRef = useRef(null);
 
-  // Scroll detection
+  // ── Role shortcuts ────────────────────────────────────────────────────────
+  const isAdmin         = hasRole('admin');
+  const isSeller        = hasRole('seller');
+  const isApprovedSeller= isSeller && user?.sellerStatus === 'approved';
+  const isPendingSeller  = user?.sellerStatus === 'pending';
+
+  // ── Scroll shadow ─────────────────────────────────────────────────────────
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close dropdown on outside click
+  // ── Close dropdown on outside click ──────────────────────────────────────
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target))
         setIsDropdownOpen(false);
-      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Close mobile menu & dropdown on route change
+  // ── Close menus on route change ───────────────────────────────────────────
   useEffect(() => {
     setIsMobileMenuOpen(false);
     setIsDropdownOpen(false);
@@ -59,132 +58,205 @@ const Navbar = () => {
     navigate('/');
   };
 
-  const dashboardPath = user?.role === 'admin' ? '/manager' : '/dashboard';
-  const dashboardLabel = user?.role === 'admin' ? 'Admin Dashboard' : t('nav.dashboard');
-
   const navLinkClasses = (path) => `
     relative font-medium text-sm tracking-wide transition-all duration-300 group py-2 px-1
-    ${isActive(path) ? 'text-[#F6C35E] font-bold' : 'text-[#4A4A4A] hover:text-[#F6C35E]'}
+    ${isActive(path)
+      ? 'text-transparent bg-clip-text bg-gradient-to-r from-[#2563eb] to-[#5BA4CF] font-bold'
+      : 'text-[#1B2B4B] hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-[#2563eb] hover:to-[#5BA4CF]'
+    }
   `;
 
-  // Profile picture: use last uploaded or fallback icon
   const profilePicUrl =
     user?.profilePictures?.length > 0
       ? user.profilePictures[user.profilePictures.length - 1].url
       : null;
 
+  // ── Dashboard link based on role ──────────────────────────────────────────
+  const myDashboardPath = isAdmin
+    ? '/manager/analytics'
+    : isApprovedSeller
+      ? '/seller/dashboard'
+      : '/orders';
+
   return (
     <>
       <nav
-        className={`fixed w-full z-50 transition-all duration-300 border-b
+        className={`fixed w-full z-[100] transition-all duration-300
           ${isScrolled
-            ? 'bg-[#FAF7F0]/95 backdrop-blur-md shadow-lg py-2 border-[#E2DED6]/50'
-            : 'bg-[#FAF7F0] py-3 md:py-4 shadow-sm border-[#E2DED6]'
+            ? 'bg-gradient-to-r from-[#e8f0fe]/95 via-[#f0f7ff]/95 to-[#dbeafe]/95 backdrop-blur-md shadow-lg py-2'
+            : 'bg-gradient-to-r from-[#eef4ff] via-[#f5f9ff] to-[#dbeafe] py-3 md:py-4 shadow-sm'
           }
         `}
       >
+        <div className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-[#1B2B4B] via-[#2563eb] to-[#5BA4CF] opacity-50" />
+
         <div className="container mx-auto px-4 md:px-6 lg:px-8">
           <div className="flex justify-between items-center">
 
-            {/* ── LOGO ─────────────────────────────────────────── */}
-            <Link
-              to="/"
-              className="flex items-center gap-2 group flex-shrink-0"
-            >
-              <div className="relative flex items-center justify-center w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-[#F6C35E] to-[#E2DED6] rounded-lg shadow-[#F6C35E]/30 shadow-lg transform group-hover:scale-105 transition-transform duration-300">
-                <FaSeedling className="text-[#4A4A4A] text-sm md:text-lg relative z-10" />
-                <div className="absolute inset-0 bg-[#4A4A4A] opacity-10 rounded-lg animate-pulse"></div>
+            {/* ── LOGO ── */}
+            <Link to="/" className="flex items-center gap-2 group flex-shrink-0">
+              <div className="relative flex items-center justify-center w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-[#1B2B4B] via-[#2563eb] to-[#5BA4CF] rounded-lg shadow-lg transform group-hover:scale-105 transition-all duration-300">
+                <FaSeedling className="text-white text-sm md:text-lg relative z-10" />
+                <div className="absolute inset-0 bg-sky-400/50 rounded-lg animate-blue-glow"></div>
+                <style>{`
+                  @keyframes blue-glow {
+                    0%, 100% { opacity: 0.1; box-shadow: 0 0 4px rgba(56, 189, 248, 0.1); }
+                    50% { opacity: 0.9; box-shadow: 0 0 30px rgba(56, 189, 248, 0.9); }
+                  }
+                  .animate-blue-glow {
+                    animation: blue-glow 2s ease-in-out infinite;
+                  }
+                `}</style>
               </div>
               <div className="flex flex-col justify-center">
-                <span className="text-lg md:text-2xl font-extrabold tracking-tight text-[#4A4A4A] leading-none">
-                  SRI<span className="text-[#F6C35E]">JON</span>
+                <span className="text-lg md:text-2xl font-extrabold tracking-tight leading-none">
+                  <span className="text-[#1B2B4B]">SRI</span>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2563eb] to-[#5BA4CF]">JON</span>
                 </span>
-                <span className="hidden md:block text-[9px] font-bold text-[#B5AFA6] tracking-[0.2em] uppercase">
+                <span className="hidden md:block text-[9px] font-bold tracking-[0.2em] uppercase text-transparent bg-clip-text bg-gradient-to-r from-[#2563eb] to-[#5BA4CF]">
                   Growth Platform
                 </span>
               </div>
             </Link>
 
-            {/* ── DESKTOP CENTER LINKS ──────────────────────────── */}
-            <div className="hidden md:flex items-center space-x-8 absolute left-1/2 transform -translate-x-1/2">
+            {/* ── DESKTOP CENTER LINKS ── */}
+            <div className="hidden md:flex items-center space-x-6 absolute left-1/2 transform -translate-x-1/2">
               <Link to="/" className={navLinkClasses('/')}>
                 {t('nav.home')}
-                <span className={`absolute bottom-0 left-0 h-0.5 bg-[#F6C35E] transition-all duration-300 ${isActive('/') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
+                <span className={`absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-[#2563eb] to-[#5BA4CF] transition-all duration-300 ${isActive('/') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
               </Link>
+
               <Link to="/about" className={navLinkClasses('/about')}>
                 {t('nav.about')}
-                <span className={`absolute bottom-0 left-0 h-0.5 bg-[#F6C35E] transition-all duration-300 ${isActive('/about') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
+                <span className={`absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-[#2563eb] to-[#5BA4CF] transition-all duration-300 ${isActive('/about') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
               </Link>
+
+              <Link to="/shop" className={navLinkClasses('/shop')}>
+                {t('nav.shop') || 'Shop'}
+                <span className={`absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-[#2563eb] to-[#5BA4CF] transition-all duration-300 ${isActive('/shop') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
+              </Link>
+
+              <Link to="/terms" className={navLinkClasses('/terms')}>
+                {t('nav.terms') || 'Terms'}
+                <span className={`absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-[#2563eb] to-[#5BA4CF] transition-all duration-300 ${isActive('/terms') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
+              </Link>
+
+              <Link to="/privacy" className={navLinkClasses('/privacy')}>
+                {t('nav.privacy') || 'Privacy'}
+                <span className={`absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-[#2563eb] to-[#5BA4CF] transition-all duration-300 ${isActive('/privacy') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
+              </Link>
+
+              {/* ── Role-specific action pill ── */}
+              {isAuthenticated && isAdmin && (
+                <Link to="/manager/analytics"
+                  className="flex items-center gap-1.5 text-white font-bold px-3 py-1.5 rounded-lg hover:-translate-y-0.5 transition-all text-xs whitespace-nowrap"
+                  style={{ background: 'linear-gradient(135deg, #9333ea 0%, #a855f7 55%, #c084fc 100%)', boxShadow: '0 4px 14px rgba(168,85,247,0.35)' }}>
+                  🛡️ Admin Dashboard
+                </Link>
+              )}
+
+              {isAuthenticated && !isAdmin && isApprovedSeller && (
+                <Link to="/seller/dashboard"
+                  className="flex items-center gap-1.5 text-white font-bold px-3 py-1.5 rounded-lg hover:-translate-y-0.5 transition-all text-xs whitespace-nowrap"
+                  style={{ background: 'linear-gradient(135deg, #166534 0%, #16a34a 55%, #4ade80 100%)', boxShadow: '0 4px 14px rgba(22,163,74,0.35)' }}>
+                  🏪 Seller Dashboard
+                </Link>
+              )}
+
+              {isAuthenticated && !isAdmin && isPendingSeller && !isApprovedSeller && (
+                <Link to="/pending"
+                  className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg border border-yellow-300 text-yellow-700 bg-yellow-50 whitespace-nowrap hover:-translate-y-0.5 transition-all">
+                  ⏳ Pending Approval
+                </Link>
+              )}
+
+              {isAuthenticated && !isAdmin && !isSeller && (
+                <Link to="/dashboard"
+                  className="flex items-center gap-1.5 text-white font-bold px-3 py-1.5 rounded-lg hover:-translate-y-0.5 transition-all text-xs whitespace-nowrap"
+                  style={{ background: 'linear-gradient(135deg, #166534 0%, #16a34a 55%, #4ade80 100%)', boxShadow: '0 4px 14px rgba(22,163,74,0.35)' }}>
+                  🌱 Become a Seller
+                </Link>
+              )}
             </div>
 
-            {/* ── RIGHT ACTIONS ─────────────────────────────────── */}
+            {/* ── RIGHT ACTIONS ── */}
             <div className="flex items-center gap-2 md:gap-3">
 
+              {/* Cart icon — visible for non-admin authenticated users */}
+              {(!isAuthenticated || !isAdmin) && (
+                <Link to="/cart"
+                  className="flex items-center justify-center w-8 h-8 md:w-9 md:h-9 rounded-full bg-blue-50 text-[#2563eb] hover:bg-blue-100 transition-colors shadow-sm border border-blue-100 relative"
+                  title="View Cart">
+                  <FaShoppingCart className="text-[14px] md:text-base relative left-[1px]" />
+                </Link>
+              )}
+
               {/* Language Switcher */}
-              <button
-                onClick={toggleLanguage}
-                className="flex items-center gap-1 px-2 py-1.5 rounded-md hover:bg-[#F0EAD6] transition-colors text-xs md:text-sm font-bold text-[#4A4A4A] uppercase border border-[#E2DED6]"
-              >
-                <FaGlobe className="text-[#F6C35E]" />
-                {currentLanguage === 'en' ? 'BN' : 'EN'}
+              <button onClick={toggleLanguage}
+                className="flex items-center gap-1 px-2 py-1.5 rounded-md hover:bg-[#dbeafe] transition-colors text-xs md:text-sm font-bold uppercase"
+                style={{ background: 'linear-gradient(white, white) padding-box, linear-gradient(to right, #2563eb, #5BA4CF) border-box', border: '1.5px solid transparent' }}>
+                <FaGlobe className="text-[#2563eb]" />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2563eb] to-[#5BA4CF]">
+                  {currentLanguage === 'en' ? 'BN' : 'EN'}
+                </span>
               </button>
 
+              {/* ── Profile Dropdown or Login/Sign In ── */}
               {isAuthenticated ? (
-                /* ── PROFILE DROPDOWN TRIGGER ───────────────── */
                 <div className="relative" ref={dropdownRef}>
-                  <button
-                    onClick={() => setIsDropdownOpen((prev) => !prev)}
-                    className="flex items-center gap-2 bg-[#FFF8EC] hover:bg-[#FFF3DC] border border-[#F6C35E]/60 rounded-full pl-1 pr-3 py-1 transition-all duration-200 shadow-sm hover:shadow-md focus:outline-none"
-                  >
-                    {/* Avatar */}
-                    <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border-2 border-[#F6C35E] bg-[#F0EAD6] flex items-center justify-center">
-                      {profilePicUrl ? (
-                        <img
-                          src={profilePicUrl}
-                          alt={user?.name}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <FaUserCircle className="text-[#F6C35E] text-2xl" />
-                      )}
+                  <button onClick={() => setIsDropdownOpen((prev) => !prev)}
+                    className="flex items-center gap-2 rounded-full pl-1 pr-3 py-1 transition-all duration-200 shadow-sm hover:shadow-md focus:outline-none"
+                    style={{ background: 'linear-gradient(white, white) padding-box, linear-gradient(to right, #2563eb, #5BA4CF) border-box', border: '1.5px solid transparent' }}>
+                    <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-[#dbeafe] to-[#bfdbfe]"
+                         style={{ boxShadow: '0 0 0 2px #5BA4CF' }}>
+                      {profilePicUrl
+                        ? <img src={profilePicUrl} alt={user?.name} className="w-full h-full object-cover" />
+                        : <FaUserCircle className="text-[#2563eb] text-2xl" />
+                      }
                     </div>
-
-                    {/* Name */}
-                    <span className="text-xs sm:text-sm font-bold text-[#4A4A4A] truncate max-w-[80px] sm:max-w-[120px] hidden sm:block">
+                    <span className="text-xs sm:text-sm font-bold text-[#1B2B4B] truncate max-w-[80px] sm:max-w-[120px] hidden sm:block">
                       {user?.name}
                     </span>
-
-                    {/* Arrow */}
-                    <FaChevronDown
-                      className={`text-[#4A4A4A] text-[10px] flex-shrink-0 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}
-                    />
+                    <FaChevronDown className={`text-[#2563eb] text-[10px] flex-shrink-0 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
                   </button>
 
-                  {/* ── DROPDOWN MENU ─────────────────────── */}
                   {isDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-52 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                      {/* User info header */}
-                      <div className="px-4 py-3 bg-gradient-to-r from-[#FFF8EC] to-[#FFF3DC] border-b border-[#F6C35E]/20">
-                        <p className="text-sm font-bold text-[#4A4A4A]">Welcome {user?.name}</p>
+                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-2xl overflow-hidden z-50"
+                         style={{ border: '1.5px solid transparent', background: 'linear-gradient(white, white) padding-box, linear-gradient(to bottom right, #2563eb, #5BA4CF) border-box' }}>
+
+                      {/* Header */}
+                      <div className="px-4 py-3 bg-gradient-to-r from-[#dbeafe] to-[#bfdbfe] border-b border-[#93c5fd]/40">
+                        <p className="text-xs text-[#5BA4CF] font-semibold uppercase tracking-wider">
+                          {isAdmin ? '🛡️ Admin' : isApprovedSeller ? '🏪 Seller' : '👤 Customer'}
+                        </p>
+                        <p className="text-sm font-bold text-[#1B2B4B] truncate">{user?.name}</p>
                       </div>
 
-                      {/* Dashboard */}
-                      <Link
-                        to={dashboardPath}
-                        className="flex items-center gap-3 px-4 py-3 text-sm text-[#4A4A4A] hover:bg-[#FFF8EC] hover:text-[#b8860b] transition-colors font-medium"
-                      >
-                        <FaTachometerAlt className="text-[#F6C35E] flex-shrink-0" />
-                        {dashboardLabel}
+                      {/* My Dashboard — single smart link */}
+                      <Link to={myDashboardPath}
+                        onClick={() => setIsDropdownOpen(false)}
+                        className="flex items-center gap-3 px-4 py-3 text-sm text-[#1B2B4B] hover:bg-[#eff6ff] hover:text-[#2563eb] transition-colors font-medium">
+                        <FaTachometerAlt className="text-[#2563eb] flex-shrink-0" />
+                        My Dashboard
                       </Link>
+                      <div className="h-px bg-gradient-to-r from-[#dbeafe] to-[#bfdbfe]" />
 
-                      {/* Divider */}
-                      <div className="border-t border-gray-100" />
+                      {/* My Orders — customers & sellers */}
+                      {!isAdmin && (
+                        <>
+                          <Link to="/my-orders"
+                            onClick={() => setIsDropdownOpen(false)}
+                            className="flex items-center gap-3 px-4 py-3 text-sm text-[#1B2B4B] hover:bg-[#eff6ff] hover:text-[#2563eb] transition-colors font-medium">
+                            <FaShoppingBag className="text-[#2563eb] flex-shrink-0" />
+                            My Orders
+                          </Link>
+                          <div className="h-px bg-gradient-to-r from-[#dbeafe] to-[#bfdbfe]" />
+                        </>
+                      )}
 
                       {/* Logout */}
-                      <button
-                        onClick={handleLogout}
-                        className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-500 hover:bg-red-50 transition-colors font-medium"
-                      >
+                      <button onClick={handleLogout}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-500 hover:bg-red-50 transition-colors font-medium">
                         <FaSignOutAlt className="flex-shrink-0" />
                         {t('nav.logout')}
                       </button>
@@ -192,64 +264,96 @@ const Navbar = () => {
                   )}
                 </div>
               ) : (
-                  /* ── NOT LOGGED IN ───────────────────────────── */
                 <div className="flex items-center gap-2">
-                  <Link
-                    to="/login"
-                    className="text-xs md:text-sm font-bold text-[#4A4A4A] hover:text-[#F6C35E] transition-colors px-1 md:px-2"
-                  >
+                  <Link to="/login" className="text-xs md:text-sm font-bold text-[#1B2B4B] hover:text-[#2563eb] transition-colors px-1 md:px-2">
                     {t('nav.login')}
-                    </Link>
-                  <Link
-                    to="/register"
-                    className="flex items-center gap-1.5 bg-gradient-to-r from-[#F6C35E] to-[#E2DED6] hover:from-[#F6C35E]/90 hover:to-[#E2DED6]/90 text-[#4A4A4A] font-bold px-3 py-1.5 md:px-5 md:py-2 rounded-lg shadow-md shadow-[#F6C35E]/20 hover:-translate-y-0.5 transition-all text-xs md:text-sm whitespace-nowrap"
-                  >
-                    <span>{t('nav.register')}</span>
-                    <FaRocket className="text-[#F6C35E] text-[10px] md:text-xs" />
+                  </Link>
+                  <Link to="/register"
+                    className="flex items-center gap-1.5 text-white font-bold px-3 py-1.5 md:px-5 md:py-2 rounded-lg hover:-translate-y-0.5 transition-all text-xs md:text-sm whitespace-nowrap"
+                    style={{ background: 'linear-gradient(135deg, #1B2B4B 0%, #2563eb 55%, #5BA4CF 100%)', boxShadow: '0 4px 14px rgba(37,99,235,0.35)' }}>
+                    <span>Sign In</span>
+                    <FaRocket className="text-white text-[10px] md:text-xs" />
                   </Link>
                 </div>
               )}
 
-              {/* ── MOBILE HAMBURGER (not logged in only needs nav links) ── */}
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="md:hidden text-[#4A4A4A] hover:text-[#F6C35E] p-2 focus:outline-none transition-colors rounded-lg hover:bg-[#F0EAD6] ml-1"
-                aria-label="Toggle menu"
-              >
-                {isMobileMenuOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
+              {/* Mobile Hamburger */}
+              <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="md:hidden p-2 focus:outline-none transition-colors rounded-lg hover:bg-[#dbeafe] ml-1"
+                aria-label="Toggle menu">
+                {isMobileMenuOpen
+                  ? <FaTimes size={20} className="text-[#2563eb]" />
+                  : <FaBars size={20} className="text-[#1B2B4B]" />
+                }
               </button>
             </div>
           </div>
         </div>
 
-        {/* ── MOBILE SLIDE-DOWN MENU ────────────────────────────── */}
-        <div
-          className={`md:hidden absolute top-full left-0 w-full bg-[#FAF7F0] border-t border-[#E2DED6] shadow-xl transition-all duration-300 ease-in-out overflow-hidden origin-top ${isMobileMenuOpen ? 'max-h-[400px] opacity-100' : 'max-h-0 opacity-0'
-            }`}
-        >
+        {/* ── MOBILE MENU ── */}
+        <div className={`md:hidden absolute top-full left-0 w-full bg-gradient-to-b from-[#f0f7ff] to-[#e8f0fe] border-t border-[#bfdbfe] shadow-xl transition-all duration-300 ease-in-out overflow-hidden origin-top ${
+          isMobileMenuOpen ? 'max-h-[700px] opacity-100' : 'max-h-0 opacity-0'
+        }`}>
           <div className="flex flex-col p-4 space-y-1">
-            <MobileLink to="/" onClick={() => setIsMobileMenuOpen(false)} active={isActive('/')}>
-              {t('nav.home')}
+            <MobileLink to="/" active={isActive('/')}>{t('nav.home')}</MobileLink>
+            <MobileLink to="/about" active={isActive('/about')}>{t('nav.about')}</MobileLink>
+
+            <div className="h-px bg-gradient-to-r from-[#dbeafe] to-[#bfdbfe] my-1" />
+            <MobileLink to="/shop" active={isActive('/shop')}>
+              <FaStore className="inline mr-2 text-[#2563eb]" />{t('nav.shop') || 'Shop'}
             </MobileLink>
-            <MobileLink to="/about" onClick={() => setIsMobileMenuOpen(false)} active={isActive('/about')}>
-              {t('nav.about')}
+            <MobileLink to="/terms" active={isActive('/terms')}>
+              <FaFileContract className="inline mr-2 text-[#2563eb]" />{t('nav.terms') || 'Terms & Conditions'}
+            </MobileLink>
+            <MobileLink to="/privacy" active={isActive('/privacy')}>
+              <FaShieldAlt className="inline mr-2 text-[#2563eb]" />{t('nav.privacy') || 'Privacy Policy'}
             </MobileLink>
 
+            {/* ── Authenticated mobile section ── */}
             {isAuthenticated && (
               <>
-                <div className="border-t border-[#E2DED6] mt-2 pt-2">
-                  <MobileLink to={dashboardPath} onClick={() => setIsMobileMenuOpen(false)} active={isActive(dashboardPath)}>
-                    <FaChartPie className="inline mr-2 text-[#F6C35E]" />
-                    {dashboardLabel}
-                  </MobileLink>
-                </div>
+                <div className="h-px bg-gradient-to-r from-[#dbeafe] to-[#bfdbfe] my-1" />
+                <p className="text-[10px] font-bold text-[#5BA4CF] uppercase tracking-widest px-4 pt-1">
+                  {isAdmin ? 'Admin' : isApprovedSeller ? 'Seller' : 'Account'}
+                </p>
 
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center gap-2 w-full text-left px-4 py-3 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 transition-colors"
-                >
-                  <FaSignOutAlt />
-                  {t('nav.logout')}
+                {/* Single smart dashboard link */}
+                <MobileLink to={myDashboardPath} active={isActive(myDashboardPath)}>
+                  <FaTachometerAlt className="inline mr-2 text-[#2563eb]" />My Dashboard
+                </MobileLink>
+
+                {/* My Orders for non-admin */}
+                {!isAdmin && (
+                  <MobileLink to="/my-orders" active={isActive('/my-orders')}>
+                    <FaShoppingBag className="inline mr-2 text-[#2563eb]" />My Orders
+                  </MobileLink>
+                )}
+
+                {/* Cart for non-admin */}
+                {!isAdmin && (
+                  <MobileLink to="/cart" active={isActive('/cart')}>
+                    <FaShoppingCart className="inline mr-2 text-[#2563eb]" />Cart
+                  </MobileLink>
+                )}
+
+                {/* Seller-specific: pending notice */}
+                {isPendingSeller && !isApprovedSeller && (
+                  <MobileLink to="/pending" active={isActive('/pending')}>
+                    ⏳ Application Pending
+                  </MobileLink>
+                )}
+
+                {/* Non-seller: become a seller */}
+                {!isAdmin && !isSeller && (
+                  <MobileLink to="/dashboard" active={isActive('/dashboard')}>
+                    🌱 Become a Seller
+                  </MobileLink>
+                )}
+
+                <div className="h-px bg-gradient-to-r from-[#dbeafe] to-[#bfdbfe] mt-2" />
+                <button onClick={handleLogout}
+                  className="flex items-center gap-2 w-full text-left px-4 py-3 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 transition-colors">
+                  <FaSignOutAlt />{t('nav.logout')}
                 </button>
               </>
             )}
@@ -257,23 +361,20 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* Spacer for fixed navbar */}
       <div className={`${isScrolled ? 'h-14' : 'h-16'} md:h-20 transition-all duration-300`}></div>
     </>
   );
 };
 
-// ── Mobile Link helper ────────────────────────────────────────────
-const MobileLink = ({ to, children, onClick, active }) => (
-  <Link
-    to={to}
-    onClick={onClick}
+const MobileLink = ({ to, children, active }) => (
+  <Link to={to}
     className={`block px-4 py-3 rounded-xl font-medium text-sm transition-all ${
-      active
-        ? 'bg-[#F6C35E]/20 text-[#4A4A4A] border border-[#F6C35E] shadow-sm'
-        : 'text-[#4A4A4A] hover:bg-[#F0EAD6] hover:text-[#F6C35E]'
+      active ? 'text-[#1B2B4B] shadow-sm' : 'text-[#1B2B4B] hover:bg-[#dbeafe] hover:text-[#2563eb]'
     }`}
-  >
+    style={active ? {
+      background: 'linear-gradient(white, white) padding-box, linear-gradient(to right, #2563eb, #5BA4CF) border-box',
+      border: '1.5px solid transparent',
+    } : {}}>
     {children}
   </Link>
 );

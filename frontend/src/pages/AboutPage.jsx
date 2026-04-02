@@ -112,17 +112,17 @@ const AboutPage = () => {
                 </div>
 
                 <h3 className="text-2xl font-bold mb-4">
-                  {t('about.lokkho.title') || "আমাদের লক্ষ্য"}
+                  {t('about.mission.title') || "আমাদের লক্ষ্য"}
                 </h3>
                 <p className="text-blue-200 leading-relaxed text-lg opacity-90 whitespace-pre-line mb-8">
-                  {t('about.lokkho.statement')}
+                  {t('about.mission.statement')}
                 </p>
 
                 <h3 className="text-2xl font-bold mb-4">
-                  {t('about.uddeshyo.title') || "আমাদের উদ্দেশ্য"}
+                  {t('about.vision.title') || "আমাদের উদ্দেশ্য"}
                 </h3>
                 <p className="text-blue-200 leading-relaxed text-lg opacity-90">
-                  {t('about.uddeshyo.statement')}
+                  {t('about.vision.statement')}
                 </p>
               </div>
             </div>
@@ -134,7 +134,7 @@ const AboutPage = () => {
               </div>
               <h3 className="text-2xl font-bold text-slate-200 mb-4">Why We Do It</h3>
               <p className="text-slate-300 leading-relaxed text-lg">
-                {t('about.lokkho.details')}
+                {t('about.vision.details')}
               </p>
             </div>
 

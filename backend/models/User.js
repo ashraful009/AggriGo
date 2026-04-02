@@ -1,105 +1,111 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, 'Please provide your name'],
-    trim: true,
-    maxlength: [100, 'Name cannot exceed 100 characters']
-  },
-  email: {
-    type: String,
-    required: [true, 'Please provide your email'],
-    unique: true,
-    lowercase: true,
-    trim: true,
-    match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email']
-  },
-  role: {
-    type: String,
-    enum: ['user', 'admin'],
-    default: 'user'
-  },
-  password: {
-    type: String,
-    required: [true, 'Please provide a password'],
-    minlength: [6, 'Password must be at least 6 characters'],
-    select: false
-  },
-  isVerified: {
-    type: Boolean,
-    default: false
-  },
-  otpHash: {
-    type: String,
-    select: false
-  },
-  otpExpiresAt: {
-    type: Date,
-    select: false
-  },
-  otpAttempts: {
-    type: Number,
-    default: 0,
-    select: false
-  },
-  resetPasswordToken: {
-    type: String,
-    select: false
-  },
-  resetPasswordExpire: {
-    type: Date,
-    select: false
-  },
-  profilePictures: [{
-    url: {
+const UserSchema = new mongoose.Schema(
+  {
+    name: {
       type: String,
-      required: true
+      required: [true, 'Name is required'],
+      trim: true,
     },
-    publicId: {
+    email: {
       type: String,
-      required: true
+      required: [true, 'Email is required'],
+      unique: true,
+      lowercase: true,
+      trim: true,
     },
-    uploadedAt: {
-      type: Date,
-      default: Date.now
-    }
-  }]
-}, {
-  timestamps: true
-});
+    password: {
+      type: String,
+      required: [true, 'Password is required'],
+      minlength: 6,
+      select: false,
+    },
+    phone: {
+      type: String,
+      trim: true,
+    },
 
-// Hash password before saving
-userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) {
-    return next();
-  }
-  
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
+    // একজন user একসাথে buyer ও seller হতে পারবে
+    roles: {
+      type: [String],
+      enum: ['buyer', 'seller', 'admin'],
+      default: ['buyer'],
+    },
+    
+    role: {
+      type: String,
+      enum: ['admin', 'seller', 'customer'],
+      default: 'customer'
+    },
+    
+    // Seller status
+    sellerStatus: {
+      type: String,
+      enum: ['none', 'pending', 'approved', 'rejected'],
+      default: 'none',
+    },
+    sellerAppliedAt: { type: Date },
+    sellerApprovedAt: { type: Date },
+    sellerRejectedReason: { type: String },
+
+    // Profile
+    profilePicture: { type: String, default: '' },
+    address: {
+      division: String,
+      district: String,
+      upazila: String,
+      details: String,
+    },
+
+    // ─── Auth helpers ───────────────────────────────────────────────────────
+    isVerified: { type: Boolean, default: false },
+    otpHash: { type: String, select: false },
+    otpExpiresAt: { type: Date, select: false },
+    otpAttempts: { type: Number, default: 0, select: false },
+    resetPasswordToken: { type: String, select: false },
+    resetPasswordExpire: { type: Date, select: false },   // singular — matches controller
+  },
+  { timestamps: true }
+);
+
+// ── Password hashing ─────────────────────────────────────────────────────────
+UserSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+  this.password = await bcrypt.hash(this.password, 12);
   next();
 });
 
-// Compare password method
-userSchema.methods.comparePassword = async function(candidatePassword) {
+// ── Instance methods ──────────────────────────────────────────────────────────
+UserSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
+UserSchema.methods.isSeller = function () {
+  return this.roles.includes('seller') && this.sellerStatus === 'approved';
+};
+
+UserSchema.methods.isAdmin = function () {
+  return this.roles.includes('admin');
+};
+
 // Generate password reset token
-userSchema.methods.getResetPasswordToken = function() {
-  // Generate token
-  const resetToken = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-  
-  // Hash token and set to resetPasswordToken field
-  this.resetPasswordToken = bcrypt.hashSync(resetToken, 10);
-  
-  // Set expire (1 hour)
-  this.resetPasswordExpire = Date.now() + 60 * 60 * 1000;
-  
+UserSchema.methods.getResetPasswordToken = function () {
+  // 1. Generate a cryptographically random 32-byte plain token
+  const resetToken = crypto.randomBytes(32).toString('hex');
+
+  // 2. Hash it and store in the schema field (never store plain token in DB)
+  this.resetPasswordToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+
+  // 3. Token valid for 10 minutes
+  this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
+
+  // 4. Return the PLAIN token — this goes into the reset URL email link
   return resetToken;
 };
 
-const User = mongoose.model('User', userSchema);
-
-export default User;
+export default mongoose.model('User', UserSchema);

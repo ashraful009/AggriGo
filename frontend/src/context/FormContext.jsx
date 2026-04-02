@@ -2,6 +2,7 @@ import { createContext, useState, useContext, useEffect } from 'react';
 import api from '../utils/api';
 import { INITIAL_FORM_STATE } from '../data/formConstants';
 import { validateStep } from '../utils/formSchemas';
+import { useAuth } from './AuthContext';
 
 // Map any previously-stored translated enum value to its correct English equivalent.
 // Fixes existing drafts that were saved in Bengali before the frontend fix was deployed.
@@ -47,14 +48,21 @@ export const useForm = () => {
 };
 
 export const FormProvider = ({ children }) => {
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const [formData, setFormData] = useState(INITIAL_FORM_STATE);
   const [loading, setLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Load existing data on mount
+  // Load existing data based on auth status
   useEffect(() => {
-    loadExistingData();
-  }, []);
+    if (authLoading) return;
+    
+    if (isAuthenticated) {
+      loadExistingData();
+    } else {
+      setFormData(INITIAL_FORM_STATE);
+    }
+  }, [isAuthenticated, authLoading]);
 
   // Listen for auth changes to reset form data
   useEffect(() => {
@@ -79,6 +87,8 @@ export const FormProvider = ({ children }) => {
   }, []);
 
   const loadExistingData = async () => {
+    if (!isAuthenticated) return; // double check
+
     try {
       setLoading(true);
       const response = await api.get('/business');
@@ -164,6 +174,13 @@ export const FormProvider = ({ children }) => {
       const response = await api.put(`/business/${formData.businessDataId}`, dataToSave);
 
       if (response.data.success) {
+        // Now also trigger the Seller application process so they show up as pending
+        try {
+          await api.post('/seller/apply');
+        } catch (applyErr) {
+          console.error('Error applying as seller:', applyErr);
+        }
+
         const updatedData = {
           ...formData,
           ...response.data.data

@@ -6,7 +6,12 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { FaUser, FaEnvelope, FaLock, FaRocket, FaCheckCircle, FaArrowRight, FaGlobeAmericas, FaShieldAlt } from 'react-icons/fa';
 
+import { useSearchParams } from 'react-router-dom';
+
 const RegisterPage = () => {
+  const [params] = useSearchParams();
+  const redirect = params.get('redirect');
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -51,7 +56,7 @@ const RegisterPage = () => {
 
     if (result.success) {
       // Navigate to OTP verification page with email
-      navigate('/verify-otp', { state: { email: formData.email } });
+      navigate('/verify-otp', { state: { email: formData.email, redirect } });
     } else {
       setError(result.message);
       setLoading(false);
@@ -69,7 +74,7 @@ const RegisterPage = () => {
         
         <div className="bg-white w-full max-w-5xl rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[650px] border border-slate-100">
 
-          {/* --- LEFT SIDE: Value Prop / Infographic (Dark Corporate Theme) --- */}
+          {/* --- LEFT SIDE: Value Prop --- */}
           <div className="md:w-1/2 bg-slate-900 relative p-12 flex flex-col justify-between overflow-hidden text-white">
 
             {/* Background Decorative Elements */}
@@ -135,7 +140,7 @@ const RegisterPage = () => {
             <div className="max-w-md mx-auto w-full relative z-10">
               
               <h3 className="text-3xl font-bold text-slate-900 mb-2">
-                {t('auth.register.title') || "Create Account"}
+                {t('auth.register.title') && !t('auth.register.title').toLowerCase().includes('regist') ? t('auth.register.title') : "Sign In"}
               </h3>
               <p className="text-slate-500 mb-8">
                 Join SRIJON today. It's free and takes less than a minute.
@@ -243,7 +248,7 @@ const RegisterPage = () => {
                   // Using Blue Gradient for Registration to imply Trust/Security
                   className="w-full py-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:-translate-y-1 shadow-lg shadow-blue-500/30 flex items-center justify-center space-x-2 mt-4 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                  <span>{loading ? t('common.loading') : t('auth.register.button')}</span>
+                  <span>{loading ? t('common.loading') : "Sign In"}</span>
                   {!loading && <FaArrowRight className="text-sm" />}
                 </button>
               </form>

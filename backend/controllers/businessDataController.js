@@ -1,9 +1,8 @@
 import BusinessData from '../models/BusinessData.js';
+import Product from '../models/Product.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Bengali → English enum value map
-// Covers every translated string a Bengali-language user might have stored
-// in a draft before the frontend value-binding fix was deployed.
 // ─────────────────────────────────────────────────────────────────────────────
 const ENUM_VALUE_MAP = {
   // gender
@@ -16,7 +15,7 @@ const ENUM_VALUE_MAP = {
   'হস্তনির্মিত': 'Handmade', 'আধা-স্বয়ংক্রিয়': 'Semi-automatic', 'স্বয়ংক্রিয়': 'Automatic',
   // productionPlace
   'গৃহ-ভিত্তিক': 'Home-based', 'কারখানা-ভিত্তিক': 'Factory-based',
-  // Yes/No fields (bulkDiscount, hasBankAccount, interestInOnlineExport)
+  // Yes/No fields
   'হ্যাঁ': 'Yes', 'না': 'No'
 };
 
@@ -25,9 +24,6 @@ const ENUM_FIELDS = [
   'productionPlace', 'bulkDiscount', 'hasBankAccount', 'interestInOnlineExport'
 ];
 
-// Normalize + sanitize incoming enum fields:
-//   1. Map any translated value to its English equivalent
-//   2. Remove empty strings (Mongoose enum fields must be undefined, not '')
 const normalizeEnumFields = (data) => {
   const out = { ...data };
   ENUM_FIELDS.forEach(field => {
@@ -42,15 +38,14 @@ const normalizeEnumFields = (data) => {
 
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Helper: calculate profile completion percentage + product showcase check
-//         + collect human-readable missing items for Dashboard UI red highlights
+// calculateCompletion
 //
 // Points breakdown (total = 100):
 //   Step 1 Core (24pts)    : ownerName, brandName, mobileNumber, email,
 //                            productType, ownerAge, gender, ownershipType  (3 pts each)
 //   Step 1 Address (15pts) : division, district, thana, postCode,
 //                            detailedAddress  (3 pts each)
-//   Step 2 Product (20pts) : productName (5), shortDescription (5),
+//   Step 2 Product (20pts) : products array ≥ 1 entry (5), shortDescription (5),
 //                            wholesalePrice (10)
 //   Step 3 Market (10pts)  : businessAge (5), totalCustomers (5)
 //   Step 4 Future (10pts)  : futureGoals (10)
@@ -76,7 +71,8 @@ const calculateCompletion = (data) => {
   step1AddressFields.forEach(f => { if (data[f]) points += 3; });
 
   // Step 2 — Product (20)
-  const hasProductName = Boolean(data.productName);
+  // FIX: use products array (matches the model) instead of a single productName field
+  const hasProductName = Boolean(data.products && data.products.length > 0);
   const hasDescription = Boolean(data.shortDescription && data.shortDescription.length >= 10);
   const hasPrice = Boolean(data.wholesalePrice && Number(data.wholesalePrice) > 0);
   if (hasProductName) points += 5;
@@ -102,35 +98,24 @@ const calculateCompletion = (data) => {
 
   const completionPercentage = Math.min(100, Math.round(points));
 
-  // Product showcase check — all four conditions must be true
   const isProductShowcaseComplete =
     hasProductName &&
     hasDescription &&
     hasPrice &&
     hasProductImages;
 
-  // ── Collect missing items for Dashboard red-highlight UI ──────────────────
-  if (completionPercentage < 80) {
-    missingItems.push('Less than 80% Complete');
-  }
-  if (!hasProductImages) {
-    missingItems.push('Gallery Images Missing');
-  }
-  if (!hasProductName || !hasDescription || !hasPrice) {
-    missingItems.push('Product Showcase Incomplete');
-  }
+  if (completionPercentage < 80) missingItems.push('Less than 80% Complete');
+  if (!hasProductImages) missingItems.push('Gallery Images Missing');
+  if (!hasProductName || !hasDescription || !hasPrice) missingItems.push('Product Showcase Incomplete');
 
   return { completionPercentage, isProductShowcaseComplete, missingItems };
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Shared helper: send Agreement PDF email exactly once.
-// Called after every data/media save. Guards against duplicate sends via the
-// isAgreementSent flag on the BusinessData document.
+// triggerAgreementEmailIfReady
 // ─────────────────────────────────────────────────────────────────────────────
 export const triggerAgreementEmailIfReady = async (businessData, userId) => {
   try {
-    // Already sent — never send twice
     if (businessData.isAgreementSent) return;
 
     const { completionPercentage, isProductShowcaseComplete } = calculateCompletion(businessData);
@@ -143,7 +128,6 @@ export const triggerAgreementEmailIfReady = async (businessData, userId) => {
       return;
     }
 
-    // Conditions met — generate PDF and send email
     const { generateAgreementPDF } = await import('../utils/agreementPdfGenerator.js');
     const { sendAgreementPDF } = await import('../utils/emailService.js');
     const UserModule = await import('../models/User.js');
@@ -158,26 +142,21 @@ export const triggerAgreementEmailIfReady = async (businessData, userId) => {
     const pdfBuffer = await generateAgreementPDF(userId, businessData, language);
     await sendAgreementPDF(user.email, user.name, pdfBuffer, language);
 
-    // Mark as sent — save to DB so it's permanent
     businessData.isAgreementSent = true;
     await businessData.save();
 
     console.log(`[Agreement] PDF email sent to ${user.email} (user: ${userId})`);
   } catch (err) {
-    // Non-blocking — log but don't break the caller's response
     console.error(`[Agreement] Failed to trigger email for user ${userId}:`, err);
   }
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// @desc    Get user's business data (includes completion metrics + missingItems)
 // @route   GET /api/business
-// @access  Private
 // ─────────────────────────────────────────────────────────────────────────────
 export const getBusinessData = async (req, res) => {
   try {
     const businessData = await BusinessData.findOne({ userId: req.user.id });
-
     const { completionPercentage, isProductShowcaseComplete, missingItems } = calculateCompletion(businessData);
 
     res.status(200).json({
@@ -189,18 +168,12 @@ export const getBusinessData = async (req, res) => {
     });
   } catch (error) {
     console.error('Get business data error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Server error while fetching business data'
-    });
+    res.status(500).json({ success: false, message: 'Server error while fetching business data' });
   }
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// @desc    Create or update business data (step-by-step saves)
-//          Triggers Agreement PDF email on first save that meets the threshold.
 // @route   POST /api/business
-// @access  Private
 // ─────────────────────────────────────────────────────────────────────────────
 export const createBusinessData = async (req, res) => {
   try {
@@ -214,34 +187,20 @@ export const createBusinessData = async (req, res) => {
         { new: true, runValidators: true }
       );
     } else {
-      businessData = await BusinessData.create({
-        ...sanitizedData,
-        userId: req.user.id
-      });
+      businessData = await BusinessData.create({ ...sanitizedData, userId: req.user.id });
     }
 
-    // Fire-and-forget agreement email check (non-blocking)
     triggerAgreementEmailIfReady(businessData, req.user.id);
 
-    res.status(201).json({
-      success: true,
-      data: businessData
-    });
+    res.status(201).json({ success: true, data: businessData });
   } catch (error) {
     console.error('Create business data error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Server error while creating business data'
-    });
+    res.status(500).json({ success: false, message: 'Server error while creating business data' });
   }
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// @desc    Update business data — triggers Agreement PDF on first time conditions
-//          are met (completionPercentage ≥ 80 AND isProductShowcaseComplete).
-//          The isAgreementSent flag prevents any duplicate sends.
 // @route   PUT /api/business/:id
-// @access  Private
 // ─────────────────────────────────────────────────────────────────────────────
 export const updateBusinessData = async (req, res) => {
   try {
@@ -250,39 +209,24 @@ export const updateBusinessData = async (req, res) => {
     if (!businessData) {
       return res.status(404).json({ success: false, message: 'Business data not found' });
     }
-
     if (businessData.userId.toString() !== req.user.id) {
       return res.status(401).json({ success: false, message: 'Not authorized to update this business data' });
     }
 
     const sanitizedData = normalizeEnumFields(req.body);
+    businessData = await BusinessData.findByIdAndUpdate(req.params.id, sanitizedData, { new: true, runValidators: true });
 
-    businessData = await BusinessData.findByIdAndUpdate(
-      req.params.id,
-      sanitizedData,
-      { new: true, runValidators: true }
-    );
-
-    // Fire-and-forget agreement email check (non-blocking, idempotent)
     triggerAgreementEmailIfReady(businessData, req.user.id);
 
-    res.status(200).json({
-      success: true,
-      data: businessData
-    });
+    res.status(200).json({ success: true, data: businessData });
   } catch (error) {
     console.error('Update business data error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Server error while updating business data'
-    });
+    res.status(500).json({ success: false, message: 'Server error while updating business data' });
   }
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// @desc    Delete business data
 // @route   DELETE /api/business/:id
-// @access  Private
 // ─────────────────────────────────────────────────────────────────────────────
 export const deleteBusinessData = async (req, res) => {
   try {
@@ -291,13 +235,11 @@ export const deleteBusinessData = async (req, res) => {
     if (!businessData) {
       return res.status(404).json({ success: false, message: 'Business data not found' });
     }
-
     if (businessData.userId.toString() !== req.user.id) {
       return res.status(401).json({ success: false, message: 'Not authorized to delete this business data' });
     }
 
     await businessData.deleteOne();
-
     res.status(200).json({ success: true, message: 'Business data deleted successfully' });
   } catch (error) {
     console.error('Delete business data error:', error);
@@ -306,9 +248,7 @@ export const deleteBusinessData = async (req, res) => {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// @desc    Download Agreement PDF
 // @route   GET /api/business/download-pdf
-// @access  Private
 // ─────────────────────────────────────────────────────────────────────────────
 export const downloadBusinessDataPDF = async (req, res) => {
   try {
@@ -321,7 +261,6 @@ export const downloadBusinessDataPDF = async (req, res) => {
       });
     }
 
-    // Completion gate — mirror the same rule as the email guard
     const { completionPercentage, isProductShowcaseComplete } = calculateCompletion(businessData);
     if (completionPercentage < 80 || !isProductShowcaseComplete) {
       return res.status(403).json({
@@ -334,10 +273,8 @@ export const downloadBusinessDataPDF = async (req, res) => {
 
     const { generateAgreementPDF } = await import('../utils/agreementPdfGenerator.js');
     const User = await import('../models/User.js');
-
     const user = await User.default.findById(req.user.id);
     const language = req.query.lang || user.preferredLanguage || 'en';
-
     const pdfBuffer = await generateAgreementPDF(req.user.id, businessData, language);
 
     const dateStr = new Date().toISOString().split('T')[0];
@@ -358,29 +295,26 @@ export const downloadBusinessDataPDF = async (req, res) => {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// @desc    Get aggregated business stats for the Manager Analytics Dashboard
-// @route   GET /api/business/stats
-// @access  Private
+// @route   GET /api/business/stats   (Admin)
 //
-// Replicates the calculateCompletion point system inline via $addFields so we
-// never need to store completionPercentage in the DB.
+// FIX: Step 2 Product score now checks `products` array size (≥1) instead of
+//      the non-existent `productName` string field, matching calculateCompletion().
 //
-// Point breakdown mirrored from calculateCompletion():
-//   Step 1 Core  (24 pts): ownerName, brandName, mobileNumber, email,
-//                           productType, ownerAge, gender, ownershipType  (3 each)
-//   Step 1 Addr  (15 pts): division, district, thana, postCode,
-//                           detailedAddress  (3 each)
-//   Step 2 Prod  (20 pts): productName(5), shortDescription≥10chars(5),
-//                           wholesalePrice>0(10)
-//   Step 3 Mkt   (10 pts): businessAge(5), totalCustomers(5)
-//   Step 4 Fut   (10 pts): futureGoals≥10chars(10)
-//   Step 5 Media (15 pts): productImages≥1(10), packagingImage||productionProcessImage(5)
-//   Step 6 Cons  ( 6 pts): consentAccuracy(3), digitalSignature(3)
+// Point breakdown (mirrors calculateCompletion):
+//   Step 1 Core  (24): ownerName, brandName, mobileNumber, email,
+//                       productType, ownerAge, gender, ownershipType  (3 each)
+//   Step 1 Addr  (15): division, district, thana, postCode,
+//                       detailedAddress  (3 each)
+//   Step 2 Prod  (20): products.length≥1(5), shortDescription≥10chars(5),
+//                       wholesalePrice>0(10)
+//   Step 3 Mkt   (10): businessAge(5), totalCustomers(5)
+//   Step 4 Fut   (10): futureGoals≥10chars(10)
+//   Step 5 Media (15): productImages≥1(10), packagingImage||productionProcessImage(5)
+//   Step 6 Cons  ( 6): consentAccuracy(3), digitalSignature(3)
 // ─────────────────────────────────────────────────────────────────────────────
 export const getBusinessStats = async (req, res) => {
   try {
     const pipeline = [
-      // ── Step 1: Compute inline completion score ─────────────────────────
       {
         $addFields: {
           _score: {
@@ -400,8 +334,8 @@ export const getBusinessStats = async (req, res) => {
               { $cond: [{ $gt: [{ $strLenCP: { $ifNull: ['$thana', ''] } }, 0] }, 3, 0] },
               { $cond: [{ $gt: [{ $strLenCP: { $ifNull: ['$postCode', ''] } }, 0] }, 3, 0] },
               { $cond: [{ $gt: [{ $strLenCP: { $ifNull: ['$detailedAddress', ''] } }, 0] }, 3, 0] },
-              // Step 2 Product
-              { $cond: [{ $gt: [{ $strLenCP: { $ifNull: ['$productName', ''] } }, 0] }, 5, 0] },
+              // Step 2 Product — FIX: check products array length, not productName string
+              { $cond: [{ $gte: [{ $size: { $ifNull: ['$products', []] } }, 1] }, 5, 0] },
               { $cond: [{ $gte: [{ $strLenCP: { $ifNull: ['$shortDescription', ''] } }, 10] }, 5, 0] },
               { $cond: [{ $gt: [{ $ifNull: ['$wholesalePrice', 0] }, 0] }, 10, 0] },
               // Step 3 Market
@@ -431,7 +365,6 @@ export const getBusinessStats = async (req, res) => {
         }
       },
 
-      // ── Step 2: Facet — four independent aggregations in one pass ────────
       {
         $facet: {
           totalRegistrations: [
@@ -441,9 +374,7 @@ export const getBusinessStats = async (req, res) => {
           completionStats: [
             {
               $group: {
-                _id: {
-                  $cond: [{ $gte: ['$_score', 80] }, 'Completed', 'Incomplete']
-                },
+                _id: { $cond: [{ $gte: ['$_score', 80] }, 'Completed', 'Incomplete'] },
                 count: { $sum: 1 }
               }
             }
@@ -454,15 +385,17 @@ export const getBusinessStats = async (req, res) => {
             { $count: 'count' }
           ],
 
+          // FIX: unwind products array and group by category to get accurate sector overview
           sectorOverview: [
+            { $unwind: { path: '$products', preserveNullAndEmptyArrays: false } },
             {
               $match: {
-                productType: { $exists: true, $nin: [null, ''] }
+                'products.category': { $exists: true, $nin: [null, ''] }
               }
             },
             {
               $group: {
-                _id: '$productType',
+                _id: '$products.category',
                 count: { $sum: 1 }
               }
             },
@@ -474,7 +407,6 @@ export const getBusinessStats = async (req, res) => {
 
     const [result] = await BusinessData.aggregate(pipeline);
 
-    // ── Shape the response ─────────────────────────────────────────────────
     const totalRegistrations = result.totalRegistrations?.[0]?.count ?? 0;
 
     const completionMap = Object.fromEntries(
@@ -485,59 +417,43 @@ export const getBusinessStats = async (req, res) => {
       incomplete: completionMap['Incomplete'] ?? 0
     };
 
-    const agreementTracking = {
-      sent: result.agreementTracking?.[0]?.count ?? 0
-    };
+    const agreementTracking = { sent: result.agreementTracking?.[0]?.count ?? 0 };
 
     const sectorOverview = (result.sectorOverview ?? []).map(({ _id, count }) => ({
       name: _id,
       count
     }));
 
+    const pendingProductCount = await Product.countDocuments({ status: 'pending' });
+
     res.status(200).json({
       success: true,
-      data: {
-        totalRegistrations,
-        completionStats,
-        agreementTracking,
-        sectorOverview
+      data: { 
+        totalRegistrations, 
+        completionStats, 
+        agreementTracking, 
+        sectorOverview,
+        pendingProductCount 
       }
     });
   } catch (error) {
     console.error('Get business stats error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Server error while computing business stats'
-    });
+    res.status(500).json({ success: false, message: 'Server error while computing business stats' });
   }
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// @desc    Get ALL business profiles — for Manager Business Directory
-// @route   GET /api/business/all
-// @access  Private
-//
-// Supports optional query params:
-//   ?search=  — matches mobileNumber or email (case-insensitive substring)
-//   ?division= — exact match on division field
-//   ?type=     — exact match on productType field
-//   ?status=   — 'completed' (completionPercentage ≥ 80) or 'incomplete'
-//
-// Returns each document enriched with:
-//   completionPercentage, isProductShowcaseComplete, missingItems
-//   plus the populated user { name, email }
+// @route   GET /api/business/all   (Admin)
 // ─────────────────────────────────────────────────────────────────────────────
 export const getAllBusinessData = async (req, res) => {
   try {
-    const { search, division, type, status } = req.query;
-
-    // ── Build Mongoose filter ────────────────────────────────────────────────
+    const { search, division, type, status, isAgreementSent } = req.query;
     const filter = {};
 
     if (division && division !== 'all') filter.division = division;
     if (type && type !== 'all') filter.productType = type;
+    if (isAgreementSent === 'true') filter.isAgreementSent = true;
 
-    // Text search across mobileNumber and email
     if (search && search.trim() !== '') {
       const escaped = search.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const rx = new RegExp(escaped, 'i');
@@ -549,42 +465,26 @@ export const getAllBusinessData = async (req, res) => {
       ];
     }
 
-    // Fetch + populate user info
     const docs = await BusinessData
       .find(filter)
       .populate('userId', 'name email profilePictures')
       .sort({ createdAt: -1 })
       .lean();
 
-    // ── Enrich each doc with JS-computed completion metrics ──────────────────
     let enriched = docs.map((doc) => {
-      const { completionPercentage, isProductShowcaseComplete, missingItems } =
-        calculateCompletion(doc);
-      return {
-        ...doc,
-        completionPercentage,
-        isProductShowcaseComplete,
-        missingItems
-      };
+      const { completionPercentage, isProductShowcaseComplete, missingItems } = calculateCompletion(doc);
+      return { ...doc, completionPercentage, isProductShowcaseComplete, missingItems };
     });
 
-    // ── Status filter (must happen AFTER JS computation) ────────────────────
     if (status === 'completed') {
       enriched = enriched.filter(d => d.completionPercentage >= 80);
     } else if (status === 'incomplete') {
       enriched = enriched.filter(d => d.completionPercentage < 80);
     }
 
-    res.status(200).json({
-      success: true,
-      count: enriched.length,
-      data: enriched
-    });
+    res.status(200).json({ success: true, count: enriched.length, data: enriched });
   } catch (error) {
     console.error('Get all business data error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Server error while fetching all business data'
-    });
+    res.status(500).json({ success: false, message: 'Server error while fetching all business data' });
   }
 };
